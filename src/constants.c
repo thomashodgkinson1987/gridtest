@@ -1,0 +1,16 @@
+#include "constants.h"
+
+const int VIRTUAL_SCREEN_WIDTH = 512;
+const int VIRTUAL_SCREEN_HEIGHT = 512;
+
+const int SCREEN_SIZE_MULTIPLIER = 1;
+
+const int WINDOW_WIDTH = VIRTUAL_SCREEN_WIDTH * SCREEN_SIZE_MULTIPLIER;
+const int WINDOW_HEIGHT = VIRTUAL_SCREEN_HEIGHT * SCREEN_SIZE_MULTIPLIER;
+
+const char *WINDOW_TITLE = "gridtest";
+
+const int TARGET_FPS = 60;
+
+const int TILE_WIDTH = 64;
+const int TILE_HEIGHT = 64;

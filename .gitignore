@@ -1,0 +1,6 @@
+# Build artifacts
+/build-Debug/
+/build-Release/
+
+# VSCode settings
+.vscode/
