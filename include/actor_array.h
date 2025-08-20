@@ -3,10 +3,11 @@
 
 #include "array_macros.h"
 
-#include "actor.h"
+// Forward-declare Actor to define the array type.
+typedef struct actor Actor;
 
-DECLARE_ARRAY_STRUCT(actor, Actor, Actor *);
-
-DECLARE_ARRAY_FUNCTIONS(actor, Actor, Actor *);
+// Use your macros to declare the struct and functions for an array of Actor pointers.
+DECLARE_ARRAY_STRUCT(actor, Actor, Actor*)
+DECLARE_ARRAY_FUNCTIONS(actor, Actor, Actor*)
 
 #endif // ACTOR_ARRAY_H

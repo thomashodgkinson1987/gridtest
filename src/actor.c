@@ -1,164 +1,178 @@
 #include "actor.h"
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "actor_colour.h"
-
-#define MAX_NAME_LENGTH 255
-
-typedef struct actor
+// The concrete definition of the actor struct.
+// This is hidden from other modules, which only see the opaque pointer.
+struct actor
 {
     int x;
     int y;
-    ActorColour colour;
-    char name[MAX_NAME_LENGTH];
-} Actor;
+    char glyph;
+    Colour colour;
 
-Actor *actor_create(
-    const int x,
-    const int y,
-    const ActorColour colour,
-    const char *name)
+    // Components (can be NULL)
+    HealthComponent* health;
+    CombatComponent* combat;
+    AIComponent* ai;
+};
+
+
+// --- Actor Creation/Destruction ---
+
+Actor* actor_create(int x, int y, char glyph, Colour colour)
 {
-    if (!name)
-    {
-        fprintf(stderr, "%s: name cannot be NULL\n", __func__);
-        return false;
-    }
-
-    if (strlen(name) == 0)
-    {
-        fprintf(stderr, "%s: name cannot have a length of 0\n", __func__);
-        return NULL;
-    }
-
-    if (strlen(name) >= MAX_NAME_LENGTH)
-    {
-        fprintf(
-            stderr,
-            "%s: name cannot be greater than %zu characters\n",
-            __func__,
-            MAX_NAME_LENGTH);
-        return NULL;
-    }
-
-    Actor *actor = malloc(sizeof(Actor));
-
+    Actor* actor = malloc(sizeof(*actor));
     if (!actor)
     {
-        char err_msg[256];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: error allocating memory",
-            __func__);
-        perror(err_msg);
-        return NULL;
+        char error_msg[100];
+        snprintf(error_msg, sizeof(error_msg), "%s: Failed to allocate memory", __func__);
+        perror(error_msg);
+        exit(EXIT_FAILURE);
     }
 
     actor->x = x;
     actor->y = y;
+    actor->glyph = glyph;
     actor->colour = colour;
-    strncpy(actor->name, name, MAX_NAME_LENGTH - 1);
-    actor->name[MAX_NAME_LENGTH - 1] = '\0';
+
+    // Initialize all component pointers to NULL.
+    // Components must be created and added separately.
+    actor->health = NULL;
+    actor->combat = NULL;
+    actor->ai = NULL;
 
     return actor;
 }
 
-void actor_free(Actor *actor)
+void actor_free(Actor* actor)
 {
+    if (!actor)
+    {
+        return;
+    }
+
+    // Free each component if it exists.
+    if (actor->health)
+    {
+        health_component_free(actor->health);
+    }
+    if (actor->combat)
+    {
+        combat_component_free(actor->combat);
+    }
+    if (actor->ai)
+    {
+        ai_component_free(actor->ai);
+    }
+
+    // Finally, free the actor struct itself.
     free(actor);
 }
 
-int actor_get_x(const Actor *actor)
+
+// --- Actor Component Management ---
+
+void actor_add_health_component(Actor* actor, HealthComponent* component)
 {
-    return actor->x;
+    actor->health = component;
 }
 
-int actor_get_y(const Actor *actor)
+void actor_add_combat_component(Actor* actor, CombatComponent* component)
 {
-    return actor->y;
+    actor->combat = component;
 }
 
-ActorColour actor_get_colour(const Actor *actor)
+void actor_add_ai_component(Actor* actor, AIComponent* component)
+{
+    actor->ai = component;
+}
+
+HealthComponent* actor_get_health_component(const Actor* actor)
+{
+    return actor->health;
+}
+
+CombatComponent* actor_get_combat_component(const Actor* actor)
+{
+    return actor->combat;
+}
+
+AIComponent* actor_get_ai_component(const Actor* actor)
+{
+    return actor->ai;
+}
+
+
+// --- Actor Getters/Setters ---
+
+void actor_get_position(const Actor* actor, int* x, int* y)
+{
+    *x = actor->x;
+    *y = actor->y;
+}
+
+void actor_set_position(Actor* actor, int x, int y)
+{
+    actor->x = x;
+    actor->y = y;
+}
+
+char actor_get_glyph(const Actor* actor)
+{
+    return actor->glyph;
+}
+
+Colour actor_get_colour(const Actor* actor)
 {
     return actor->colour;
 }
 
-const char *actor_get_name(const Actor *actor)
-{
-    return actor->name;
-}
 
-void actor_set_x(Actor *actor, int x)
-{
-    actor->x = x;
-}
+// --- Actor Actions (Commands) ---
 
-void actor_set_y(Actor *actor, int y)
+void actor_attack(Actor* attacker, Actor* target)
 {
-    actor->y = y;
-}
+    // An attack requires the attacker to have a combat component
+    // and the target to have a health component.
+    CombatComponent* combat = attacker->combat;
+    HealthComponent* health = target->health;
 
-void actor_set_position(Actor *actor, int x, int y)
-{
-    actor_set_x(actor, x);
-    actor_set_y(actor, y);
-}
-
-void actor_set_colour(Actor *actor, ActorColour colour)
-{
-    actor->colour = colour;
-}
-
-bool actor_set_name(Actor *actor, const char *name)
-{
-    if (!name)
+    if (!combat || !health)
     {
-        fprintf(stderr, "%s: name cannot be NULL\n", __func__);
-        return false;
+        // This attack is impossible, so do nothing.
+        return;
     }
 
-    if (strlen(name) == 0)
+    int damage = combat->attack_power;
+
+    // For now, we'll just print to the console.
+    // Later, this will go into a message log.
+    printf("Attacker hits for %d damage!\n", damage);
+
+    actor_take_damage(target, damage);
+}
+
+void actor_take_damage(Actor* actor, int amount)
+{
+    HealthComponent* health = actor->health;
+    if (!health)
     {
-        fprintf(stderr, "%s: name cannot have a length of 0\n", __func__);
-        return false;
+        // Cannot take damage if it doesn't have health.
+        return;
     }
 
-    if (strlen(name) >= MAX_NAME_LENGTH)
+    health->current_hp -= amount;
+
+    // Check for death
+    if (health->current_hp <= 0)
     {
-        fprintf(
-            stderr,
-            "%s: name cannot be greater than %zu characters\n",
-            __func__,
-            MAX_NAME_LENGTH);
-        return false;
+        printf("Actor has died!\n");
+        // In the future, we would add logic here to handle death:
+        // - Change glyph to a corpse '%'
+        // - Make non-blocking
+        // - Remove AI and Combat components
+        // - Drop loot, etc.
     }
-
-    strncpy(actor->name, name, MAX_NAME_LENGTH - 1);
-    actor->name[MAX_NAME_LENGTH - 1] = '\0';
-
-    return true;
-}
-
-void actor_translate_x(Actor *actor, int translation_x)
-{
-    actor_set_x(actor, actor_get_x(actor) + translation_x);
-}
-
-void actor_translate_y(Actor *actor, int translation_y)
-{
-    actor_set_y(actor, actor_get_y(actor) + translation_y);
-}
-
-void actor_translate_position(
-    Actor *actor,
-    int translation_x,
-    int translation_y)
-{
-    actor_translate_x(actor, translation_x);
-    actor_translate_y(actor, translation_y);
 }

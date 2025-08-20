@@ -2,30 +2,45 @@
 #define ACTOR_H
 
 #include <stdbool.h>
+#include "colour.h"
+#include "components.h"
 
-#include "actor_colour.h"
-
+// Opaque pointer type for an Actor. The struct is defined in actor.c.
 typedef struct actor Actor;
 
-Actor *actor_create(int x, int y, ActorColour colour, const char *name);
-void actor_free(Actor *actor);
+// Forward-declare World to avoid circular dependencies
+typedef struct world World;
 
-int actor_get_x(const Actor *actor);
-int actor_get_y(const Actor *actor);
-ActorColour actor_get_colour(const Actor *actor);
-const char *actor_get_name(const Actor *actor);
 
-void actor_set_x(Actor *actor, int x);
-void actor_set_y(Actor *actor, int y);
-void actor_set_position(Actor *actor, int x, int y);
-void actor_set_colour(Actor *actor, ActorColour colour);
-bool actor_set_name(Actor *actor, const char *name);
+// --- Actor Creation/Destruction ---
 
-void actor_translate_x(Actor *actor, int translation_x);
-void actor_translate_y(Actor *actor, int translation_y);
-void actor_translate_position(
-    Actor *actor,
-    int translation_x,
-    int translation_y);
+Actor* actor_create(int x, int y, char glyph, Colour colour);
+void actor_free(Actor* actor);
+
+
+// --- Actor Component Management ---
+
+void actor_add_health_component(Actor* actor, HealthComponent* component);
+void actor_add_combat_component(Actor* actor, CombatComponent* component);
+void actor_add_ai_component(Actor* actor, AIComponent* component);
+
+HealthComponent* actor_get_health_component(const Actor* actor);
+CombatComponent* actor_get_combat_component(const Actor* actor);
+AIComponent* actor_get_ai_component(const Actor* actor);
+
+
+// --- Actor Getters/Setters ---
+
+void actor_get_position(const Actor* actor, int* x, int* y);
+void actor_set_position(Actor* actor, int x, int y);
+
+char actor_get_glyph(const Actor* actor);
+Colour actor_get_colour(const Actor* actor);
+
+
+// --- Actor Actions (Commands) ---
+
+void actor_attack(Actor* attacker, Actor* target);
+void actor_take_damage(Actor* actor, int amount);
 
 #endif // ACTOR_H

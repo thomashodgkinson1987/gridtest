@@ -21,21 +21,11 @@ set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
 # --- Project Sources ---
 # List all your .c source files in the 'src' directory explicitly.
 set(SOURCES
+    src/main.c
     src/actor.c
     src/actor_array.c
-    src/actor_colour.c
-    src/constants.c
+    src/components.c
     src/game.c
-    src/main.c
-    src/tile.c
-    src/tile_array.c
-    src/tile_colour.c
-    src/tile_map.c
-    src/tile_prototype.c
-    src/tile_prototype_array.c
-    src/tile_prototype_repository.c
-    src/tile_prototype_repository_entry.c
-    src/tile_prototype_repository_entry_array.c
     src/world.c
 )
 

@@ -1,0 +1,3 @@
+[submodule "vendor/array_macros"]
+	path = vendor/array_macros
+	url = ssh://tom@localhost/home/tom/Projects/C/libs/array_macros
