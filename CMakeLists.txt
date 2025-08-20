@@ -18,6 +18,11 @@ include_directories(include)
 # Define a variable for the raylib library path.
 set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
 
+# --- Submodules ---
+# Add the array_macros library from the vendor directory.
+# This makes the 'array_macros' INTERFACE target available.
+add_subdirectory(vendor/array_macros)
+
 # --- Project Sources ---
 # List all your .c source files in the 'src' directory explicitly.
 set(SOURCES
@@ -42,10 +47,10 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
 # --- Linking ---
-# Link your executable against the raylib library.
-# We also link against 'm' (math library) and 'pthread', which raylib often needs.
+# Link your executable against all required libraries.
 target_link_libraries(gridtest
     PRIVATE
+    array_macros
     ${RAYLIB_LIBRARY}
     m
     pthread
@@ -64,3 +69,4 @@ add_custom_target(run
     DEPENDS gridtest
     COMMENT "Running gridtest from ${CMAKE_SOURCE_DIR}"
 )
+
