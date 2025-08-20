@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "components.h"
 #include "colour.h"
+#include "renderer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,8 +35,7 @@ static void create_map(World *world);
 
 void game_init(void)
 {
-    InitWindow(800, 600, "gridtest");
-    SetTargetFPS(60);
+    renderer_init(800, 600, "gridtest");
 
     game_instance = malloc(sizeof(*game_instance));
     if (!game_instance)
@@ -82,7 +82,7 @@ void game_run(void)
 {
     while (game_instance->is_running)
     {
-        if (WindowShouldClose())
+        if (renderer_should_close())
         {
             game_instance->is_running = false;
             continue;
@@ -98,7 +98,7 @@ void game_shutdown(void)
 {
     world_free(game_instance->world);
     free(game_instance);
-    CloseWindow();
+    renderer_shutdown();
 }
 
 // --- Static Function Implementations ---
@@ -175,38 +175,31 @@ static void update(void)
 
 static void render(void)
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
+    renderer_begin_frame();
 
-    // For now, we will use the simple console renderer.
-    // In the future, this would be replaced with a proper Raylib tile renderer.
-    // To simulate it, we can print to the console before drawing with Raylib.
-    // This flickers, a better console clear is needed for real use
-    if (game_instance->is_draw_dirty)
-    {
-        //system("clear");
-        world_render(game_instance->world);
-        game_instance->is_draw_dirty = false;
-    }
+    world_render(game_instance->world);
 
-    // A placeholder to show the window is working
-    DrawText("Roguelike Prototype", 10, 10, 20, RAYWHITE);
+    // renderer_draw_text(
+    //     10,
+    //     10,
+    //     "Roguelike Prototype",
+    //     (Colour){255, 255, 255, 255});
 
-    HealthComponent *player_health = actor_get_health_component(
-        game_instance->player);
-    if (player_health)
-    {
-        char health_text[20];
-        snprintf(
-            health_text,
-            sizeof(health_text),
-            "HP: %d / %d",
-            player_health->current_hp,
-            player_health->max_hp);
-        DrawText(health_text, 10, 40, 20, LIME);
-    }
+    // HealthComponent *player_health = actor_get_health_component(
+    //     game_instance->player);
+    // if (player_health)
+    // {
+    //     char health_text[20];
+    //     snprintf(
+    //         health_text,
+    //         sizeof(health_text),
+    //         "HP: %d / %d",
+    //         player_health->current_hp,
+    //         player_health->max_hp);
+    //     renderer_draw_text(10, 40, health_text, (Colour){0, 255, 0, 255});
+    // }
 
-    EndDrawing();
+    renderer_end_frame();
 }
 
 // A simple helper function to carve out a rectangular room.

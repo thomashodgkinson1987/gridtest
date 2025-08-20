@@ -31,12 +31,20 @@ set(SOURCES
     src/actor_array.c
     src/components.c
     src/game.c
+    src/renderer.c
     src/world.c
 )
 
 # --- Executable Definition ---
 # Define the executable target and give it a name.
 add_executable(gridtest ${SOURCES})
+
+# --- IDE Integration ---
+# Set the working directory for when the debugger launches the executable.
+# This ensures that relative paths (like "res/font.png") work correctly.
+set_target_properties(gridtest PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
 
 # --- RPATH Handling ---
 # Embed a runtime search path (RPATH) into the executable. This tells the

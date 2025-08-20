@@ -1,5 +1,6 @@
 #include "world.h"
 #include "actor.h"
+#include "renderer.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -155,7 +156,10 @@ void world_render(const World *world)
             const Actor *actor = world_get_actor_at(world, x, y);
             if (actor)
             {
-                putchar(actor_get_glyph(actor));
+                const char glyph = actor_get_glyph(actor);
+                const Colour fg_colour = actor_get_colour(actor);
+                const Colour bg_colour = (Colour){0, 0, 0, 255};
+                renderer_draw_glyph(x, y, glyph, fg_colour, bg_colour);
             }
             else
             {
@@ -163,18 +167,32 @@ void world_render(const World *world)
                 switch (tile->type)
                 {
                 case TILE_TYPE_FLOOR:
-                    putchar('.');
+                    renderer_draw_glyph(
+                        x,
+                        y,
+                        '.',
+                        (Colour){255, 255, 255, 255},
+                        (Colour){0, 0, 0, 255});
                     break;
                 case TILE_TYPE_WALL:
-                    putchar('#');
+                    renderer_draw_glyph(
+                        x,
+                        y,
+                        '#',
+                        (Colour){255, 255, 255, 255},
+                        (Colour){0, 0, 0, 255});
                     break;
                 default:
-                    putchar('?');
+                    renderer_draw_glyph(
+                        x,
+                        y,
+                        '?',
+                        (Colour){255, 255, 255, 255},
+                        (Colour){0, 0, 0, 255});
                     break;
                 }
             }
         }
-        putchar('\n');
     }
 }
 
