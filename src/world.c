@@ -213,15 +213,6 @@ const Actor *world_get_actor_at(const World *world, int x, int y)
     return NULL;
 }
 
-const Tile *world_get_tile_at(const World *world, int x, int y)
-{
-    if (x < 0 || x >= world->width || y < 0 || y >= world->height)
-    {
-        return NULL;
-    }
-    return &world->tiles[y * world->width + x];
-}
-
 Actor *world_get_mutable_actor_at(World *world, int x, int y)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
@@ -235,6 +226,15 @@ Actor *world_get_mutable_actor_at(World *world, int x, int y)
         }
     }
     return NULL;
+}
+
+const Tile *world_get_tile_at(const World *world, int x, int y)
+{
+    if (x < 0 || x >= world->width || y < 0 || y >= world->height)
+    {
+        return NULL;
+    }
+    return &world->tiles[y * world->width + x];
 }
 
 Tile *world_get_mutable_tile_at(World *world, int x, int y)
