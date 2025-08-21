@@ -103,25 +103,8 @@ static void redraw_virtual_screen(const World *world)
     BeginTextureMode(renderer_state.virtual_screen);
     ClearBackground(BLACK); // Clear the buffer
 
+    // Render current world state to off-screen buffer
     world_render(world);
-
-    // --- THIS IS WHERE world_render() WILL GO ---
-    // We will need to modify world_render to draw the world here.
-    // For now, we'll just draw a test pattern.
-
-
-
-    // for (int y = 0; y < 50; ++y)
-    // {
-    //     for (int x = 0; x < 80; ++x)
-    //     {
-    //         renderer_draw_glyph(x, y, 'A' + (x + y) % 26, (Colour){255, 255, 255, 255}, (Colour){20, 20, 20, 255});
-    //     }
-    // }
-
-
-
-    // --- END OF PLACEHOLDER ---
 
     // Deactivate drawing to the off-screen buffer
     EndTextureMode();
