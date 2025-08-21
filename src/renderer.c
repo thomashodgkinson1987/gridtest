@@ -138,10 +138,8 @@ void renderer_init(int screen_width, int screen_height, const char *title)
     build_glyph_atlas();
 
     // Calculate virtual screen dimensions and create the render texture
-    // renderer_state.virtual_width = 80 * renderer_state.glyph_width;   // Example: 80 columns
-    // renderer_state.virtual_height = 50 * renderer_state.glyph_height; // Example: 50 rows
-    renderer_state.virtual_width = 128;   // Example: 80 columns
-    renderer_state.virtual_height = 128; // Example: 50 rows
+    renderer_state.virtual_width = 128;  // manually linked with screen size
+    renderer_state.virtual_height = 128; // in game.c
     renderer_state.virtual_screen = LoadRenderTexture(
         renderer_state.virtual_width,
         renderer_state.virtual_height);
@@ -176,7 +174,7 @@ void renderer_end_frame(void)
         0.0f,
         0.0f,
         (float)renderer_state.virtual_screen.texture.width,
-        // Inverting the height is necessary because OpenGL textures are upside-down.
+        // Inverting height is needed because OpenGL textures are upside-down.
         -(float)renderer_state.virtual_screen.texture.height};
 
     Rectangle dest_rect = {
