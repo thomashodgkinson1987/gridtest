@@ -231,11 +231,6 @@ void renderer_draw_glyph(
     // Draw the glyph texture itself
     if (source_rect.width > 0) // Don't draw empty glyphs like space
     {
-        // DrawTextureRec(
-        //     renderer_state.font_texture,
-        //     source_rect,
-        //     (Vector2){dest_x, dest_y},
-        //     raylib_fg);
         DrawTexturePro(
             renderer_state.font_texture,
             source_rect,
