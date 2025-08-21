@@ -18,30 +18,33 @@ include_directories(include)
 # Define a variable for the raylib library path.
 set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
 
+# --- Submodules ---
+# Add the array_macros library from the vendor directory.
+# This makes the 'array_macros' INTERFACE target available.
+add_subdirectory(vendor/array_macros)
+
 # --- Project Sources ---
 # List all your .c source files in the 'src' directory explicitly.
 set(SOURCES
+    src/main.c
     src/actor.c
     src/actor_array.c
-    src/actor_colour.c
-    src/constants.c
+    src/components.c
     src/game.c
-    src/main.c
-    src/tile.c
-    src/tile_array.c
-    src/tile_colour.c
-    src/tile_map.c
-    src/tile_prototype.c
-    src/tile_prototype_array.c
-    src/tile_prototype_repository.c
-    src/tile_prototype_repository_entry.c
-    src/tile_prototype_repository_entry_array.c
+    src/renderer.c
     src/world.c
 )
 
 # --- Executable Definition ---
 # Define the executable target and give it a name.
 add_executable(gridtest ${SOURCES})
+
+# --- IDE Integration ---
+# Set the working directory for when the debugger launches the executable.
+# This ensures that relative paths (like "res/font.png") work correctly.
+set_target_properties(gridtest PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
 
 # --- RPATH Handling ---
 # Embed a runtime search path (RPATH) into the executable. This tells the
@@ -52,10 +55,10 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
 # --- Linking ---
-# Link your executable against the raylib library.
-# We also link against 'm' (math library) and 'pthread', which raylib often needs.
+# Link your executable against all required libraries.
 target_link_libraries(gridtest
     PRIVATE
+    array_macros
     ${RAYLIB_LIBRARY}
     m
     pthread
@@ -74,3 +77,4 @@ add_custom_target(run
     DEPENDS gridtest
     COMMENT "Running gridtest from ${CMAKE_SOURCE_DIR}"
 )
+

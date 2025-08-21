@@ -1,20 +1,23 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <stdbool.h>
+#include "colour.h"
 
-#include "tile_colour.h"
-#include "tile_flags.h"
+// A simple enum for our two tile types.
+typedef enum tile_type
+{
+    TILE_TYPE_FLOOR,
+    TILE_TYPE_WALL
+} TileType;
 
+
+// The struct representing a single tile on the map.
 typedef struct tile
 {
-    TileFlags flags;
-    TileColour colour;
+    TileType type;
+    Colour fg_colour; // Foreground colour
+    Colour bg_colour; // Background colour
+    // We can add more properties later, like visibility, explored status, etc.
 } Tile;
-
-Tile tile_create(TileFlags flags, TileColour colour);
-
-bool tile_is_walkable(const Tile *tile);
-bool tile_is_solid(const Tile *tile);
 
 #endif // TILE_H

@@ -1,268 +1,205 @@
 #include "game.h"
 
 #include "raylib.h"
-
-#include "actor.h"
-#include "actor_array.h"
-#include "actor_colour.h"
-#include "constants.h"
-#include "tile.h"
-#include "tile_colour.h"
-#include "tile_flags.h"
-#include "tile_map.h"
-#include "tile_prototype.h"
-#include "tile_prototype_repository.h"
 #include "world.h"
+#include "actor.h"
+#include "components.h"
+#include "colour.h"
+#include "renderer.h"
 
-// ---------------------------------------------------------------------------
-// Static Globals
-// ---------------------------------------------------------------------------
+#include <stdlib.h>
+#include <stdio.h>
 
-static TilePrototypeRepository tile_prototype_repository;
-static World *world;
-static Actor *player_actor;
+// The concrete definition of the game struct.
+struct game
+{
+    World *world;
+    Actor *player;
+    bool is_running;
+    bool player_took_turn;
+    bool is_draw_dirty;
+};
 
-// ---------------------------------------------------------------------------
-// Static Function Prototypes
-// ---------------------------------------------------------------------------
+// A single static instance of the game state. This is a simple way to manage
+// the global state of the game without passing the Game pointer everywhere.
+static struct game *game_instance = NULL;
 
-static void game_init_tile_prototype_repository(
-    TilePrototypeRepository *repository);
-static void game_free_tile_prototype_repository(
-    TilePrototypeRepository *repository);
+// --- Static Function Prototypes ---
 
-static void game_tick_actors(
-    World *world,
-    Actor *player_actor);
+static void handle_input(void);
+static void update(void);
+static void render(void);
+static void create_map(World *world);
 
-static void game_draw_tile_map(
-    World *world,
-    size_t tile_width,
-    size_t tile_height);
-static void game_draw_actors(
-    const World *world,
-    size_t tile_width,
-    size_t tile_height);
-
-static Tile game_create_tile_from_prototype(
-    TilePrototype prototype);
-static Tile game_create_tile_from_id(
-    const TilePrototypeRepository *repository,
-    size_t id);
-static Tile game_create_tile_from_name(
-    const TilePrototypeRepository *repository,
-    const char *name);
-
-// ---------------------------------------------------------------------------
-// Public Functions
-// ---------------------------------------------------------------------------
+// --- Public Function Implementations ---
 
 void game_init(void)
 {
-    game_init_tile_prototype_repository(&tile_prototype_repository);
+    renderer_init(512, 512, "gridtest");
 
-    world = world_create(8, 8, &tile_prototype_repository);
-
-    const ActorColour colour = actor_colour_create(0, 0, 255, 255);
-    player_actor = actor_create(0, 0, colour, "player");
-
-    if (!player_actor)
+    game_instance = malloc(sizeof(*game_instance));
+    if (!game_instance)
     {
-        fprintf(
-            stderr,
-            "%s: error creating player actor\n",
+        char error_msg[100];
+        snprintf(
+            error_msg,
+            sizeof(error_msg),
+            "%s: Failed to allocate memory for game",
             __func__);
+        perror(error_msg);
         exit(EXIT_FAILURE);
     }
 
-    world_add_actor(world, player_actor);
+    game_instance->world = world_create(8, 8);
+    game_instance->is_running = true;
+    game_instance->player_took_turn = false;
+    game_instance->is_draw_dirty = true;
+
+    // Create a simple map layout
+    create_map(game_instance->world);
+
+    // Create the player
+    Colour player_colour = {255, 255, 255, 255};
+    game_instance->player = actor_create(4, 4, '@', player_colour);
+    actor_add_health_component(
+        game_instance->player,
+        health_component_create(100));
+    actor_add_combat_component(
+        game_instance->player,
+        combat_component_create(10));
+    world_add_actor(game_instance->world, game_instance->player);
+
+    // Create a monster
+    Colour monster_colour = {0, 255, 0, 255};
+    Actor *monster = actor_create(6, 4, 'g', monster_colour);
+    actor_add_health_component(monster, health_component_create(20));
+    actor_add_combat_component(monster, combat_component_create(5));
+    actor_add_ai_component(monster, ai_component_create());
+    world_add_actor(game_instance->world, monster);
 }
 
-void game_free(void)
+void game_run(void)
 {
-    world_free(world);
-    game_free_tile_prototype_repository(&tile_prototype_repository);
-}
-
-void game_tick(
-    float delta)
-{
-    (void)delta;
-
-    game_tick_actors(world, player_actor);
-}
-
-void game_draw(void)
-{
-    BeginDrawing();
-    ClearBackground(WHITE);
-    DrawFPS(8, 8);
-
-    game_draw_tile_map(world, TILE_WIDTH, TILE_HEIGHT);
-    game_draw_actors(world, TILE_WIDTH, TILE_HEIGHT);
-
-    EndDrawing();
-}
-
-// ---------------------------------------------------------------------------
-// Static Functions
-// ---------------------------------------------------------------------------
-
-static void game_init_tile_prototype_repository(
-    TilePrototypeRepository *repository)
-{
-    *repository = tile_prototype_repository_create();
-
-    // empty tile prototype
+    while (game_instance->is_running)
     {
-        const TileFlags flags = TILE_FLAG_NONE;
-        const TileColour colour = tile_colour_create(0, 0, 0, 255);
-        const TilePrototype prototype = tile_prototype_create(flags, colour);
+        if (renderer_should_close())
+        {
+            game_instance->is_running = false;
+            continue;
+        }
 
-        tile_prototype_repository_add(repository, 0, "empty", prototype);
-    }
-
-    // floor tile prototype
-    {
-        const TileFlags flags = TILE_FLAG_WALKABLE;
-        const TileColour colour = tile_colour_create(255, 0, 0, 255);
-        const TilePrototype prototype = tile_prototype_create(flags, colour);
-
-        tile_prototype_repository_add(repository, 1, "floor", prototype);
-    }
-
-    // wall tile prototype
-    {
-        const TileFlags flags = TILE_FLAG_SOLID;
-        const TileColour colour = tile_colour_create(0, 255, 0, 255);
-        const TilePrototype prototype = tile_prototype_create(flags, colour);
-
-        tile_prototype_repository_add(repository, 2, "wall", prototype);
+        handle_input();
+        update();
+        render();
     }
 }
 
-static void game_free_tile_prototype_repository(
-    TilePrototypeRepository *repository)
+void game_shutdown(void)
 {
-    tile_prototype_repository_free(repository);
+    world_free(game_instance->world);
+    free(game_instance);
+    renderer_shutdown();
 }
 
-static void game_tick_actors(
-    World *world,
-    Actor *player_actor)
+// --- Static Function Implementations ---
+
+static void handle_input(void)
 {
-    if (IsKeyPressed(KEY_KP_1) || IsKeyPressed(KEY_KP_2) ||
-        IsKeyPressed(KEY_KP_3) || IsKeyPressed(KEY_KP_4) ||
-        IsKeyPressed(KEY_KP_6) || IsKeyPressed(KEY_KP_7) ||
-        IsKeyPressed(KEY_KP_8) || IsKeyPressed(KEY_KP_9))
+    int dx = 0;
+    int dy = 0;
+
+    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_KP_8))
+        dy = -1;
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
+        dy = 1;
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_KP_4))
+        dx = -1;
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_KP_6))
+        dx = 1;
+    if (IsKeyPressed(KEY_KP_7))
     {
-        int dx = 0;
-        int dy = 0;
+        dx = -1;
+        dy = -1;
+    }
+    if (IsKeyPressed(KEY_KP_9))
+    {
+        dx = 1;
+        dy = -1;
+    }
+    if (IsKeyPressed(KEY_KP_1))
+    {
+        dx = -1;
+        dy = 1;
+    }
+    if (IsKeyPressed(KEY_KP_3))
+    {
+        dx = 1;
+        dy = 1;
+    }
 
-        if (IsKeyPressed(KEY_KP_7) ||
-            IsKeyPressed(KEY_KP_4) ||
-            IsKeyPressed(KEY_KP_1))
+    if (dx != 0 || dy != 0)
+    {
+        int player_x, player_y;
+        actor_get_position(game_instance->player, &player_x, &player_y);
+
+        int target_x = player_x + dx;
+        int target_y = player_y + dy;
+
+        // Check for actors at the target location
+        Actor *target_actor = world_get_mutable_actor_at(
+            game_instance->world,
+            target_x,
+            target_y);
+        if (target_actor)
         {
-            --dx;
+            actor_attack(game_instance->player, target_actor);
+        }
+        else if (
+            world_is_tile_walkable(game_instance->world, target_x, target_y))
+        {
+            actor_set_position(game_instance->player, target_x, target_y);
         }
 
-        if (IsKeyPressed(KEY_KP_9) ||
-            IsKeyPressed(KEY_KP_6) ||
-            IsKeyPressed(KEY_KP_3))
-        {
-            ++dx;
-        }
-
-        if (IsKeyPressed(KEY_KP_7) ||
-            IsKeyPressed(KEY_KP_8) ||
-            IsKeyPressed(KEY_KP_9))
-        {
-            --dy;
-        }
-
-        if (IsKeyPressed(KEY_KP_1) ||
-            IsKeyPressed(KEY_KP_2) ||
-            IsKeyPressed(KEY_KP_3))
-        {
-            ++dy;
-        }
-
-        if (dx || dy)
-        {
-            world_move_actor(world, player_actor, dx, dy);
-        }
+        game_instance->player_took_turn = true;
+        renderer_set_dirty();
     }
 }
 
-static void game_draw_tile_map(
-    World *world,
-    size_t tile_width,
-    size_t tile_height)
+static void update(void)
 {
-    for (int y = 0; y < world->tile_map->height; ++y)
+    if (game_instance->player_took_turn)
     {
-        const int pos_y = y * tile_height;
-        for (int x = 0; x < world->tile_map->width; ++x)
+        world_update_actors(game_instance->world);
+        game_instance->player_took_turn = false;
+    }
+}
+
+static void render(void)
+{
+    renderer_begin_frame(game_instance->world);
+
+    // world_render(game_instance->world);
+
+    renderer_end_frame();
+}
+
+// A simple helper function to carve out a rectangular room.
+static void create_map(World *world)
+{
+    int room_x = 1;
+    int room_y = 1;
+    int room_w = 6;
+    int room_h = 6;
+
+    for (int y = room_y; y < room_y + room_h; ++y)
+    {
+        for (int x = room_x; x < room_x + room_w; ++x)
         {
-            const Tile *tile = world_get_tile(world, x, y);
-            const TileColour colour = tile->colour;
-
-            if (!tile)
-                continue;
-
-            const int pos_x = x * tile_width;
-            const Color color = {colour.r, colour.g, colour.b, colour.a};
-
-            DrawRectangle(pos_x, pos_y, tile_width, tile_height, color);
+            Tile *tile = world_get_mutable_tile_at(world, x, y);
+            if (tile)
+            {
+                tile->type = TILE_TYPE_FLOOR;
+            }
         }
     }
-}
-
-static void game_draw_actors(
-    const World *world,
-    size_t tile_width,
-    size_t tile_height)
-{
-    for (size_t i = 0; i < world->actors->count; ++i)
-    {
-        const Actor *actor = world->actors->data[i];
-        const ActorColour colour = actor_get_colour(actor);
-
-        const int pos_x = actor_get_x(actor) * tile_width;
-        const int pos_y = actor_get_y(actor) * tile_height;
-        const int width = tile_width;
-        const int height = tile_height;
-        const Color color = {colour.r, colour.g, colour.b, colour.a};
-
-        DrawRectangle(pos_x, pos_y, width, height, color);
-    }
-}
-
-static Tile game_create_tile_from_prototype(
-    TilePrototype prototype)
-{
-    const Tile tile = tile_create(prototype.flags, prototype.colour);
-    return tile;
-}
-
-static Tile game_create_tile_from_id(
-    const TilePrototypeRepository *repository,
-    size_t id)
-{
-    const TilePrototype prototype = *tile_prototype_repository_get_by_id(
-        repository,
-        id);
-    const Tile tile = game_create_tile_from_prototype(prototype);
-    return tile;
-}
-
-static Tile game_create_tile_from_name(
-    const TilePrototypeRepository *repository,
-    const char *name)
-{
-    const TilePrototype prototype = *tile_prototype_repository_get_by_name(
-        repository,
-        name);
-    const Tile tile = game_create_tile_from_prototype(prototype);
-    return tile;
 }
