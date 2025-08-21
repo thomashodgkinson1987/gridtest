@@ -4,6 +4,8 @@
 #include "colour.h"
 #include <stdbool.h>
 
+typedef struct world World;
+
 // --- Initialization and Shutdown ---
 
 // Initializes the window and loads all rendering assets (like the font).
@@ -13,7 +15,7 @@ void renderer_shutdown(void);
 // --- Frame Management ---
 
 // Should be called at the beginning of the main game loop's drawing phase.
-void renderer_begin_frame(void);
+void renderer_begin_frame(const World *world);
 
 // Should be called at the end of the main game loop's drawing phase.
 void renderer_end_frame(void);
@@ -41,5 +43,11 @@ void renderer_draw_text(
 
 // A function to check if the user has requested to close the window.
 bool renderer_should_close(void);
+
+// --- State Management ---
+
+// Tells the renderer that the game state has changed and the
+// virtual screen needs to be redrawn on the next frame.
+void renderer_set_dirty(void);
 
 #endif // RENDERER_H

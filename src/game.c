@@ -35,7 +35,7 @@ static void create_map(World *world);
 
 void game_init(void)
 {
-    renderer_init(800, 600, "gridtest");
+    renderer_init(512, 512, "gridtest");
 
     game_instance = malloc(sizeof(*game_instance));
     if (!game_instance)
@@ -161,6 +161,7 @@ static void handle_input(void)
         }
 
         game_instance->player_took_turn = true;
+        renderer_set_dirty();
     }
 }
 
@@ -175,29 +176,9 @@ static void update(void)
 
 static void render(void)
 {
-    renderer_begin_frame();
+    renderer_begin_frame(game_instance->world);
 
-    world_render(game_instance->world);
-
-    // renderer_draw_text(
-    //     10,
-    //     10,
-    //     "Roguelike Prototype",
-    //     (Colour){255, 255, 255, 255});
-
-    // HealthComponent *player_health = actor_get_health_component(
-    //     game_instance->player);
-    // if (player_health)
-    // {
-    //     char health_text[20];
-    //     snprintf(
-    //         health_text,
-    //         sizeof(health_text),
-    //         "HP: %d / %d",
-    //         player_health->current_hp,
-    //         player_health->max_hp);
-    //     renderer_draw_text(10, 40, health_text, (Colour){0, 255, 0, 255});
-    // }
+    // world_render(game_instance->world);
 
     renderer_end_frame();
 }

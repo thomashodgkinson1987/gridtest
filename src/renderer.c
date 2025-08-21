@@ -1,6 +1,8 @@
 #include "renderer.h"
+#include "world.h"
 #include "raylib.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,6 +20,10 @@ static struct
     int glyph_width;
     int glyph_height;
 
+    int virtual_width;
+    int virtual_height;
+    RenderTexture2D virtual_screen;
+    bool is_dirty;
 } renderer_state;
 
 // --- Static Helper Functions ---
@@ -89,6 +95,41 @@ static void build_glyph_atlas(void)
     }
 }
 
+// This is the core of the new system. It draws the entire game world
+// to the off-screen render texture.
+static void redraw_virtual_screen(const World *world)
+{
+    // Activate drawing to our off-screen buffer
+    BeginTextureMode(renderer_state.virtual_screen);
+    ClearBackground(BLACK); // Clear the buffer
+
+    world_render(world);
+
+    // --- THIS IS WHERE world_render() WILL GO ---
+    // We will need to modify world_render to draw the world here.
+    // For now, we'll just draw a test pattern.
+
+
+
+    // for (int y = 0; y < 50; ++y)
+    // {
+    //     for (int x = 0; x < 80; ++x)
+    //     {
+    //         renderer_draw_glyph(x, y, 'A' + (x + y) % 26, (Colour){255, 255, 255, 255}, (Colour){20, 20, 20, 255});
+    //     }
+    // }
+
+
+
+    // --- END OF PLACEHOLDER ---
+
+    // Deactivate drawing to the off-screen buffer
+    EndTextureMode();
+
+    // Mark the screen as clean
+    renderer_state.is_dirty = false;
+}
+
 // --- Public API Implementation ---
 
 void renderer_init(int screen_width, int screen_height, const char *title)
@@ -112,22 +153,63 @@ void renderer_init(int screen_width, int screen_height, const char *title)
 
     // Build the lookup table
     build_glyph_atlas();
+
+    // Calculate virtual screen dimensions and create the render texture
+    // renderer_state.virtual_width = 80 * renderer_state.glyph_width;   // Example: 80 columns
+    // renderer_state.virtual_height = 50 * renderer_state.glyph_height; // Example: 50 rows
+    renderer_state.virtual_width = 128;   // Example: 80 columns
+    renderer_state.virtual_height = 128; // Example: 50 rows
+    renderer_state.virtual_screen = LoadRenderTexture(
+        renderer_state.virtual_width,
+        renderer_state.virtual_height);
+
+    // Force an initial draw on the first frame
+    renderer_state.is_dirty = true;
 }
 
 void renderer_shutdown(void)
 {
+    UnloadRenderTexture(renderer_state.virtual_screen);
     UnloadTexture(renderer_state.font_texture);
     CloseWindow();
 }
 
-void renderer_begin_frame(void)
+void renderer_begin_frame(const World *world)
 {
+    if (renderer_state.is_dirty)
+    {
+        redraw_virtual_screen(world);
+    }
+
     BeginDrawing();
     ClearBackground(BLACK);
 }
 
 void renderer_end_frame(void)
 {
+    // Draw the entire virtual screen texture to the window in one go.
+    // This is where scaling happens. We use DrawTexturePro for flexibility.
+    Rectangle source_rect = {
+        0.0f,
+        0.0f,
+        (float)renderer_state.virtual_screen.texture.width,
+        // Inverting the height is necessary because OpenGL textures are upside-down.
+        -(float)renderer_state.virtual_screen.texture.height};
+
+    Rectangle dest_rect = {
+        0.0f,
+        0.0f,
+        (float)renderer_state.screen_width,
+        (float)renderer_state.screen_height};
+
+    DrawTexturePro(
+        renderer_state.virtual_screen.texture,
+        source_rect,
+        dest_rect,
+        (Vector2){0, 0}, // Origin
+        0.0f,            // Rotation
+        WHITE);          // Tint
+
     EndDrawing();
 }
 
@@ -143,8 +225,8 @@ void renderer_draw_glyph(
     const float dest_y = (float)grid_y * renderer_state.glyph_height;
 
     // Convert our custom Colour to Raylib Color
-    Color raylib_bg = to_raylib_colour(bg_colour);
-    Color raylib_fg = to_raylib_colour(fg_colour);
+    const Color raylib_bg = to_raylib_colour(bg_colour);
+    const Color raylib_fg = to_raylib_colour(fg_colour);
 
     // Draw the background cell colour
     DrawRectangle(
@@ -155,14 +237,32 @@ void renderer_draw_glyph(
         raylib_bg);
 
     // Look up the source rectangle for the glyph from our atlas
-    Rectangle source_rect = renderer_state.glyph_atlas[(unsigned char)glyph];
+    const Rectangle source_rect = renderer_state.glyph_atlas[(unsigned char)glyph];
+    const Rectangle dest_rect = (Rectangle){
+        .x = dest_x,
+        .y = dest_y,
+        .width = (float)renderer_state.glyph_width,
+        .height = (float)renderer_state.glyph_height
+    };
+    const Vector2 origin = (Vector2){0.0f, 0.0f};
+    const float rotation = 0.0f;
 
     // Draw the glyph texture itself
-    DrawTextureRec(
-        renderer_state.font_texture,
-        source_rect,
-        (Vector2){dest_x, dest_y},
-        raylib_fg);
+    if (source_rect.width > 0) // Don't draw empty glyphs like space
+    {
+        // DrawTextureRec(
+        //     renderer_state.font_texture,
+        //     source_rect,
+        //     (Vector2){dest_x, dest_y},
+        //     raylib_fg);
+        DrawTexturePro(
+            renderer_state.font_texture,
+            source_rect,
+            dest_rect,
+            origin,
+            rotation,
+            raylib_fg);
+    }
 }
 
 void renderer_draw_text(
@@ -179,4 +279,11 @@ void renderer_draw_text(
 bool renderer_should_close(void)
 {
     return WindowShouldClose();
+}
+
+// --- State Management ---
+
+void renderer_set_dirty(void)
+{
+    renderer_state.is_dirty = true;
 }

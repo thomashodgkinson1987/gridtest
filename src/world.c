@@ -148,7 +148,6 @@ void world_update_actors(World *world)
 
 void world_render(const World *world)
 {
-    // This is a simple console renderer for now.
     for (int y = 0; y < world->height; ++y)
     {
         for (int x = 0; x < world->width; ++x)
