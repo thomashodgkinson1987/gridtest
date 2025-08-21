@@ -218,13 +218,13 @@ void renderer_draw_glyph(
         raylib_bg);
 
     // Look up the source rectangle for the glyph from our atlas
-    const Rectangle source_rect = renderer_state.glyph_atlas[(unsigned char)glyph];
+    const Rectangle source_rect =
+        renderer_state.glyph_atlas[(unsigned char)glyph];
     const Rectangle dest_rect = (Rectangle){
         .x = dest_x,
         .y = dest_y,
         .width = (float)renderer_state.glyph_width,
-        .height = (float)renderer_state.glyph_height
-    };
+        .height = (float)renderer_state.glyph_height};
     const Vector2 origin = (Vector2){0.0f, 0.0f};
     const float rotation = 0.0f;
 
