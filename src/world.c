@@ -174,33 +174,22 @@ void world_render(const World *world)
             else
             {
                 const Tile *tile = world_get_tile_at(world, x, y);
+                char glyph = '?';
                 switch (tile->type)
                 {
                 case TILE_TYPE_FLOOR:
-                    renderer_draw_glyph(
-                        x,
-                        y,
-                        '.',
-                        (Colour){255, 255, 255, 255},
-                        (Colour){0, 0, 0, 255});
+                    glyph = '.';
                     break;
                 case TILE_TYPE_WALL:
-                    renderer_draw_glyph(
-                        x,
-                        y,
-                        '#',
-                        (Colour){255, 255, 255, 255},
-                        (Colour){0, 0, 0, 255});
+                    glyph = '#';
                     break;
                 default:
-                    renderer_draw_glyph(
-                        x,
-                        y,
-                        '?',
-                        (Colour){255, 255, 255, 255},
-                        (Colour){0, 0, 0, 255});
+                    glyph = '?';
                     break;
                 }
+                const Colour fg_colour = {255, 255, 255, 255};
+                const Colour bg_colour = {0, 0, 0, 255};
+                renderer_draw_glyph(x, y, glyph, fg_colour, bg_colour);
             }
         }
     }
