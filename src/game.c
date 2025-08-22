@@ -50,7 +50,7 @@ void game_init(void)
         exit(EXIT_FAILURE);
     }
 
-    game_instance->world = world_create(8, 8);
+    game_instance->world = world_create(16, 16);
     game_instance->is_running = true;
     game_instance->player_took_turn = false;
     game_instance->is_draw_dirty = true;
