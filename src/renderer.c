@@ -138,8 +138,8 @@ void renderer_init(int screen_width, int screen_height, const char *title)
     build_glyph_atlas();
 
     // Calculate virtual screen dimensions and create the render texture
-    renderer_state.virtual_width = 128;  // manually linked with screen size
-    renderer_state.virtual_height = 128; // in game.c
+    renderer_state.virtual_width = 256;  // manually linked with screen size
+    renderer_state.virtual_height = 256; // in game.c
     renderer_state.virtual_screen = LoadRenderTexture(
         renderer_state.virtual_width,
         renderer_state.virtual_height);
