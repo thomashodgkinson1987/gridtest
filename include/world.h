@@ -14,6 +14,11 @@ typedef struct world World;
 World *world_create(int width, int height);
 void world_free(World *world);
 
+// --- World Getters ---
+
+int world_get_width(const World *world);
+int world_get_height(const World *world);
+
 // --- World Management ---
 
 void world_add_actor(World *world, Actor *actor);

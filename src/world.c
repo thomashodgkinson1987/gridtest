@@ -126,6 +126,17 @@ void world_free(World *world)
     free(world);
 }
 
+// -- World Getters ---
+
+int world_get_width(const World *world)
+{
+    return world->width;
+}
+int world_get_height(const World *world)
+{
+    return world->height;
+}
+
 // --- World Management ---
 
 void world_add_actor(World *world, Actor *actor)

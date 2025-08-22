@@ -191,8 +191,8 @@ static void create_map(World *world)
 {
     int room_x = 1;
     int room_y = 1;
-    int room_w = 6;
-    int room_h = 6;
+    int room_w = world_get_width(world) - 2;
+    int room_h = world_get_height(world) - 2;
 
     for (int y = room_y; y < room_y + room_h; ++y)
     {
