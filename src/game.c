@@ -17,7 +17,6 @@ struct game
     Actor *player;
     bool is_running;
     bool player_took_turn;
-    bool is_draw_dirty;
 };
 
 // A single static instance of the game state. This is a simple way to manage
@@ -53,7 +52,6 @@ void game_init(void)
     game_instance->world = world_create(16, 16);
     game_instance->is_running = true;
     game_instance->player_took_turn = false;
-    game_instance->is_draw_dirty = true;
 
     // Create a simple map layout
     create_map(game_instance->world);
