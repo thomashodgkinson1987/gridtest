@@ -8,39 +8,27 @@
 // Opaque pointer type for an Actor. The struct is defined in actor.c.
 typedef struct actor Actor;
 
-// Forward-declare World to avoid circular dependencies
-typedef struct world World;
-
-
 // --- Actor Creation/Destruction ---
 
-Actor* actor_create(int x, int y, char glyph, Colour colour);
-void actor_free(Actor* actor);
-
+Actor *actor_create(int x, int y, char glyph, Colour colour);
+void actor_free(Actor *actor);
 
 // --- Actor Component Management ---
 
-void actor_add_health_component(Actor* actor, HealthComponent* component);
-void actor_add_combat_component(Actor* actor, CombatComponent* component);
-void actor_add_ai_component(Actor* actor, AIComponent* component);
+void actor_add_health_component(Actor *actor, HealthComponent *component);
+void actor_add_combat_component(Actor *actor, CombatComponent *component);
+void actor_add_ai_component(Actor *actor, AIComponent *component);
 
-HealthComponent* actor_get_health_component(const Actor* actor);
-CombatComponent* actor_get_combat_component(const Actor* actor);
-AIComponent* actor_get_ai_component(const Actor* actor);
-
+HealthComponent *actor_get_health_component(const Actor *actor);
+CombatComponent *actor_get_combat_component(const Actor *actor);
+AIComponent *actor_get_ai_component(const Actor *actor);
 
 // --- Actor Getters/Setters ---
 
-void actor_get_position(const Actor* actor, int* x, int* y);
-void actor_set_position(Actor* actor, int x, int y);
+void actor_get_position(const Actor *actor, int *x, int *y);
+void actor_set_position(Actor *actor, int x, int y);
 
-char actor_get_glyph(const Actor* actor);
-Colour actor_get_colour(const Actor* actor);
-
-
-// --- Actor Actions (Commands) ---
-
-void actor_attack(Actor* attacker, Actor* target);
-void actor_take_damage(Actor* actor, int amount);
+char actor_get_glyph(const Actor *actor);
+Colour actor_get_colour(const Actor *actor);
 
 #endif // ACTOR_H

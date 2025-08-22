@@ -195,6 +195,63 @@ void world_render(const World *world)
     }
 }
 
+void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
+{
+    // grab pointers to required components
+    CombatComponent *atk_combat = actor_get_combat_component(attacker);
+    HealthComponent *def_health = actor_get_health_component(defender);
+
+    // if all components exist
+    if (atk_combat && def_health)
+    {
+        // subtract attack power from health, clamping at 0
+        def_health->current_hp -= atk_combat->attack_power;
+        if (def_health->current_hp < 0)
+            def_health->current_hp = 0;
+
+        // print act of attacker attacking
+        printf(
+            "Attacker attacks defender for %i damage\n",
+            atk_combat->attack_power);
+
+        // print act of defender defending
+        printf(
+            "Defender takes %i points of damage\n",
+            atk_combat->attack_power);
+
+        // print updated defender health
+        printf("Defender's health is now %i\n", def_health->current_hp);
+
+        // if defender is dead...
+        if (def_health->current_hp == 0)
+        {
+            // print death message
+            printf("Defender dies\n");
+
+            // find index of defender
+            size_t index = 0;
+
+            for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
+            {
+                if (defender == *actor_array_get_const(&world->actors, i))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            // remove defender from world's actors array
+            actor_array_remove(&world->actors, index);
+
+            // free defender actor
+            actor_free(defender);
+
+            // flag renderer as dirty
+            renderer_set_dirty();
+        }
+    }
+}
+
 // --- World Queries ---
 
 const Actor *world_get_actor_at(const World *world, int x, int y)

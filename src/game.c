@@ -152,7 +152,10 @@ static void handle_input(void)
             target_y);
         if (target_actor)
         {
-            actor_attack(game_instance->player, target_actor);
+            world_actor_attack_actor(
+                game_instance->world,
+                game_instance->player,
+                target_actor);
         }
         else if (
             world_is_tile_walkable(game_instance->world, target_x, target_y))
