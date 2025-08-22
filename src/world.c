@@ -209,10 +209,10 @@ void world_render(const World *world)
 void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
 {
     // grab pointers to required components
-    CombatComponent *atk_combat = actor_get_combat_component(attacker);
-    NameComponent *atk_name = actor_get_name_component(attacker);
-    HealthComponent *def_health = actor_get_health_component(defender);
-    NameComponent *def_name = actor_get_name_component(defender);
+    const CombatComponent *atk_combat = actor_get_combat_component(attacker);
+    const NameComponent *atk_name = actor_get_name_component(attacker);
+    HealthComponent *def_health = actor_get_health_component_mut(defender);
+    const NameComponent *def_name = actor_get_name_component(defender);
 
     // if all components exist
     if (atk_combat && atk_name && def_health && def_name)
