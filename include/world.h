@@ -30,10 +30,10 @@ void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender);
 // --- World Queries ---
 
 const Actor *world_get_actor_at(const World *world, int x, int y);
-Actor *world_get_mutable_actor_at(World *world, int x, int y);
+Actor *world_get_actor_at_mut(World *world, int x, int y);
 
 const Tile *world_get_tile_at(const World *world, int x, int y);
-Tile *world_get_mutable_tile_at(World *world, int x, int y);
+Tile *world_get_tile_at_mut(World *world, int x, int y);
 
 bool world_is_tile_walkable(const World *world, int x, int y);
 

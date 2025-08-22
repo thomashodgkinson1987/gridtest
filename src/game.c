@@ -142,7 +142,7 @@ static void handle_input(void)
         int target_y = player_y + dy;
 
         // Check for actors at the target location
-        Actor *target_actor = world_get_mutable_actor_at(
+        Actor *target_actor = world_get_actor_at_mut(
             game_instance->world,
             target_x,
             target_y);
@@ -194,7 +194,7 @@ static void create_map(World *world)
     {
         for (int x = room_x; x < room_x + room_w; ++x)
         {
-            Tile *tile = world_get_mutable_tile_at(world, x, y);
+            Tile *tile = world_get_tile_at_mut(world, x, y);
             if (tile)
             {
                 tile->type = TILE_TYPE_FLOOR;
