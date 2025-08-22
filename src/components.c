@@ -11,7 +11,6 @@ HealthComponent *health_component_create(int max_hp)
     HealthComponent *component = malloc(sizeof(*component));
     if (!component)
     {
-        // Using __func__ makes error messages more robust.
         char error_msg[100];
         snprintf(
             error_msg,
