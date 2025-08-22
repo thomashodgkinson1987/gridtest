@@ -16,6 +16,7 @@ struct actor
     HealthComponent *health;
     CombatComponent *combat;
     AIComponent *ai;
+    NameComponent *name;
 };
 
 // --- Actor Creation/Destruction ---
@@ -45,6 +46,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour)
     actor->health = NULL;
     actor->combat = NULL;
     actor->ai = NULL;
+    actor->name = NULL;
 
     return actor;
 }
@@ -69,6 +71,10 @@ void actor_free(Actor *actor)
     {
         ai_component_free(actor->ai);
     }
+    if (actor->name)
+    {
+        name_component_free(actor->name);
+    }
 
     // Finally, free the actor struct itself.
     free(actor);
@@ -91,6 +97,11 @@ void actor_add_ai_component(Actor *actor, AIComponent *component)
     actor->ai = component;
 }
 
+void actor_add_name_component(Actor *actor, NameComponent *component)
+{
+    actor->name = component;
+}
+
 HealthComponent *actor_get_health_component(const Actor *actor)
 {
     return actor->health;
@@ -104,6 +115,11 @@ CombatComponent *actor_get_combat_component(const Actor *actor)
 AIComponent *actor_get_ai_component(const Actor *actor)
 {
     return actor->ai;
+}
+
+NameComponent *actor_get_name_component(const Actor *actor)
+{
+    return actor->name;
 }
 
 // --- Actor Getters/Setters ---

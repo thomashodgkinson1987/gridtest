@@ -210,10 +210,12 @@ void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
 {
     // grab pointers to required components
     CombatComponent *atk_combat = actor_get_combat_component(attacker);
+    NameComponent *atk_name = actor_get_name_component(attacker);
     HealthComponent *def_health = actor_get_health_component(defender);
+    NameComponent *def_name = actor_get_name_component(defender);
 
     // if all components exist
-    if (atk_combat && def_health)
+    if (atk_combat && atk_name && def_health && def_name)
     {
         // subtract attack power from health, clamping at 0
         def_health->current_hp -= atk_combat->attack_power;
@@ -222,22 +224,28 @@ void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
 
         // print act of attacker attacking
         printf(
-            "Attacker attacks defender for %i damage\n",
+            "%s attacks %s for %i damage\n",
+            atk_name->name,
+            def_name->name,
             atk_combat->attack_power);
 
         // print act of defender defending
         printf(
-            "Defender takes %i points of damage\n",
+            "%s takes %i points of damage\n",
+            def_name->name,
             atk_combat->attack_power);
 
         // print updated defender health
-        printf("Defender's health is now %i\n", def_health->current_hp);
+        printf(
+            "%s's health is now %i\n",
+            def_name->name,
+            def_health->current_hp);
 
         // if defender is dead...
         if (def_health->current_hp == 0)
         {
             // print death message
-            printf("Defender dies\n");
+            printf("%s dies\n", def_name->name);
 
             // find index of defender
             size_t index = 0;

@@ -1,7 +1,8 @@
 #include "components.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // --- Health Component ---
 
@@ -83,5 +84,34 @@ AIComponent *ai_component_create(void)
 
 void ai_component_free(AIComponent *component)
 {
+    free(component);
+}
+
+// --- Name Component ---
+
+NameComponent *name_component_create(const char *name)
+{
+    NameComponent *component = malloc(sizeof(*component));
+    if (!component)
+    {
+        char error_msg[100];
+        snprintf(
+            error_msg,
+            sizeof(error_msg),
+            "%s: Failed to allocate memory",
+            __func__);
+        perror(error_msg);
+        exit(EXIT_FAILURE);
+    }
+
+    component->name = malloc(strlen(name) + 1);
+    strncpy(component->name, name, strlen(name) + 1);
+
+    return component;
+}
+
+void name_component_free(NameComponent *component)
+{
+    free(component->name);
     free(component);
 }

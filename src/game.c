@@ -65,6 +65,9 @@ void game_init(void)
     actor_add_combat_component(
         game_instance->player,
         combat_component_create(10));
+    actor_add_name_component(
+        game_instance->player,
+        name_component_create("Player"));
     world_add_actor(game_instance->world, game_instance->player);
 
     // Create a monster
@@ -73,6 +76,7 @@ void game_init(void)
     actor_add_health_component(monster, health_component_create(20));
     actor_add_combat_component(monster, combat_component_create(5));
     actor_add_ai_component(monster, ai_component_create());
+    actor_add_name_component(monster, name_component_create("Goblin"));
     world_add_actor(game_instance->world, monster);
 }
 

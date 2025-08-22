@@ -18,10 +18,12 @@ void actor_free(Actor *actor);
 void actor_add_health_component(Actor *actor, HealthComponent *component);
 void actor_add_combat_component(Actor *actor, CombatComponent *component);
 void actor_add_ai_component(Actor *actor, AIComponent *component);
+void actor_add_name_component(Actor *actor, NameComponent *component);
 
 HealthComponent *actor_get_health_component(const Actor *actor);
 CombatComponent *actor_get_combat_component(const Actor *actor);
 AIComponent *actor_get_ai_component(const Actor *actor);
+NameComponent *actor_get_name_component(const Actor *actor);
 
 // --- Actor Getters/Setters ---
 
