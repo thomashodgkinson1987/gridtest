@@ -1,12 +1,13 @@
 #include "world.h"
-#include "actor.h"
-#include "renderer.h"
 
 #include <stdbool.h>
+#include <stdint.h> // For SIZE_MAX
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h> // For SIZE_MAX
+
+#include "actor.h"
+#include "renderer.h"
 
 // The concrete definition of the world struct. This makes the type "complete"
 // within this file, allowing us to access its members.

@@ -1,14 +1,15 @@
 #include "game.h"
 
-#include "raylib.h"
-#include "world.h"
-#include "actor.h"
-#include "components.h"
-#include "colour.h"
-#include "renderer.h"
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "raylib.h"
+
+#include "actor.h"
+#include "colour.h"
+#include "components.h"
+#include "renderer.h"
+#include "world.h"
 
 // The concrete definition of the game struct.
 struct game

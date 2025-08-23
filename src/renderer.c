@@ -1,10 +1,12 @@
 #include "renderer.h"
-#include "world.h"
-#include "raylib.h"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "raylib.h"
+
+#include "world.h"
 
 // --- Module-Private State ---
 

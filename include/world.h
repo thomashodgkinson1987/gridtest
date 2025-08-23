@@ -1,10 +1,10 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <stdbool.h>
+
 #include "actor_array.h"
 #include "tile.h"
-
-#include <stdbool.h>
 
 // Opaque pointer type for a World.
 typedef struct world World;

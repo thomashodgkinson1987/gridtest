@@ -1,8 +1,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "colour.h"
 #include <stdbool.h>
+
+#include "colour.h"
 
 typedef struct world World;
 

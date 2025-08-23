@@ -1,9 +1,10 @@
 #include "actor.h"
-#include "colour.h"
-#include "components.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "colour.h"
+#include "components.h"
 
 // The concrete definition of the actor struct.
 // This is hidden from other modules, which only see the opaque pointer.
