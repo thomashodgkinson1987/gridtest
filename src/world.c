@@ -113,7 +113,8 @@ void world_free(World *world)
     // Free all the actors stored in the dynamic array
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {
-        actor_free(*actor_array_get(&world->actors, i));
+        Actor *actor = actor_array_get(&world->actors, i);
+        actor_free(actor);
     }
 
     // Free the dynamic array's internal data
@@ -149,7 +150,7 @@ void world_update_actors(World *world)
     // This is the core of the monster turn logic.
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {
-        Actor *actor = *actor_array_get(&world->actors, i);
+        const Actor *actor = actor_array_get(&world->actors, i);
         if (actor_get_ai_component(actor))
         {
             printf("AI actor takes its turn.\n");
@@ -157,7 +158,7 @@ void world_update_actors(World *world)
     }
 }
 
-void world_render(const World *world)
+void world_render(World *world)
 {
     for (int y = 0; y < world->height; ++y)
     {
@@ -241,7 +242,7 @@ void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
 
             for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
             {
-                if (defender == *actor_array_get_const(&world->actors, i))
+                if (defender == actor_array_get(&world->actors, i))
                 {
                     index = i;
                     break;
@@ -262,11 +263,11 @@ void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
 
 // --- World Queries ---
 
-const Actor *world_get_actor_at(const World *world, int x, int y)
+const Actor *world_get_actor_at(World *world, int x, int y)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {
-        const Actor *actor = *actor_array_get_const(&world->actors, i);
+        const Actor *actor = actor_array_get(&world->actors, i);
         int actor_x, actor_y;
         actor_get_position(actor, &actor_x, &actor_y);
         if (actor_x == x && actor_y == y)
@@ -281,7 +282,7 @@ Actor *world_get_actor_at_mut(World *world, int x, int y)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {
-        Actor *actor = *actor_array_get(&world->actors, i);
+        Actor *actor = actor_array_get(&world->actors, i);
         int actor_x, actor_y;
         actor_get_position(actor, &actor_x, &actor_y);
         if (actor_x == x && actor_y == y)

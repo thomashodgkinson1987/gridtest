@@ -97,7 +97,7 @@ static void build_glyph_atlas(void)
 
 // This is the core of the new system. It draws the entire game world
 // to the off-screen render texture.
-static void redraw_virtual_screen(const World *world)
+static void redraw_virtual_screen(World *world)
 {
     // Activate drawing to our off-screen buffer
     BeginTextureMode(renderer_state.virtual_screen);
@@ -155,7 +155,7 @@ void renderer_shutdown(void)
     CloseWindow();
 }
 
-void renderer_begin_frame(const World *world)
+void renderer_begin_frame(World *world)
 {
     if (renderer_state.is_dirty)
     {

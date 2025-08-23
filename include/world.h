@@ -23,13 +23,13 @@ int world_get_height(const World *world);
 
 void world_add_actor(World *world, Actor *actor);
 void world_update_actors(World *world);
-void world_render(const World *world);
+void world_render(World *world);
 
 void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender);
 
 // --- World Queries ---
 
-const Actor *world_get_actor_at(const World *world, int x, int y);
+const Actor *world_get_actor_at(World *world, int x, int y);
 Actor *world_get_actor_at_mut(World *world, int x, int y);
 
 const Tile *world_get_tile_at(const World *world, int x, int y);

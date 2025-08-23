@@ -176,9 +176,6 @@ static void update(void)
 static void render(void)
 {
     renderer_begin_frame(game_instance->world);
-
-    // world_render(game_instance->world);
-
     renderer_end_frame();
 }
 
