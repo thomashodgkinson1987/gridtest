@@ -97,13 +97,25 @@ NameComponent *name_component_create(const char *name)
         snprintf(
             error_msg,
             sizeof(error_msg),
-            "%s: Failed to allocate memory",
+            "%s: Failed to allocate memory for component",
             __func__);
         perror(error_msg);
         exit(EXIT_FAILURE);
     }
 
     component->name = malloc(strlen(name) + 1);
+    if (!component->name)
+    {
+        char error_msg[100];
+        snprintf(
+            error_msg,
+            sizeof(error_msg),
+            "%s: Failed to allocate memory for component name",
+            __func__);
+        perror(error_msg);
+        exit(EXIT_FAILURE);
+    }
+
     strncpy(component->name, name, strlen(name) + 1);
 
     return component;
