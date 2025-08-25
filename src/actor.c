@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "colour.h"
 #include "components.h"
@@ -14,18 +15,25 @@ struct actor
     int y;
     Colour colour;
     char glyph;
+    char *name;
 
     // Components (can be NULL)
     HealthComponent *health_component;
     CombatComponent *combat_component;
     AIComponent *ai_component;
-    NameComponent *name_component;
 };
 
 // --- Actor Creation/Destruction ---
 
-Actor *actor_create(int x, int y, char glyph, Colour colour)
+Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 {
+    if (!name || strlen(name) == 0)
+    {
+        fprintf(stderr, "%s: name cannot be null or 0\n", __func__);
+        // TODO: better error handling
+        exit(EXIT_FAILURE);
+    }
+
     Actor *actor = malloc(sizeof(*actor));
     if (!actor)
     {
@@ -36,6 +44,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour)
             "%s: Failed to allocate memory",
             __func__);
         perror(error_msg);
+        // TODO: better error handling
         exit(EXIT_FAILURE);
     }
 
@@ -43,13 +52,26 @@ Actor *actor_create(int x, int y, char glyph, Colour colour)
     actor->y = y;
     actor->glyph = glyph;
     actor->colour = colour;
+    actor->name = strdup(name);
+
+    if (!actor->name)
+    {
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: actor name allocation failure",
+            __func__);
+        perror(err_msg);
+        // TODO: better error handling
+        exit(EXIT_FAILURE);
+    }
 
     // Initialize all component pointers to NULL.
     // Components must be created and added separately.
     actor->health_component = NULL;
     actor->combat_component = NULL;
     actor->ai_component = NULL;
-    actor->name_component = NULL;
 
     return actor;
 }
@@ -60,6 +82,8 @@ void actor_free(Actor *actor)
     {
         return;
     }
+
+    free(actor->name);
 
     // Free each component if it exists.
     if (actor->health_component)
@@ -73,10 +97,6 @@ void actor_free(Actor *actor)
     if (actor->ai_component)
     {
         ai_component_free(actor->ai_component);
-    }
-    if (actor->name_component)
-    {
-        name_component_free(actor->name_component);
     }
 
     // Finally, free the actor struct itself.
@@ -118,17 +138,6 @@ void actor_add_ai_component(Actor *actor)
         actor->ai_component = ai_component_create();
     }
 }
-void actor_add_name_component(Actor *actor, const char *name)
-{
-    if (actor->name_component)
-    {
-        fprintf(stderr, "%s: component already exists\n", __func__);
-    }
-    else
-    {
-        actor->name_component = name_component_create(name);
-    }
-}
 
 void actor_remove_health_component(Actor *actor)
 {
@@ -166,18 +175,6 @@ void actor_remove_ai_component(Actor *actor)
         actor->ai_component = NULL;
     }
 }
-void actor_remove_name_component(Actor *actor)
-{
-    if (!actor->name_component)
-    {
-        fprintf(stderr, "%s: component does not exists\n", __func__);
-    }
-    else
-    {
-        name_component_free(actor->name_component);
-        actor->name_component = NULL;
-    }
-}
 
 const HealthComponent *actor_get_health_component(const Actor *actor)
 {
@@ -191,10 +188,6 @@ const AIComponent *actor_get_ai_component(const Actor *actor)
 {
     return actor->ai_component;
 }
-const NameComponent *actor_get_name_component(const Actor *actor)
-{
-    return actor->name_component;
-}
 
 HealthComponent *actor_get_health_component_mut(Actor *actor)
 {
@@ -207,10 +200,6 @@ CombatComponent *actor_get_combat_component_mut(Actor *actor)
 AIComponent *actor_get_ai_component_mut(Actor *actor)
 {
     return actor->ai_component;
-}
-NameComponent *actor_get_name_component_mut(Actor *actor)
-{
-    return actor->name_component;
 }
 
 // --- Actor Getters/Setters ---
@@ -252,6 +241,10 @@ unsigned char actor_get_a(const Actor *actor)
 {
     return actor->colour.a;
 }
+const char *actor_get_name(const Actor *actor)
+{
+    return actor->name;
+}
 
 void actor_set_x(Actor *actor, int x)
 {
@@ -289,4 +282,21 @@ void actor_set_b(Actor *actor, unsigned char b)
 void actor_set_a(Actor *actor, unsigned char a)
 {
     actor->colour.a = a;
+}
+void actor_set_name(Actor *actor, const char *name)
+{
+    char *new_pointer = realloc(actor->name, strlen(name) + 1);
+    if (!new_pointer)
+    {
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: error reallocating for name",
+            __func__);
+        perror(err_msg);
+        exit(EXIT_FAILURE);
+    }
+    strncpy(new_pointer, name, strlen(name) + 1);
+    actor->name = new_pointer;
 }

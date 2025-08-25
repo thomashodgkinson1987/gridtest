@@ -9,7 +9,7 @@ typedef struct actor Actor;
 
 // --- Actor Creation/Destruction ---
 
-Actor *actor_create(int x, int y, char glyph, Colour colour);
+Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name);
 void actor_free(Actor *actor);
 
 // --- Actor Component Management ---
@@ -17,22 +17,18 @@ void actor_free(Actor *actor);
 void actor_add_health_component(Actor *actor, int max_hp);
 void actor_add_combat_component(Actor *actor, int attack_power);
 void actor_add_ai_component(Actor *actor);
-void actor_add_name_component(Actor *actor, const char *name);
 
 void actor_remove_health_component(Actor *actor);
 void actor_remove_combat_component(Actor *actor);
 void actor_remove_ai_component(Actor *actor);
-void actor_remove_name_component(Actor *actor);
 
 const HealthComponent *actor_get_health_component(const Actor *actor);
 const CombatComponent *actor_get_combat_component(const Actor *actor);
 const AIComponent *actor_get_ai_component(const Actor *actor);
-const NameComponent *actor_get_name_component(const Actor *actor);
 
 HealthComponent *actor_get_health_component_mut(Actor *actor);
 CombatComponent *actor_get_combat_component_mut(Actor *actor);
 AIComponent *actor_get_ai_component_mut(Actor *actor);
-NameComponent *actor_get_name_component_mut(Actor *actor);
 
 // --- Actor Getters/Setters ---
 
@@ -45,6 +41,7 @@ unsigned char actor_get_r(const Actor *actor);
 unsigned char actor_get_g(const Actor *actor);
 unsigned char actor_get_b(const Actor *actor);
 unsigned char actor_get_a(const Actor *actor);
+const char *actor_get_name(const Actor *actor);
 
 void actor_set_x(Actor *actor, int x);
 void actor_set_y(Actor *actor, int y);
@@ -55,5 +52,6 @@ void actor_set_r(Actor *actor, unsigned char r);
 void actor_set_g(Actor *actor, unsigned char g);
 void actor_set_b(Actor *actor, unsigned char b);
 void actor_set_a(Actor *actor, unsigned char a);
+void actor_set_name(Actor *actor, const char *name);
 
 #endif // ACTOR_H
