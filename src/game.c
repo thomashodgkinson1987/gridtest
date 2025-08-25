@@ -190,7 +190,6 @@ static void handle_input(void)
         }
 
         game_instance->player_took_turn = true;
-        renderer_set_dirty();
     }
 }
 
