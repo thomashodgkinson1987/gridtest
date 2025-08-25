@@ -1,10 +1,12 @@
 #include "renderer.h"
-#include "world.h"
-#include "raylib.h"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "raylib.h"
+
+#include "world.h"
 
 // --- Module-Private State ---
 
@@ -97,7 +99,7 @@ static void build_glyph_atlas(void)
 
 // This is the core of the new system. It draws the entire game world
 // to the off-screen render texture.
-static void redraw_virtual_screen(const World *world)
+static void redraw_virtual_screen(World *world)
 {
     // Activate drawing to our off-screen buffer
     BeginTextureMode(renderer_state.virtual_screen);
@@ -138,8 +140,8 @@ void renderer_init(int screen_width, int screen_height, const char *title)
     build_glyph_atlas();
 
     // Calculate virtual screen dimensions and create the render texture
-    renderer_state.virtual_width = 128;  // manually linked with screen size
-    renderer_state.virtual_height = 128; // in game.c
+    renderer_state.virtual_width = 256;  // manually linked with screen size
+    renderer_state.virtual_height = 256; // in game.c
     renderer_state.virtual_screen = LoadRenderTexture(
         renderer_state.virtual_width,
         renderer_state.virtual_height);
@@ -155,7 +157,7 @@ void renderer_shutdown(void)
     CloseWindow();
 }
 
-void renderer_begin_frame(const World *world)
+void renderer_begin_frame(World *world)
 {
     if (renderer_state.is_dirty)
     {

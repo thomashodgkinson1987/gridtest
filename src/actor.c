@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "colour.h"
+#include "components.h"
 
 // The concrete definition of the actor struct.
 // This is hidden from other modules, which only see the opaque pointer.
@@ -9,26 +13,38 @@ struct actor
 {
     int x;
     int y;
-    char glyph;
     Colour colour;
+    char glyph;
+    char *name;
 
     // Components (can be NULL)
-    HealthComponent* health;
-    CombatComponent* combat;
-    AIComponent* ai;
+    HealthComponent *health_component;
+    CombatComponent *combat_component;
+    AIComponent *ai_component;
 };
-
 
 // --- Actor Creation/Destruction ---
 
-Actor* actor_create(int x, int y, char glyph, Colour colour)
+Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 {
-    Actor* actor = malloc(sizeof(*actor));
+    if (!name || strlen(name) == 0)
+    {
+        fprintf(stderr, "%s: name cannot be null or 0\n", __func__);
+        // TODO: better error handling
+        exit(EXIT_FAILURE);
+    }
+
+    Actor *actor = malloc(sizeof(*actor));
     if (!actor)
     {
         char error_msg[100];
-        snprintf(error_msg, sizeof(error_msg), "%s: Failed to allocate memory", __func__);
+        snprintf(
+            error_msg,
+            sizeof(error_msg),
+            "%s: Failed to allocate memory",
+            __func__);
         perror(error_msg);
+        // TODO: better error handling
         exit(EXIT_FAILURE);
     }
 
@@ -36,143 +52,251 @@ Actor* actor_create(int x, int y, char glyph, Colour colour)
     actor->y = y;
     actor->glyph = glyph;
     actor->colour = colour;
+    actor->name = strdup(name);
+
+    if (!actor->name)
+    {
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: actor name allocation failure",
+            __func__);
+        perror(err_msg);
+        // TODO: better error handling
+        exit(EXIT_FAILURE);
+    }
 
     // Initialize all component pointers to NULL.
     // Components must be created and added separately.
-    actor->health = NULL;
-    actor->combat = NULL;
-    actor->ai = NULL;
+    actor->health_component = NULL;
+    actor->combat_component = NULL;
+    actor->ai_component = NULL;
 
     return actor;
 }
 
-void actor_free(Actor* actor)
+void actor_free(Actor *actor)
 {
     if (!actor)
     {
         return;
     }
 
+    free(actor->name);
+
     // Free each component if it exists.
-    if (actor->health)
+    if (actor->health_component)
     {
-        health_component_free(actor->health);
+        health_component_free(actor->health_component);
     }
-    if (actor->combat)
+    if (actor->combat_component)
     {
-        combat_component_free(actor->combat);
+        combat_component_free(actor->combat_component);
     }
-    if (actor->ai)
+    if (actor->ai_component)
     {
-        ai_component_free(actor->ai);
+        ai_component_free(actor->ai_component);
     }
 
     // Finally, free the actor struct itself.
     free(actor);
 }
 
-
 // --- Actor Component Management ---
 
-void actor_add_health_component(Actor* actor, HealthComponent* component)
+void actor_add_health_component(Actor *actor, int max_hp)
 {
-    actor->health = component;
+    if (actor->health_component)
+    {
+        fprintf(stderr, "%s: component already exists\n", __func__);
+    }
+    else
+    {
+        actor->health_component = health_component_create(max_hp);
+    }
+}
+void actor_add_combat_component(Actor *actor, int attack_power)
+{
+    if (actor->combat_component)
+    {
+        fprintf(stderr, "%s: component already exists\n", __func__);
+    }
+    else
+    {
+        actor->combat_component = combat_component_create(attack_power);
+    }
+}
+void actor_add_ai_component(Actor *actor)
+{
+    if (actor->ai_component)
+    {
+        fprintf(stderr, "%s: component already exists\n", __func__);
+    }
+    else
+    {
+        actor->ai_component = ai_component_create();
+    }
 }
 
-void actor_add_combat_component(Actor* actor, CombatComponent* component)
+void actor_remove_health_component(Actor *actor)
 {
-    actor->combat = component;
+    if (!actor->health_component)
+    {
+        fprintf(stderr, "%s: component does not exists\n", __func__);
+    }
+    else
+    {
+        health_component_free(actor->health_component);
+        actor->health_component = NULL;
+    }
+}
+void actor_remove_combat_component(Actor *actor)
+{
+    if (!actor->combat_component)
+    {
+        fprintf(stderr, "%s: component does not exists\n", __func__);
+    }
+    else
+    {
+        combat_component_free(actor->combat_component);
+        actor->combat_component = NULL;
+    }
+}
+void actor_remove_ai_component(Actor *actor)
+{
+    if (!actor->ai_component)
+    {
+        fprintf(stderr, "%s: component does not exists\n", __func__);
+    }
+    else
+    {
+        ai_component_free(actor->ai_component);
+        actor->ai_component = NULL;
+    }
 }
 
-void actor_add_ai_component(Actor* actor, AIComponent* component)
+const HealthComponent *actor_get_health_component(const Actor *actor)
 {
-    actor->ai = component;
+    return actor->health_component;
+}
+const CombatComponent *actor_get_combat_component(const Actor *actor)
+{
+    return actor->combat_component;
+}
+const AIComponent *actor_get_ai_component(const Actor *actor)
+{
+    return actor->ai_component;
 }
 
-HealthComponent* actor_get_health_component(const Actor* actor)
+HealthComponent *actor_get_health_component_mut(Actor *actor)
 {
-    return actor->health;
+    return actor->health_component;
 }
-
-CombatComponent* actor_get_combat_component(const Actor* actor)
+CombatComponent *actor_get_combat_component_mut(Actor *actor)
 {
-    return actor->combat;
+    return actor->combat_component;
 }
-
-AIComponent* actor_get_ai_component(const Actor* actor)
+AIComponent *actor_get_ai_component_mut(Actor *actor)
 {
-    return actor->ai;
+    return actor->ai_component;
 }
-
 
 // --- Actor Getters/Setters ---
 
-void actor_get_position(const Actor* actor, int* x, int* y)
+int actor_get_x(const Actor *actor)
+{
+    return actor->x;
+}
+int actor_get_y(const Actor *actor)
+{
+    return actor->y;
+}
+void actor_get_position(const Actor *actor, int *x, int *y)
 {
     *x = actor->x;
     *y = actor->y;
 }
+char actor_get_glyph(const Actor *actor)
+{
+    return actor->glyph;
+}
+Colour actor_get_colour(const Actor *actor)
+{
+    return actor->colour;
+}
+unsigned char actor_get_r(const Actor *actor)
+{
+    return actor->colour.r;
+}
+unsigned char actor_get_g(const Actor *actor)
+{
+    return actor->colour.g;
+}
+unsigned char actor_get_b(const Actor *actor)
+{
+    return actor->colour.b;
+}
+unsigned char actor_get_a(const Actor *actor)
+{
+    return actor->colour.a;
+}
+const char *actor_get_name(const Actor *actor)
+{
+    return actor->name;
+}
 
-void actor_set_position(Actor* actor, int x, int y)
+void actor_set_x(Actor *actor, int x)
+{
+    actor->x = x;
+}
+void actor_set_y(Actor *actor, int y)
+{
+    actor->y = y;
+}
+void actor_set_position(Actor *actor, int x, int y)
 {
     actor->x = x;
     actor->y = y;
 }
-
-char actor_get_glyph(const Actor* actor)
+void actor_set_glyph(Actor *actor, char glyph)
 {
-    return actor->glyph;
+    actor->glyph = glyph;
 }
-
-Colour actor_get_colour(const Actor* actor)
+void actor_set_colour(Actor *actor, Colour colour)
 {
-    return actor->colour;
+    actor->colour = colour;
 }
-
-
-// --- Actor Actions (Commands) ---
-
-void actor_attack(Actor* attacker, Actor* target)
+void actor_set_r(Actor *actor, unsigned char r)
 {
-    // An attack requires the attacker to have a combat component
-    // and the target to have a health component.
-    CombatComponent* combat = attacker->combat;
-    HealthComponent* health = target->health;
-
-    if (!combat || !health)
-    {
-        // This attack is impossible, so do nothing.
-        return;
-    }
-
-    int damage = combat->attack_power;
-
-    // For now, we'll just print to the console.
-    // Later, this will go into a message log.
-    printf("Attacker hits for %d damage!\n", damage);
-
-    actor_take_damage(target, damage);
+    actor->colour.r = r;
 }
-
-void actor_take_damage(Actor* actor, int amount)
+void actor_set_g(Actor *actor, unsigned char g)
 {
-    HealthComponent* health = actor->health;
-    if (!health)
+    actor->colour.g = g;
+}
+void actor_set_b(Actor *actor, unsigned char b)
+{
+    actor->colour.b = b;
+}
+void actor_set_a(Actor *actor, unsigned char a)
+{
+    actor->colour.a = a;
+}
+void actor_set_name(Actor *actor, const char *name)
+{
+    char *new_pointer = realloc(actor->name, strlen(name) + 1);
+    if (!new_pointer)
     {
-        // Cannot take damage if it doesn't have health.
-        return;
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: error reallocating for name",
+            __func__);
+        perror(err_msg);
+        exit(EXIT_FAILURE);
     }
-
-    health->current_hp -= amount;
-
-    // Check for death
-    if (health->current_hp <= 0)
-    {
-        printf("Actor has died!\n");
-        // In the future, we would add logic here to handle death:
-        // - Change glyph to a corpse '%'
-        // - Make non-blocking
-        // - Remove AI and Combat components
-        // - Drop loot, etc.
-    }
+    strncpy(new_pointer, name, strlen(name) + 1);
+    actor->name = new_pointer;
 }

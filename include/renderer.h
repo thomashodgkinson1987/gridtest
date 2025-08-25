@@ -1,8 +1,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "colour.h"
 #include <stdbool.h>
+
+#include "colour.h"
 
 typedef struct world World;
 
@@ -15,7 +16,7 @@ void renderer_shutdown(void);
 // --- Frame Management ---
 
 // Should be called at the beginning of the main game loop's drawing phase.
-void renderer_begin_frame(const World *world);
+void renderer_begin_frame(World *world);
 
 // Should be called at the end of the main game loop's drawing phase.
 void renderer_end_frame(void);

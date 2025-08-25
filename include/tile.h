@@ -10,7 +10,6 @@ typedef enum tile_type
     TILE_TYPE_WALL
 } TileType;
 
-
 // The struct representing a single tile on the map.
 typedef struct tile
 {

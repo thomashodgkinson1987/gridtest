@@ -32,4 +32,14 @@ typedef struct ai_component
 AIComponent *ai_component_create(void);
 void ai_component_free(AIComponent *component);
 
+// --- Name Component ---
+// Component that stores a name (string) for an actor.
+typedef struct name_component
+{
+    char *name;
+} NameComponent;
+
+NameComponent *name_component_create(const char *name);
+void name_component_free(NameComponent *component);
+
 #endif // COMPONENTS_H
