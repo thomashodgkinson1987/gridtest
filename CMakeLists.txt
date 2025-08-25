@@ -29,6 +29,9 @@ set(SOURCES
     src/main.c
     src/actor.c
     src/actor_array.c
+    src/command.c
+    src/command_array.c
+    src/command_result.c
     src/components.c
     src/game.c
     src/renderer.c

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "actor_array.h"
+#include "command.h"
 #include "tile.h"
 
 // Opaque pointer type for a World.
@@ -22,10 +22,14 @@ int world_get_height(const World *world);
 // --- World Management ---
 
 void world_add_actor(World *world, Actor *actor);
+void world_remove_actor(World *world, Actor *actor);
 void world_update_actors(World *world);
 void world_render(World *world);
 
-void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender);
+Command world_actor_attack_actor(
+    World *world,
+    Actor *attacker,
+    Actor *defender);
 
 // --- World Queries ---
 

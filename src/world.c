@@ -7,6 +7,8 @@
 #include <string.h>
 
 #include "actor.h"
+#include "actor_array.h"
+#include "command.h"
 #include "renderer.h"
 
 // The concrete definition of the world struct. This makes the type "complete"
@@ -146,6 +148,33 @@ void world_add_actor(World *world, Actor *actor)
     actor_array_push(&world->actors, actor);
 }
 
+void world_remove_actor(World *world, Actor *actor)
+{
+    size_t index = 0;
+    bool was_found = false;
+
+    for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
+    {
+        Actor *_actor = actor_array_get(&world->actors, i);
+        if (_actor == actor)
+        {
+            actor_free(actor);
+            index = i;
+            was_found = true;
+            break;
+        }
+    }
+
+    if (!was_found)
+    {
+        // TODO: better error handling
+        fprintf(stderr, "%s: passed actor not in array\n", __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    actor_array_remove(&world->actors, index);
+}
+
 void world_update_actors(World *world)
 {
     // This is the core of the monster turn logic.
@@ -197,67 +226,30 @@ void world_render(World *world)
     }
 }
 
-void world_actor_attack_actor(World *world, Actor *attacker, Actor *defender)
+Command world_actor_attack_actor(
+    World *world,
+    Actor *attacker,
+    Actor *defender)
 {
-    // grab pointers to required components
-    const CombatComponent *atk_combat = actor_get_combat_component(attacker);
-    HealthComponent *def_health = actor_get_health_component_mut(defender);
+    const CombatComponent *attacker_combat_component =
+        actor_get_combat_component(attacker);
 
-    // if all components exist
-    if (atk_combat && def_health)
+    if (!attacker_combat_component)
     {
-        // subtract attack power from health, clamping at 0
-        def_health->current_hp -= atk_combat->attack_power;
-        if (def_health->current_hp < 0)
-            def_health->current_hp = 0;
-
-        // print act of attacker attacking
-        printf(
-            "%s attacks %s for %i damage\n",
-            actor_get_name(attacker),
-            actor_get_name(defender),
-            atk_combat->attack_power);
-
-        // print act of defender defending
-        printf(
-            "%s takes %i points of damage\n",
-            actor_get_name(defender),
-            atk_combat->attack_power);
-
-        // print updated defender health
-        printf(
-            "%s's health is now %i\n",
-            actor_get_name(defender),
-            def_health->current_hp);
-
-        // if defender is dead...
-        if (def_health->current_hp == 0)
-        {
-            // print death message
-            printf("%s dies\n", actor_get_name(defender));
-
-            // find index of defender
-            size_t index = 0;
-
-            for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
-            {
-                if (defender == actor_array_get(&world->actors, i))
-                {
-                    index = i;
-                    break;
-                }
-            }
-
-            // remove defender from world's actors array
-            actor_array_remove(&world->actors, index);
-
-            // free defender actor
-            actor_free(defender);
-
-            // flag renderer as dirty
-            renderer_set_dirty();
-        }
+        // TODO: better errror handling
+        fprintf(
+            stderr,
+            "%s: attacker '%s' does not have combat component\n",
+            __func__,
+            actor_get_name(attacker));
+        exit(EXIT_FAILURE);
     }
+
+    Command command = command_actor_translate_health_create(
+        defender,
+        -attacker_combat_component->attack_power);
+
+    return command;
 }
 
 // --- World Queries ---
