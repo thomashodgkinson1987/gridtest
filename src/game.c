@@ -43,13 +43,7 @@ void game_init(void)
     game_instance = malloc(sizeof(*game_instance));
     if (!game_instance)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory for game",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] Game instance allocation failure");
         exit(EXIT_FAILURE);
     }
 

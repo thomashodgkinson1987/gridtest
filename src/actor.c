@@ -37,14 +37,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
     Actor *actor = malloc(sizeof(*actor));
     if (!actor)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory",
-            __func__);
-        perror(error_msg);
-        // TODO: better error handling
+        perror("[FATAL] Actor allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -56,14 +49,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 
     if (!actor->name)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: actor name allocation failure",
-            __func__);
-        perror(err_msg);
-        // TODO: better error handling
+        perror("[FATAL] Actor name allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -288,13 +274,7 @@ void actor_set_name(Actor *actor, const char *name)
     char *new_pointer = realloc(actor->name, strlen(name) + 1);
     if (!new_pointer)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: error reallocating for name",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] Name reallocation failure");
         exit(EXIT_FAILURE);
     }
     strncpy(new_pointer, name, strlen(name) + 1);

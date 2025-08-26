@@ -208,25 +208,13 @@ CommandResult command_result_actor_set_name_create(
     result.params.actor_set_name.old_name = strdup(old_name);
     if (!result.params.actor_set_name.old_name)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: old name allocation failure",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] Old name allocation failure");
         exit(EXIT_FAILURE);
     }
     result.params.actor_set_name.new_name = strdup(new_name);
     if (!result.params.actor_set_name.new_name)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: new name allocation failure",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] New name allocation failure");
         exit(EXIT_FAILURE);
     }
 

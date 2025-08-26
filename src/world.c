@@ -40,13 +40,7 @@ World *world_create(int width, int height)
     World *world = malloc(sizeof(*world));
     if (!world)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory for world",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] World allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -83,13 +77,7 @@ World *world_create(int width, int height)
     world->tiles = malloc(tile_count * sizeof(*world->tiles));
     if (!world->tiles)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory for tiles",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] World tiles allocation failure");
         free(world);
         exit(EXIT_FAILURE);
     }

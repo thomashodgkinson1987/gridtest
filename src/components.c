@@ -11,13 +11,7 @@ HealthComponent *health_component_create(int max_hp)
     HealthComponent *component = malloc(sizeof(*component));
     if (!component)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] Health component allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -39,13 +33,7 @@ CombatComponent *combat_component_create(int attack_power)
     CombatComponent *component = malloc(sizeof(*component));
     if (!component)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] Combat component allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -66,13 +54,7 @@ AIComponent *ai_component_create(void)
     AIComponent *component = malloc(sizeof(*component));
     if (!component)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] AI component allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -93,26 +75,14 @@ NameComponent *name_component_create(const char *name)
     NameComponent *component = malloc(sizeof(*component));
     if (!component)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory for component",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] Name component allocation failure");
         exit(EXIT_FAILURE);
     }
 
     component->name = malloc(strlen(name) + 1);
     if (!component->name)
     {
-        char error_msg[100];
-        snprintf(
-            error_msg,
-            sizeof(error_msg),
-            "%s: Failed to allocate memory for component name",
-            __func__);
-        perror(error_msg);
+        perror("[FATAL] Name component name allocation failure");
         exit(EXIT_FAILURE);
     }
 

@@ -210,28 +210,14 @@ Command command_actor_set_name_create(Actor *actor, const char *name)
     command.params.actor_set_name.old_name = strdup(actor_get_name(actor));
     if (!command.params.actor_set_name.old_name)
     {
-        // TODO: better error handling
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: old name strdup allocation error",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] Old name allocation failure");
         exit(EXIT_FAILURE);
     }
 
     command.params.actor_set_name.new_name = strdup(name);
     if (!command.params.actor_set_name.new_name)
     {
-        // TODO: better error handling
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: new name strdup allocation error",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] New name allocation error");
         exit(EXIT_FAILURE);
     }
 

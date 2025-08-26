@@ -174,13 +174,7 @@ Renderer *renderer_create(
     Renderer *renderer = malloc(sizeof(*renderer));
     if (!renderer)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: renderer allocation failure",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] Renderer allocation failure");
         exit(EXIT_FAILURE);
     }
 
@@ -189,13 +183,7 @@ Renderer *renderer_create(
     renderer->screen_title = strdup(screen_title);
     if (!renderer->screen_title)
     {
-        char err_msg[100];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "%s: screen title allocation failure",
-            __func__);
-        perror(err_msg);
+        perror("[FATAL] Screen title allocation failure");
         exit(EXIT_FAILURE);
     }
     renderer->target_fps = 60;
