@@ -158,7 +158,6 @@ void world_remove_actor(World *world, Actor *actor)
         Actor *_actor = actor_array_get(&world->actors, i);
         if (_actor == actor)
         {
-            actor_free(actor);
             index = i;
             was_found = true;
             break;
@@ -173,6 +172,8 @@ void world_remove_actor(World *world, Actor *actor)
     }
 
     actor_array_remove(&world->actors, index);
+
+    actor_free(actor);
 }
 
 void world_update_actors(World *world)
@@ -184,44 +185,6 @@ void world_update_actors(World *world)
         if (actor_get_ai_component(actor))
         {
             printf("AI actor takes its turn.\n");
-        }
-    }
-}
-
-void world_render(World *world)
-{
-    for (int y = 0; y < world->height; ++y)
-    {
-        for (int x = 0; x < world->width; ++x)
-        {
-            const Actor *actor = world_get_actor_at(world, x, y);
-            if (actor)
-            {
-                const char glyph = actor_get_glyph(actor);
-                const Colour fg_colour = actor_get_colour(actor);
-                const Colour bg_colour = (Colour){0, 0, 0, 255};
-                renderer_draw_glyph(x, y, glyph, fg_colour, bg_colour);
-            }
-            else
-            {
-                const Tile *tile = world_get_tile_at(world, x, y);
-                char glyph = '?';
-                switch (tile->type)
-                {
-                case TILE_TYPE_FLOOR:
-                    glyph = '.';
-                    break;
-                case TILE_TYPE_WALL:
-                    glyph = '#';
-                    break;
-                default:
-                    glyph = '?';
-                    break;
-                }
-                const Colour fg_colour = {255, 255, 255, 255};
-                const Colour bg_colour = {0, 0, 0, 255};
-                renderer_draw_glyph(x, y, glyph, fg_colour, bg_colour);
-            }
         }
     }
 }

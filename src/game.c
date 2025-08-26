@@ -19,6 +19,7 @@ struct game
 {
     World *world;
     Actor *player;
+    Renderer *renderer;
     bool is_running;
     bool player_took_turn;
     CommandArray command_array;
@@ -39,8 +40,6 @@ static void create_map(World *world);
 
 void game_init(void)
 {
-    renderer_init(512, 512, "gridtest");
-
     game_instance = malloc(sizeof(*game_instance));
     if (!game_instance)
     {
@@ -54,6 +53,7 @@ void game_init(void)
         exit(EXIT_FAILURE);
     }
 
+    game_instance->renderer = renderer_create(512, 512, "gridtest");
     game_instance->world = world_create(16, 16);
     game_instance->is_running = true;
     game_instance->player_took_turn = false;
@@ -109,7 +109,7 @@ void game_shutdown(void)
     command_array_free(&game_instance->command_array);
     world_free(game_instance->world);
     free(game_instance);
-    renderer_shutdown();
+    renderer_free(game_instance->renderer);
 }
 
 void game_add_command(Game *game, Command command)
@@ -367,15 +367,15 @@ static void update(void)
 
         if (is_set_renderer_dirty)
         {
-            renderer_set_dirty();
+            renderer_set_dirty(game_instance->renderer);
         }
     }
 }
 
 static void render(void)
 {
-    renderer_begin_frame(game_instance->world);
-    renderer_end_frame();
+    renderer_begin_frame(game_instance->renderer, game_instance->world);
+    renderer_end_frame(game_instance->renderer);
 }
 
 // A simple helper function to carve out a rectangular room.

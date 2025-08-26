@@ -24,7 +24,6 @@ int world_get_height(const World *world);
 void world_add_actor(World *world, Actor *actor);
 void world_remove_actor(World *world, Actor *actor);
 void world_update_actors(World *world);
-void world_render(World *world);
 
 Command world_actor_attack_actor(
     World *world,

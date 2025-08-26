@@ -3,22 +3,24 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "raylib.h"
 
+#include "actor.h"
 #include "world.h"
 
 // --- Module-Private State ---
 
-// This static struct holds all the rendering-specific data.
-// It is only visible within this .c file.
-static struct
+struct renderer
 {
     int screen_width;
     int screen_height;
+    char *screen_title;
+    int target_fps;
 
     Texture2D font_texture;
-    Rectangle glyph_atlas[256]; // Our "dictionary" mapping char -> Rectangle
+    Rectangle glyph_atlas[256];
     int glyph_width;
     int glyph_height;
 
@@ -26,7 +28,7 @@ static struct
     int virtual_height;
     RenderTexture2D virtual_screen;
     bool is_dirty;
-} renderer_state;
+};
 
 // --- Static Helper Functions ---
 
@@ -41,7 +43,7 @@ static Color to_raylib_colour(Colour colour)
 }
 
 // The core logic for building the glyph atlas lookup table.
-static void build_glyph_atlas(void)
+static void build_glyph_atlas(Renderer *renderer)
 {
     // Define the characters in the order they appear in the font texture.
     const char *chars_row0 = "abcdefghijklmnopqrstuvwxyz ";
@@ -49,144 +51,226 @@ static void build_glyph_atlas(void)
     const char *chars_row2 = "1234567890";
     const char *chars_row3 = "()[]{}<>+-?!^:#_@%~$\"'&*=`|/\\.,;";
 
-    renderer_state.glyph_width = 12;
-    renderer_state.glyph_height = 12;
-
     // Process row 0 (lowercase)
     for (int i = 0; chars_row0[i] != '\0'; ++i)
     {
         char c = chars_row0[i];
-        renderer_state.glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer_state.glyph_width,
-            .y = 0 * renderer_state.glyph_height,
-            .width = renderer_state.glyph_width,
-            .height = renderer_state.glyph_height};
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 0 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
     }
 
     // Process row 1 (uppercase)
     for (int i = 0; chars_row1[i] != '\0'; ++i)
     {
         char c = chars_row1[i];
-        renderer_state.glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer_state.glyph_width,
-            .y = 1 * renderer_state.glyph_height,
-            .width = renderer_state.glyph_width,
-            .height = renderer_state.glyph_height};
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 1 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
     }
 
     // Process row 2 (numbers)
     for (int i = 0; chars_row2[i] != '\0'; ++i)
     {
         char c = chars_row2[i];
-        renderer_state.glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer_state.glyph_width,
-            .y = 2 * renderer_state.glyph_height,
-            .width = renderer_state.glyph_width,
-            .height = renderer_state.glyph_height};
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 2 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
     }
 
     // Process row 3 (symbols)
     for (int i = 0; chars_row3[i] != '\0'; ++i)
     {
         char c = chars_row3[i];
-        renderer_state.glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer_state.glyph_width,
-            .y = 3 * renderer_state.glyph_height,
-            .width = renderer_state.glyph_width,
-            .height = renderer_state.glyph_height};
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 3 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
+    }
+}
+
+static void draw_world(const Renderer *renderer, World *world)
+{
+    for (int y = 0; y < world_get_height(world); ++y)
+    {
+        for (int x = 0; x < world_get_width(world); ++x)
+        {
+            const Actor *actor = world_get_actor_at(world, x, y);
+            if (actor)
+            {
+                const char glyph = actor_get_glyph(actor);
+                const Colour fg_colour = actor_get_colour(actor);
+                const Colour bg_colour = (Colour){0, 0, 0, 255};
+                renderer_draw_glyph(
+                    renderer,
+                    x,
+                    y,
+                    glyph,
+                    fg_colour,
+                    bg_colour);
+            }
+            else
+            {
+                const Tile *tile = world_get_tile_at(world, x, y);
+                char glyph = '?';
+                switch (tile->type)
+                {
+                case TILE_TYPE_FLOOR:
+                    glyph = '.';
+                    break;
+                case TILE_TYPE_WALL:
+                    glyph = '#';
+                    break;
+                default:
+                    glyph = '?';
+                    break;
+                }
+                const Colour fg_colour = {255, 255, 255, 255};
+                const Colour bg_colour = {0, 0, 0, 255};
+                renderer_draw_glyph(
+                    renderer,
+                    x,
+                    y,
+                    glyph,
+                    fg_colour,
+                    bg_colour);
+            }
+        }
     }
 }
 
 // This is the core of the new system. It draws the entire game world
 // to the off-screen render texture.
-static void redraw_virtual_screen(World *world)
+static void redraw_virtual_screen(Renderer *renderer, World *world)
 {
     // Activate drawing to our off-screen buffer
-    BeginTextureMode(renderer_state.virtual_screen);
+    BeginTextureMode(renderer->virtual_screen);
     ClearBackground(BLACK); // Clear the buffer
 
     // Render current world state to off-screen buffer
-    world_render(world);
+    draw_world(renderer, world);
 
     // Deactivate drawing to the off-screen buffer
     EndTextureMode();
 
     // Mark the screen as clean
-    renderer_state.is_dirty = false;
+    renderer->is_dirty = false;
 }
 
 // --- Public API Implementation ---
 
-void renderer_init(int screen_width, int screen_height, const char *title)
+Renderer *renderer_create(
+    int screen_width,
+    int screen_height,
+    const char *screen_title)
 {
-    renderer_state.screen_width = screen_width;
-    renderer_state.screen_height = screen_height;
+    Renderer *renderer = malloc(sizeof(*renderer));
+    if (!renderer)
+    {
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: renderer allocation failure",
+            __func__);
+        perror(err_msg);
+        exit(EXIT_FAILURE);
+    }
 
-    InitWindow(screen_width, screen_height, title);
-    SetTargetFPS(60);
+    renderer->screen_width = screen_width;
+    renderer->screen_height = screen_height;
+    renderer->screen_title = strdup(screen_title);
+    if (!renderer->screen_title)
+    {
+        char err_msg[100];
+        snprintf(
+            err_msg,
+            sizeof(err_msg),
+            "%s: screen title allocation failure",
+            __func__);
+        perror(err_msg);
+        exit(EXIT_FAILURE);
+    }
+    renderer->target_fps = 60;
+
+    InitWindow(screen_width, screen_height, screen_title);
+    SetTargetFPS(renderer->target_fps);
 
     // Load the font texture
-    renderer_state.font_texture = LoadTexture("res/bitmap_font_0001.png");
-    if (renderer_state.font_texture.id == 0)
+    renderer->font_texture = LoadTexture("res/bitmap_font_0001.png");
+    if (renderer->font_texture.id == 0)
     {
         // A simple way to handle the error if the texture is not found
         fprintf(
             stderr,
-            "ERROR: Failed to load font texture 'res/bitmap_font_0001.png'\n");
+            "%s: Failed to load font texture 'res/bitmap_font_0001.png'\n",
+            __func__);
         exit(EXIT_FAILURE);
     }
 
     // Build the lookup table
-    build_glyph_atlas();
+    renderer->glyph_width = 12;
+    renderer->glyph_height = 12;
+    build_glyph_atlas(renderer);
 
     // Calculate virtual screen dimensions and create the render texture
-    renderer_state.virtual_width = 256;  // manually linked with screen size
-    renderer_state.virtual_height = 256; // in game.c
-    renderer_state.virtual_screen = LoadRenderTexture(
-        renderer_state.virtual_width,
-        renderer_state.virtual_height);
+    renderer->virtual_width = 256;  // manually linked with screen size
+    renderer->virtual_height = 256; // in game.c
+    renderer->virtual_screen = LoadRenderTexture(
+        renderer->virtual_width,
+        renderer->virtual_height);
 
     // Force an initial draw on the first frame
-    renderer_state.is_dirty = true;
+    renderer->is_dirty = true;
 }
 
-void renderer_shutdown(void)
+void renderer_free(Renderer *renderer)
 {
-    UnloadRenderTexture(renderer_state.virtual_screen);
-    UnloadTexture(renderer_state.font_texture);
+    UnloadRenderTexture(renderer->virtual_screen);
+    UnloadTexture(renderer->font_texture);
     CloseWindow();
+
+    free(renderer->screen_title);
+    free(renderer);
 }
 
-void renderer_begin_frame(World *world)
+void renderer_begin_frame(Renderer *renderer, World *world)
 {
-    if (renderer_state.is_dirty)
+    if (renderer->is_dirty)
     {
-        redraw_virtual_screen(world);
+        redraw_virtual_screen(renderer, world);
     }
 
     BeginDrawing();
     ClearBackground(BLACK);
 }
 
-void renderer_end_frame(void)
+void renderer_end_frame(const Renderer *renderer)
 {
     // Draw the entire virtual screen texture to the window in one go.
     // This is where scaling happens. We use DrawTexturePro for flexibility.
     Rectangle source_rect = {
         0.0f,
         0.0f,
-        (float)renderer_state.virtual_screen.texture.width,
+        (float)renderer->virtual_screen.texture.width,
         // Inverting height is needed because OpenGL textures are upside-down.
-        -(float)renderer_state.virtual_screen.texture.height};
+        -(float)renderer->virtual_screen.texture.height};
 
     Rectangle dest_rect = {
         0.0f,
         0.0f,
-        (float)renderer_state.screen_width,
-        (float)renderer_state.screen_height};
+        (float)renderer->screen_width,
+        (float)renderer->screen_height};
 
     DrawTexturePro(
-        renderer_state.virtual_screen.texture,
+        renderer->virtual_screen.texture,
         source_rect,
         dest_rect,
         (Vector2){0, 0}, // Origin
@@ -197,6 +281,7 @@ void renderer_end_frame(void)
 }
 
 void renderer_draw_glyph(
+    const Renderer *renderer,
     int grid_x,
     int grid_y,
     char glyph,
@@ -204,8 +289,8 @@ void renderer_draw_glyph(
     Colour bg_colour)
 {
     // Calculate the destination pixel position on the screen
-    const float dest_x = (float)grid_x * renderer_state.glyph_width;
-    const float dest_y = (float)grid_y * renderer_state.glyph_height;
+    const float dest_x = (float)grid_x * renderer->glyph_width;
+    const float dest_y = (float)grid_y * renderer->glyph_height;
 
     // Convert our custom Colour to Raylib Color
     const Color raylib_bg = to_raylib_colour(bg_colour);
@@ -215,18 +300,17 @@ void renderer_draw_glyph(
     DrawRectangle(
         dest_x,
         dest_y,
-        renderer_state.glyph_width,
-        renderer_state.glyph_height,
+        renderer->glyph_width,
+        renderer->glyph_height,
         raylib_bg);
 
     // Look up the source rectangle for the glyph from our atlas
-    const Rectangle source_rect =
-        renderer_state.glyph_atlas[(unsigned char)glyph];
+    const Rectangle source_rect = renderer->glyph_atlas[(unsigned char)glyph];
     const Rectangle dest_rect = (Rectangle){
         .x = dest_x,
         .y = dest_y,
-        .width = (float)renderer_state.glyph_width,
-        .height = (float)renderer_state.glyph_height};
+        .width = (float)renderer->glyph_width,
+        .height = (float)renderer->glyph_height};
     const Vector2 origin = (Vector2){0.0f, 0.0f};
     const float rotation = 0.0f;
 
@@ -234,7 +318,7 @@ void renderer_draw_glyph(
     if (source_rect.width > 0) // Don't draw empty glyphs like space
     {
         DrawTexturePro(
-            renderer_state.font_texture,
+            renderer->font_texture,
             source_rect,
             dest_rect,
             origin,
@@ -247,11 +331,12 @@ void renderer_draw_text(
     int pixel_x,
     int pixel_y,
     const char *text,
-    Colour colour)
+    Colour colour,
+    int size)
 {
     // This is a simple wrapper around Raylib's default font drawing,
     // not our bitmap font. Useful for debug text.
-    DrawText(text, pixel_x, pixel_y, 20, to_raylib_colour(colour));
+    DrawText(text, pixel_x, pixel_y, size, to_raylib_colour(colour));
 }
 
 bool renderer_should_close(void)
@@ -261,7 +346,7 @@ bool renderer_should_close(void)
 
 // --- State Management ---
 
-void renderer_set_dirty(void)
+void renderer_set_dirty(Renderer *renderer)
 {
-    renderer_state.is_dirty = true;
+    renderer->is_dirty = true;
 }

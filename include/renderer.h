@@ -5,27 +5,33 @@
 
 #include "colour.h"
 
+typedef struct renderer Renderer;
+
 typedef struct world World;
 
 // --- Initialization and Shutdown ---
 
 // Initializes the window and loads all rendering assets (like the font).
-void renderer_init(int screen_width, int screen_height, const char *title);
-void renderer_shutdown(void);
+Renderer *renderer_create(
+    int screen_width,
+    int screen_height,
+    const char *screen_title);
+void renderer_free(Renderer *renderer);
 
 // --- Frame Management ---
 
 // Should be called at the beginning of the main game loop's drawing phase.
-void renderer_begin_frame(World *world);
+void renderer_begin_frame(Renderer *renderer, World *world);
 
 // Should be called at the end of the main game loop's drawing phase.
-void renderer_end_frame(void);
+void renderer_end_frame(const Renderer *renderer);
 
 // --- Drawing Functions ---
 
 // The core function for our grid-based rendering.
 // Draws a single character glyph from our bitmap font to a specific grid cell.
 void renderer_draw_glyph(
+    const Renderer *renderer,
     int grid_x,
     int grid_y,
     char glyph,
@@ -38,7 +44,8 @@ void renderer_draw_text(
     int pixel_x,
     int pixel_y,
     const char *text,
-    Colour colour);
+    Colour colour,
+    int size);
 
 // --- Window Management ---
 
@@ -49,6 +56,6 @@ bool renderer_should_close(void);
 
 // Tells the renderer that the game state has changed and the
 // virtual screen needs to be redrawn on the next frame.
-void renderer_set_dirty(void);
+void renderer_set_dirty(Renderer *renderer);
 
 #endif // RENDERER_H
