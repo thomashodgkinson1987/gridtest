@@ -21,10 +21,10 @@ This file outlines the next steps for the project, focusing on refactoring core 
     -   **[Done] Action:** Delete the unused `NameComponent` struct and its associated functions from `components.h`/`.c`.
     -   **[Done] Git:** Commit, merge, and clean up.
 
-4.  **Refactor `game` and `renderer` Structs**
-    -   **Branch:** `refactor/struct-organization`
-    -   **Action:** Review and reorder the fields in the main `game` and `renderer` structs for clarity and consistency.
-    -   **Git:** Commit, merge, and clean up.
+4.  **[Done] Refactor `game` and `renderer` Structs**
+    -   **[Done] Branch:** `refactor/struct-organization`
+    -   **[Done] Action:** Review and reorder the fields in the main `game` and `renderer` structs for clarity and consistency.
+    -   **[Done] Git:** Commit, merge, and clean up.
 
 5.  **Create the Command Processing System**
     -   **Branch:** `feature/command-processing-system`

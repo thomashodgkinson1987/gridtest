@@ -18,12 +18,19 @@
 // The concrete definition of the game struct.
 struct game
 {
-    World *world;
-    Actor *player;
+    // --- Core Subsystems ---
     Renderer *renderer;
+    World *world;
+
+    // --- Game State ---
     bool is_running;
-    bool player_took_turn;
-    CommandArray command_array;
+    bool is_player_turn_complete;
+
+    // --- Player Reference ---
+    Actor *player;
+
+    // --- Command Processing ---
+    CommandArray command_queue;
 };
 
 // A single static instance of the game state. This is a simple way to manage
@@ -53,7 +60,7 @@ void game_init(void)
     game_instance->renderer = renderer_create(512, 512, "gridtest");
     game_instance->world = world_create(16, 16);
     game_instance->is_running = true;
-    game_instance->player_took_turn = false;
+    game_instance->is_player_turn_complete = false;
 
     // Create a simple map layout
     create_map(game_instance->world);
@@ -74,7 +81,7 @@ void game_init(void)
     world_add_actor(game_instance->world, monster);
 
     // Init command array
-    game_instance->command_array = command_array_create(1);
+    game_instance->command_queue = command_array_create(1);
 }
 
 void game_run(void)
@@ -97,21 +104,22 @@ void game_shutdown(void)
 {
     for (
         size_t i = 0;
-        i < command_array_get_count(&game_instance->command_array);
+        i < command_array_get_count(&game_instance->command_queue);
         ++i)
     {
-        Command command = command_array_get(&game_instance->command_array, i);
+        Command command = command_array_get(&game_instance->command_queue, i);
         command_free(&command);
     }
-    command_array_free(&game_instance->command_array);
+    command_array_free(&game_instance->command_queue);
+
     world_free(game_instance->world);
-    free(game_instance);
     renderer_free(game_instance->renderer);
+    free(game_instance);
 }
 
 void game_add_command(Game *game, Command command)
 {
-    command_array_push(&game->command_array, command);
+    command_array_push(&game->command_queue, command);
 }
 
 // --- Static Function Implementations ---
@@ -186,23 +194,23 @@ static void handle_input(void)
             game_add_command(game_instance, command);
         }
 
-        game_instance->player_took_turn = true;
+        game_instance->is_player_turn_complete = true;
     }
 }
 
 static void update(void)
 {
-    if (game_instance->player_took_turn)
+    if (game_instance->is_player_turn_complete)
     {
         bool is_set_renderer_dirty = false;
 
         for (
             size_t i = 0;
-            i < command_array_get_count(&game_instance->command_array);
+            i < command_array_get_count(&game_instance->command_queue);
             ++i)
         {
             Command command =
-                command_array_get(&game_instance->command_array, i);
+                command_array_get(&game_instance->command_queue, i);
             CommandResult result = command_execute(&command);
 
             switch (result.type)
@@ -364,10 +372,10 @@ static void update(void)
             command_free(&command);
         }
 
-        command_array_clear(&game_instance->command_array);
+        command_array_clear(&game_instance->command_queue);
 
         world_update_actors(game_instance->world);
-        game_instance->player_took_turn = false;
+        game_instance->is_player_turn_complete = false;
 
         if (is_set_renderer_dirty)
         {

@@ -15,19 +15,22 @@
 
 struct renderer
 {
+    // --- Window Properties ---
     int screen_width;
     int screen_height;
     char *screen_title;
     int target_fps;
 
+    // --- Font & Glyph Atlas ---
     Texture2D font_texture;
-    Rectangle glyph_atlas[256];
     int glyph_width;
     int glyph_height;
+    Rectangle glyph_atlas[256];
 
+    // --- Virtual Screen (Off-screen Buffer) ---
+    RenderTexture2D virtual_screen;
     int virtual_width;
     int virtual_height;
-    RenderTexture2D virtual_screen;
     bool is_dirty;
 };
 
@@ -193,7 +196,10 @@ Renderer *renderer_create(
     }
     renderer->target_fps = 60;
 
-    InitWindow(screen_width, screen_height, screen_title);
+    InitWindow(
+        renderer->screen_width,
+        renderer->screen_height,
+        renderer->screen_title);
     SetTargetFPS(renderer->target_fps);
 
     // Load the font texture
@@ -226,10 +232,11 @@ void renderer_free(Renderer *renderer)
 {
     UnloadRenderTexture(renderer->virtual_screen);
     UnloadTexture(renderer->font_texture);
-    CloseWindow();
 
     free(renderer->screen_title);
     free(renderer);
+
+    CloseWindow();
 }
 
 void renderer_begin_frame(Renderer *renderer, World *world)
