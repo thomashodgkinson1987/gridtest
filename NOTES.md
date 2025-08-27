@@ -11,4 +11,8 @@
 - **Future Task:** Standardize logging for core objects.
   - Create helper functions (e.g., `command_to_string`, `component_to_string`) to generate consistent, formatted string representations of `Command`, `CommandResult`, and `Component` objects.
   - Refactor the logging calls to use these functions, replacing the current ad-hoc formatting.
+
+- **Workflow Idea:** Dynamic Task List Generation.
+  - Tom can provide a simple, high-level list (e.g., "make task list: 1. review notes, 2. commit changes").
+  - I will parse this and generate a formal, structured task group in `PLAN.md` using our established `BRANCH`, `ACTION`, `GIT` format.
 </notes>

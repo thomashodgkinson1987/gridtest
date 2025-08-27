@@ -25,6 +25,14 @@
 -   **Formatting:** Adhere to an 80-column limit. Use include guards and a standard include order (primary header, system headers, library headers, project headers).
 -   **Git Workflow:** See section below.
 
+### Task-Based Workflow
+
+Our collaboration follows a structured, task-based workflow managed via `PLAN.md`.
+
+1.  **Initiate Task:** We will review the task group in `PLAN.md` to ensure we are synchronized.
+2.  **Execute Sub-Tasks:** We will work through each sub-task sequentially.
+3.  **Update Plan:** We will keep `PLAN.md` updated by marking tasks as `[Doing]` when active and `[Done]` upon completion. The parent task group is marked `[Done]` only when all its sub-tasks are finished.
+
 ## 4. Git & Repository
 
 -   **URLs:**
@@ -36,6 +44,15 @@
     -   Features are merged into `develop` using a **squash merge**.
     -   `develop` is merged into `main` for releases using a **`--no-ff` merge**.
     -   A "back-merge" from `main` to `develop` is performed after releases to keep branches synchronized.
+
+### Managing Metadata (`PLAN.md`, `NOTES.md`)
+
+To keep the `develop` branch history clean and contextually relevant, changes to metadata files are committed as part of the feature lifecycle, not in separate commits.
+
+1.  **Start of Task:** On a new feature branch, the *first commit* should be an update to `PLAN.md`, marking the current task as `[Doing]`.
+2.  **End of Task:** Before merging, make a final commit on the feature branch that updates `PLAN.md` to mark the task as `[Done]`.
+3.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
+</overview>
 
 ## 5. Directory Structure
 
