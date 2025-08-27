@@ -45,6 +45,20 @@ Our collaboration follows a structured, task-based workflow managed via `PLAN.md
     -   `develop` is merged into `main` for releases using a **`--no-ff` merge**.
     -   A "back-merge" from `main` to `develop` is performed after releases to keep branches synchronized.
 
+### Build & Run Workflow
+
+This project uses a CMake configuration that simplifies the build and run process.
+
+-   **Build:** To compile the project, press `F7` in VS Code, or run the following command in the terminal:
+    ```bash
+    cmake --build build-Debug
+    ```
+-   **Run (Recommended):** To build and run the application with the correct working directory, use the custom `run` target. This is the preferred method for command-line execution.
+    ```bash
+    cmake --build build-Debug --target run
+    ```
+-   **Debug:** To launch a debugging session (which correctly sets the working directory), press `F5` in VS Code.
+
 ### Managing Metadata (`PLAN.md`, `NOTES.md`)
 
 To keep the `develop` branch history clean and contextually relevant, changes to metadata files are committed as part of the feature lifecycle, not in separate commits.
