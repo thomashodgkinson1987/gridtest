@@ -1,3 +1,4 @@
+<plan>
 # Development Plan
 
 This file outlines the next steps for the project, focusing on refactoring core utilities, professionalizing the project structure, and preparing for advanced gameplay logic.
@@ -33,3 +34,4 @@ This file outlines the next steps for the project, focusing on refactoring core 
 
 6.  **Future Task: Error Handling in `array_macros`**
     -   **Topic:** Revisit the `array_macros` library to design a robust error handling strategy (e.g., returning error codes) that avoids direct logging, keeping the library decoupled.
+</plan>
