@@ -41,7 +41,8 @@ Our collaboration follows a structured, task-based workflow managed via `PLAN.md
 -   **Branching:** All work is done on feature/fix/chore branches, branched from `develop`.
 -   **Commits:** All commit messages must adhere to the **Conventional Commits** specification. We practice creating **atomic commits** where it adds clarity.
 -   **Merging:**
-    -   Features are merged into `develop` using a **squash merge**.
+    -   Branches are merged into `develop` using a **fast-forward merge (`--ff-only`)** when the branch contains a single commit.
+    -   For feature branches with multiple commits, a **squash merge** is used to maintain a clean, atomic history on `develop`.
     -   `develop` is merged into `main` for releases using a **`--no-ff` merge**.
     -   A "back-merge" from `main` to `develop` is performed after releases to keep branches synchronized.
 
