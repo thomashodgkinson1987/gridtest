@@ -67,7 +67,6 @@ To keep the `develop` branch history clean and contextually relevant, changes to
 1.  **Start of Task:** On a new feature branch, the *first commit* should be an update to `PLAN.md`, marking the current task as `[Doing]`.
 2.  **End of Task:** Before merging, make a final commit on the feature branch that updates `PLAN.md` to mark the task as `[Done]`.
 3.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
-</overview>
 
 ## 5. Directory Structure
 
