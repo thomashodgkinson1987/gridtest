@@ -64,9 +64,10 @@ This project uses a CMake configuration that simplifies the build and run proces
 
 To keep the `develop` branch history clean and contextually relevant, changes to metadata files are committed as part of the feature lifecycle, not in separate commits.
 
-1.  **Start of Task:** On a new feature branch, the *first commit* should be an update to `PLAN.md`, marking the current task as `[Doing]`.
-2.  **End of Task:** Before merging, make a final commit on the feature branch that updates `PLAN.md` to mark the task as `[Done]`.
-3.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
+1.  **Start of Task:** On a new feature branch, the *first commit* should be an update to `PLAN.md`, marking the current parent task as `[Doing]`.
+2.  **During Task:** As individual `Action` or `Branch` sub-tasks are completed, they should be marked `[Done]` in `PLAN.md`. These changes can be committed along with the relevant code.
+3.  **End of Task:** Before merging, the *final commit* on the feature branch should be a `docs(plan)` commit. This commit's sole purpose is to update `PLAN.md` by marking the parent task and all remaining sub-tasks (like the `Git` step) as `[Done]`.
+4.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
 
 ## 5. Directory Structure
 
