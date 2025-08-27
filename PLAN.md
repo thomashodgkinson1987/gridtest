@@ -16,9 +16,9 @@ This file outlines the next steps for the project, focusing on refactoring core 
     -   **[Done] Action:** Refactor the entire codebase to use these new, clean logging functions.
     -   **[Done] Git:** Commit, merge to `develop`, and clean up the branch.
 
-3.  **Remove Obsolete `NameComponent`**
-    -   **Branch:** `chore/remove-name-component`
-    -   **Action:** Delete the unused `NameComponent` struct and its associated functions from `components.h`/`.c`.
+3.  **[Doing] Remove Obsolete `NameComponent`**
+    -   **[Done] Branch:** `chore/remove-name-component`
+    -   **[Done] Action:** Delete the unused `NameComponent` struct and its associated functions from `components.h`/`.c`.
     -   **Git:** Commit, merge, and clean up.
 
 4.  **Refactor `game` and `renderer` Structs**

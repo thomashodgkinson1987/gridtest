@@ -76,35 +76,4 @@ void ai_component_free(AIComponent *component)
     free(component);
 }
 
-// --- Name Component ---
 
-NameComponent *name_component_create(const char *name)
-{
-    NameComponent *component = malloc(sizeof(*component));
-    if (!component)
-    {
-        log_perror("Name component allocation failure");
-        log_fatal(
-            "%s: Fatal error due to name component allocation failure",
-            __func__);
-    }
-
-    component->name = malloc(strlen(name) + 1);
-    if (!component->name)
-    {
-        log_perror("Name component name allocation failure");
-        log_fatal(
-            "%s: Fatal error due to name component name allocation failure",
-            __func__);
-    }
-
-    strncpy(component->name, name, strlen(name) + 1);
-
-    return component;
-}
-
-void name_component_free(NameComponent *component)
-{
-    free(component->name);
-    free(component);
-}
