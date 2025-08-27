@@ -11,6 +11,7 @@
 #include "command_array.h"
 #include "command_result.h"
 #include "components.h"
+#include "log.h"
 #include "renderer.h"
 #include "world.h"
 
@@ -43,8 +44,10 @@ void game_init(void)
     game_instance = malloc(sizeof(*game_instance));
     if (!game_instance)
     {
-        perror("[FATAL] Game instance allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Game instance allocation failure");
+        log_fatal(
+            "%s: Fatal error due to game instance allocation failure",
+            __func__);
     }
 
     game_instance->renderer = renderer_create(512, 512, "gridtest");
@@ -334,10 +337,17 @@ static void update(void)
                 Actor *actor = params->actor;
                 const int amount = params->amount;
                 const bool did_die = params->did_die;
-                printf("%s took %i damage\n", actor_get_name(actor), amount);
+                log_message(
+                    LOG_LEVEL_INFO,
+                    "%s took %i damage",
+                    actor_get_name(actor),
+                    amount);
                 if (did_die)
                 {
-                    printf("%s died\n", actor_get_name(actor));
+                    log_message(
+                        LOG_LEVEL_INFO,
+                        "%s died",
+                        actor_get_name(actor));
                     world_remove_actor(game_instance->world, actor);
                     is_set_renderer_dirty = true;
                 }

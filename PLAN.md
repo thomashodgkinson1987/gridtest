@@ -5,16 +5,16 @@ This file outlines the next steps for the project, focusing on refactoring core 
 
 ## Checklist
 
-1.  **Learning Objective: Understand Variadic Arguments (`va_args`)**
-    -   **Topic:** Start with a focused discussion on `va_list`, `va_start`, `va_arg`, and `va_end` to understand how to create functions that accept a variable number of arguments.
+1.  **[Done] Learning Objective: Understand Variadic Arguments (`va_args`)**
+    -   **[Done] Topic:** Start with a focused discussion on `va_list`, `va_start`, `va_arg`, and `va_end` to understand how to create functions that accept a variable number of arguments.
 
 2.  **Create the Logging System**
-    -   **Branch:** `feature/logging-system`
-    -   **Action:** Create `log.h` and `log.c`.
-    -   **Action:** Implement a variadic `log_message(LogLevel level, const char *format, ...)` function.
-    -   **Action:** Create a `log_perror(const char *msg)` helper for system errors.
-    -   **Action:** Refactor the entire codebase to use these new, clean logging functions.
-    -   **Git:** Commit, merge to `develop`, and clean up the branch.
+    -   **[Done] Branch:** `feature/logging-system`
+    -   **[Done] Action:** Create `log.h` and `log.c`.
+    -   **[Done] Action:** Implement a variadic `log_message(LogLevel level, const char *format, ...)` function.
+    -   **[Done] Action:** Create a `log_perror(const char *msg)` helper for system errors.
+    -   **[Done] Action:** Refactor the entire codebase to use these new, clean logging functions.
+    -   **[Doing] Git:** Commit, merge to `develop`, and clean up the branch.
 
 3.  **Remove Obsolete `NameComponent`**
     -   **Branch:** `chore/remove-name-component`

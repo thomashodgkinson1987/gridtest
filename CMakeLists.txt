@@ -34,6 +34,7 @@ set(SOURCES
     src/command_result.c
     src/components.c
     src/game.c
+    src/log.c
     src/renderer.c
     src/world.c
 )

@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "colour.h"
 #include "command_result.h"
+#include "log.h"
 
 Command command_actor_set_x_create(Actor *actor, int x)
 {
@@ -120,9 +121,7 @@ Command command_actor_set_current_hp_create(Actor *actor, int current_hp)
 
     if (!health_component)
     {
-        fprintf(stderr, "%s: health component is null\n", __func__);
-        // TODO: better error handling
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Health component does not exists\n", __func__);
     }
 
     command.params.actor_set_current_hp.old_current_hp =
@@ -143,9 +142,7 @@ Command command_actor_set_max_hp_create(Actor *actor, int max_hp)
 
     if (!health_component)
     {
-        fprintf(stderr, "%s: health component is null\n", __func__);
-        // TODO: better error handling
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Health component does not exists\n", __func__);
     }
 
     command.params.actor_set_max_hp.old_max_hp = health_component->max_hp;
@@ -165,9 +162,7 @@ Command command_actor_set_hp_create(Actor *actor, int current_hp, int max_hp)
 
     if (!health_component)
     {
-        fprintf(stderr, "%s: health component is null\n", __func__);
-        // TODO: better error handling
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Health component does not exists\n", __func__);
     }
 
     command.params.actor_set_hp.old_current_hp = health_component->current_hp;
@@ -189,9 +184,7 @@ Command command_actor_set_attack_power_create(Actor *actor, int attack_power)
 
     if (!combat_component)
     {
-        fprintf(stderr, "%s: combat component is null\n", __func__);
-        // TODO: better error handling
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Combat component does not exists\n", __func__);
     }
 
     command.params.actor_set_attack_power.old_attack_power =
@@ -210,15 +203,19 @@ Command command_actor_set_name_create(Actor *actor, const char *name)
     command.params.actor_set_name.old_name = strdup(actor_get_name(actor));
     if (!command.params.actor_set_name.old_name)
     {
-        perror("[FATAL] Old name allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Old name allocation failure");
+        log_fatal(
+            "%s: Fatal error due to old name allocation failure",
+            __func__);
     }
 
     command.params.actor_set_name.new_name = strdup(name);
     if (!command.params.actor_set_name.new_name)
     {
-        perror("[FATAL] New name allocation error");
-        exit(EXIT_FAILURE);
+        log_perror("New name allocation failure");
+        log_fatal(
+            "%s: Fatal error due to new name allocation failure",
+            __func__);
     }
 
     return command;
@@ -323,8 +320,10 @@ void command_free(Command *command)
 
     default:
     {
-        // Good practice to have a default case
-        fprintf(stderr, "Warning: Unknown command type %d\n", command->type);
+        log_message(
+            LOG_LEVEL_WARN,
+            "Invalid command type %d",
+            command->type);
         break;
     }
     }
@@ -347,8 +346,9 @@ CommandResult command_execute(Command *command)
         const int old_x = params->old_x;
         const int new_x = params->new_x;
         actor_set_x(actor, new_x);
-        printf(
-            "%s [actor_set_x]: old_x=%i new_x=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_x]: old_x=%i new_x=%i",
             __func__,
             old_x,
             new_x);
@@ -366,8 +366,9 @@ CommandResult command_execute(Command *command)
         const int old_y = params->old_y;
         const int new_y = params->new_y;
         actor_set_y(actor, new_y);
-        printf(
-            "%s [actor_set_y]: old_y=%i new_y=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_y]: old_y=%i new_y=%i",
             __func__,
             old_y,
             new_y);
@@ -388,8 +389,9 @@ CommandResult command_execute(Command *command)
         const int new_x = params->new_x;
         const int new_y = params->new_y;
         actor_set_position(actor, new_x, new_y);
-        printf(
-            "%s [actor_set_position]: old_x=%i old_y=%i new_x=%i new_y=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_position]: old_x=%i old_y=%i new_x=%i new_y=%i",
             __func__,
             old_x,
             old_y,
@@ -411,8 +413,9 @@ CommandResult command_execute(Command *command)
         const char old_glyph = params->old_glyph;
         const char new_glyph = params->new_glyph;
         actor_set_glyph(actor, new_glyph);
-        printf(
-            "%s [actor_set_glyph]: old_glyph=%c new_glyph=%c\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_glyph]: old_glyph=%c new_glyph=%c",
             __func__,
             old_glyph,
             new_glyph);
@@ -431,9 +434,11 @@ CommandResult command_execute(Command *command)
         const Colour old_colour = params->old_colour;
         const Colour new_colour = params->new_colour;
         actor_set_colour(actor, new_colour);
-        printf(
-            "%s [actor_set_colour]: old_colour={%hhu. %hhu, %hhu, %hhu} "
-            "new_colour={%hhu. %hhu, %hhu, %hhu}\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_colour]: "
+            "old_colour={%hhu. %hhu, %hhu, %hhu} "
+            "new_colour={%hhu. %hhu, %hhu, %hhu}",
             __func__,
             old_colour.r,
             old_colour.g,
@@ -457,8 +462,9 @@ CommandResult command_execute(Command *command)
         const unsigned char old_r = params->old_r;
         const unsigned char new_r = params->new_r;
         actor_set_r(actor, new_r);
-        printf(
-            "%s [actor_set_r]: old_r=%hhu new_r=%hhu\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_r]: old_r=%hhu new_r=%hhu",
             __func__,
             old_r,
             new_r);
@@ -476,8 +482,9 @@ CommandResult command_execute(Command *command)
         const unsigned char old_g = params->old_g;
         const unsigned char new_g = params->new_g;
         actor_set_g(actor, new_g);
-        printf(
-            "%s [actor_set_g]: old_g=%hhu new_g=%hhu\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_g]: old_g=%hhu new_g=%hhu",
             __func__,
             old_g,
             new_g);
@@ -495,8 +502,9 @@ CommandResult command_execute(Command *command)
         const unsigned char old_b = params->old_b;
         const unsigned char new_b = params->new_b;
         actor_set_b(actor, new_b);
-        printf(
-            "%s [actor_set_b]: old_b=%hhu new_b=%hhu\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_b]: old_b=%hhu new_b=%hhu",
             __func__,
             old_b,
             new_b);
@@ -514,8 +522,9 @@ CommandResult command_execute(Command *command)
         const unsigned char old_a = params->old_a;
         const unsigned char new_a = params->new_a;
         actor_set_a(actor, new_a);
-        printf(
-            "%s [actor_set_a]: old_a=%hhu new_a=%hhu\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_a]: old_a=%hhu new_a=%hhu",
             __func__,
             old_a,
             new_a);
@@ -537,20 +546,19 @@ CommandResult command_execute(Command *command)
             actor_get_health_component_mut(actor);
         if (!health_component)
         {
-            fprintf(
-                stderr,
+            log_fatal(
                 "%s: COMMAND_TYPE_ACTOR_SET_CURRENT_HP health component is "
                 "null\n",
                 __func__);
-            exit(EXIT_FAILURE);
         }
         health_component->current_hp = new_current_hp;
         if (health_component->current_hp < 0)
             health_component->current_hp = 0;
         else if (health_component->current_hp > health_component->max_hp)
             health_component->current_hp = health_component->max_hp;
-        printf(
-            "%s [actor_set_current_hp]: old_current_hp=%i new_current_hp=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_current_hp]: old_current_hp=%i new_current_hp=%i",
             __func__,
             old_current_hp,
             health_component->current_hp);
@@ -571,12 +579,9 @@ CommandResult command_execute(Command *command)
             actor_get_health_component_mut(actor);
         if (!health_component)
         {
-            fprintf(
-                stderr,
-                "%s: COMMAND_TYPE_ACTOR_SET_MAX_HP health component is "
-                "null\n",
+            log_fatal(
+                "%s: COMMAND_TYPE_ACTOR_SET_MAX_HP health component is null\n",
                 __func__);
-            exit(EXIT_FAILURE);
         }
         health_component->max_hp = new_max_hp;
         if (health_component->max_hp < 0)
@@ -584,8 +589,9 @@ CommandResult command_execute(Command *command)
         if (health_component->current_hp > health_component->max_hp)
             health_component->current_hp = health_component->max_hp;
         // TODO: Add old/new current_hp it could be changed
-        printf(
-            "%s [actor_set_max_hp]: old_max_hp=%i new_max_hp=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_max_hp]: old_max_hp=%i new_max_hp=%i",
             __func__,
             old_max_hp,
             health_component->max_hp);
@@ -608,10 +614,8 @@ CommandResult command_execute(Command *command)
             actor_get_health_component_mut(actor);
         if (!health_component)
         {
-            fprintf(
-                stderr,
-                "%s: COMMAND_TYPE_ACTOR_SET_HP health component is "
-                "null\n",
+            log_fatal(
+                "%s: COMMAND_TYPE_ACTOR_SET_HP health component is null\n",
                 __func__);
         }
         health_component->current_hp = new_current_hp;
@@ -622,9 +626,11 @@ CommandResult command_execute(Command *command)
             health_component->max_hp = 0;
         if (health_component->current_hp > health_component->max_hp)
             health_component->current_hp = health_component->max_hp;
-        printf(
-            "%s [actor_set_hp]: old_current_hp=%i old_max_hp=%i "
-            "new_current_hp=%i new_max_hp=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_hp]: "
+            "old_current_hp=%i old_max_hp=%i "
+            "new_current_hp=%i new_max_hp=%i",
             __func__,
             old_current_hp,
             old_max_hp,
@@ -650,19 +656,19 @@ CommandResult command_execute(Command *command)
             actor_get_combat_component_mut(actor);
         if (!combat_component)
         {
-            fprintf(
-                stderr,
+            log_fatal(
                 "%s: COMMAND_TYPE_ACTOR_SET_ATTACK_POWER combat component is "
                 "null\n",
                 __func__);
-            exit(EXIT_FAILURE);
         }
         combat_component->attack_power = new_attack_power;
         if (combat_component->attack_power < 0)
             combat_component->attack_power = 0;
-        printf(
-            "%s [actor_set_attack_power]: old_attack_power=%i "
-            "new_attack_power=%i\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_attack_power]: "
+            "old_attack_power=%i "
+            "new_attack_power=%i",
             __func__,
             old_attack_power,
             combat_component->attack_power);
@@ -680,8 +686,9 @@ CommandResult command_execute(Command *command)
         const char *old_name = params->old_name;
         const char *new_name = params->new_name;
         actor_set_name(actor, new_name);
-        printf(
-            "%s [actor_set_name]: old_name=%s new_name=%s\n",
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [actor_set_name]: old_name=%s new_name=%s",
             __func__,
             old_name,
             new_name);
@@ -702,12 +709,10 @@ CommandResult command_execute(Command *command)
             actor_get_health_component_mut(actor);
         if (!health_component)
         {
-            // TODO: better error handling
-            fprintf(
-                stderr,
-                "%s [actor_translate_health]: health component is null\n",
+            log_fatal(
+                "%s: COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH health component is "
+                "null\n",
                 __func__);
-            exit(EXIT_FAILURE);
         }
         const int old_current_hp = health_component->current_hp;
         health_component->current_hp += translation;
@@ -725,8 +730,10 @@ CommandResult command_execute(Command *command)
 
     default:
     {
-        // Good practice to have a default case
-        fprintf(stderr, "Warning: Unknown command type %d\n", command->type);
+        log_message(
+            LOG_LEVEL_ERROR,
+            "Warning: Unknown command type %d",
+            command->type);
         break;
     }
     }

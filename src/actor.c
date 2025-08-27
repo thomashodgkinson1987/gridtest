@@ -6,6 +6,7 @@
 
 #include "colour.h"
 #include "components.h"
+#include "log.h"
 
 // The concrete definition of the actor struct.
 // This is hidden from other modules, which only see the opaque pointer.
@@ -29,16 +30,14 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 {
     if (!name || strlen(name) == 0)
     {
-        fprintf(stderr, "%s: name cannot be null or 0\n", __func__);
-        // TODO: better error handling
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Name cannot be null or 0", __func__);
     }
 
     Actor *actor = malloc(sizeof(*actor));
     if (!actor)
     {
-        perror("[FATAL] Actor allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Actor allocation failure");
+        log_fatal("%s: Fatal error due to actor allocation failure", __func__);
     }
 
     actor->x = x;
@@ -49,8 +48,10 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 
     if (!actor->name)
     {
-        perror("[FATAL] Actor name allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Actor name allocation failure");
+        log_fatal(
+            "%s: Fatal error due to actor name allocation failure",
+            __func__);
     }
 
     // Initialize all component pointers to NULL.
@@ -95,7 +96,10 @@ void actor_add_health_component(Actor *actor, int max_hp)
 {
     if (actor->health_component)
     {
-        fprintf(stderr, "%s: component already exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component already exists",
+            __func__);
     }
     else
     {
@@ -106,7 +110,10 @@ void actor_add_combat_component(Actor *actor, int attack_power)
 {
     if (actor->combat_component)
     {
-        fprintf(stderr, "%s: component already exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component already exists",
+            __func__);
     }
     else
     {
@@ -117,7 +124,10 @@ void actor_add_ai_component(Actor *actor)
 {
     if (actor->ai_component)
     {
-        fprintf(stderr, "%s: component already exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component already exists",
+            __func__);
     }
     else
     {
@@ -129,7 +139,10 @@ void actor_remove_health_component(Actor *actor)
 {
     if (!actor->health_component)
     {
-        fprintf(stderr, "%s: component does not exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component does not exists",
+            __func__);
     }
     else
     {
@@ -141,7 +154,10 @@ void actor_remove_combat_component(Actor *actor)
 {
     if (!actor->combat_component)
     {
-        fprintf(stderr, "%s: component does not exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component does not exists",
+            __func__);
     }
     else
     {
@@ -153,7 +169,10 @@ void actor_remove_ai_component(Actor *actor)
 {
     if (!actor->ai_component)
     {
-        fprintf(stderr, "%s: component does not exists\n", __func__);
+        log_message(
+            LOG_LEVEL_WARN,
+            "%s: Component does not exists",
+            __func__);
     }
     else
     {
@@ -274,8 +293,10 @@ void actor_set_name(Actor *actor, const char *name)
     char *new_pointer = realloc(actor->name, strlen(name) + 1);
     if (!new_pointer)
     {
-        perror("[FATAL] Name reallocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Name reallocation failure");
+        log_fatal(
+            "%s: Fatal error due to name reallocation failure",
+            __func__);
     }
     strncpy(new_pointer, name, strlen(name) + 1);
     actor->name = new_pointer;

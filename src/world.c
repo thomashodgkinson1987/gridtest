@@ -9,6 +9,7 @@
 #include "actor.h"
 #include "actor_array.h"
 #include "command.h"
+#include "log.h"
 #include "renderer.h"
 
 // The concrete definition of the world struct. This makes the type "complete"
@@ -28,20 +29,20 @@ World *world_create(int width, int height)
     // Enforce a minimum world size.
     if (width < 1 || height < 1)
     {
-        fprintf(
-            stderr,
+        log_fatal(
             "%s: Invalid world dimensions (%d x %d). Must be at least 1x1.\n",
             __func__,
             width,
             height);
-        exit(EXIT_FAILURE);
     }
 
     World *world = malloc(sizeof(*world));
     if (!world)
     {
-        perror("[FATAL] World allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("World allocation failure");
+        log_fatal(
+            "%s: Fatal error due to world allocation failure",
+            __func__);
     }
 
     world->width = width;
@@ -50,14 +51,14 @@ World *world_create(int width, int height)
     // Defensively check for integer overflow before calculating tile_count.
     if ((size_t)width > SIZE_MAX / (size_t)height)
     {
-        fprintf(
-            stderr,
-            "%s: Map dimensions (%d x %d) would cause size_t overflow\n",
+        log_message(
+            LOG_LEVEL_ERROR,
+            "%s: Map dimensions (%d x %d) would cause size_t overflow",
             __func__,
             width,
             height);
         free(world);
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Fatal error due to world dimensions");
     }
     const size_t tile_count = (size_t)width * (size_t)height;
 
@@ -65,21 +66,23 @@ World *world_create(int width, int height)
     // allocation size for the malloc call does not overflow.
     if (tile_count > SIZE_MAX / sizeof(*world->tiles))
     {
-        fprintf(
-            stderr,
-            "%s: Total tile memory allocation size would overflow\n",
+        log_message(
+            LOG_LEVEL_ERROR,
+            "%s: Total tile memory allocation size would overflow",
             __func__);
         free(world);
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Fatal error due to catching overflow", __func__);
     }
 
     // Allocate memory for the map tiles
     world->tiles = malloc(tile_count * sizeof(*world->tiles));
     if (!world->tiles)
     {
-        perror("[FATAL] World tiles allocation failure");
+        log_perror("World tiles allocation failure");
         free(world);
-        exit(EXIT_FAILURE);
+        log_fatal(
+            "%s: Fatal error due to world tiles allocation failure",
+            __func__);
     }
 
     // Initialize all tiles to be walls by default
@@ -154,13 +157,10 @@ void world_remove_actor(World *world, Actor *actor)
 
     if (!was_found)
     {
-        // TODO: better error handling
-        fprintf(stderr, "%s: passed actor not in array\n", __func__);
-        exit(EXIT_FAILURE);
+        log_fatal("%s: Actor not in array", __func__);
     }
 
     actor_array_remove(&world->actors, index);
-
     actor_free(actor);
 }
 
@@ -172,7 +172,7 @@ void world_update_actors(World *world)
         const Actor *actor = actor_array_get(&world->actors, i);
         if (actor_get_ai_component(actor))
         {
-            printf("AI actor takes its turn.\n");
+            log_message(LOG_LEVEL_INFO, "AI actor takes its turn.");
         }
     }
 }
@@ -187,13 +187,10 @@ Command world_actor_attack_actor(
 
     if (!attacker_combat_component)
     {
-        // TODO: better errror handling
-        fprintf(
-            stderr,
-            "%s: attacker '%s' does not have combat component\n",
+        log_fatal(
+            "%s: Attacker '%s' does not have combat component",
             __func__,
             actor_get_name(attacker));
-        exit(EXIT_FAILURE);
     }
 
     Command command = command_actor_translate_health_create(

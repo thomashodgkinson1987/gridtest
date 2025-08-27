@@ -8,6 +8,7 @@
 #include "raylib.h"
 
 #include "actor.h"
+#include "log.h"
 #include "world.h"
 
 // --- Module-Private State ---
@@ -174,8 +175,10 @@ Renderer *renderer_create(
     Renderer *renderer = malloc(sizeof(*renderer));
     if (!renderer)
     {
-        perror("[FATAL] Renderer allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Renderer allocation failure");
+        log_fatal(
+            "%s: Fatal error due to renderer allocation failure",
+            __func__);
     }
 
     renderer->screen_width = screen_width;
@@ -183,8 +186,10 @@ Renderer *renderer_create(
     renderer->screen_title = strdup(screen_title);
     if (!renderer->screen_title)
     {
-        perror("[FATAL] Screen title allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Screen title allocation failure");
+        log_fatal(
+            "%s: Fatal error due to screen title allocation failure",
+            __func__);
     }
     renderer->target_fps = 60;
 
@@ -196,11 +201,9 @@ Renderer *renderer_create(
     if (renderer->font_texture.id == 0)
     {
         // A simple way to handle the error if the texture is not found
-        fprintf(
-            stderr,
+        log_fatal(
             "%s: Failed to load font texture 'res/bitmap_font_0001.png'\n",
             __func__);
-        exit(EXIT_FAILURE);
     }
 
     // Build the lookup table

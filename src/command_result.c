@@ -6,6 +6,7 @@
 
 #include "actor.h"
 #include "colour.h"
+#include "log.h"
 
 CommandResult command_result_actor_set_x_create(
     Actor *actor,
@@ -208,14 +209,18 @@ CommandResult command_result_actor_set_name_create(
     result.params.actor_set_name.old_name = strdup(old_name);
     if (!result.params.actor_set_name.old_name)
     {
-        perror("[FATAL] Old name allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("Old name allocation failure");
+        log_fatal(
+            "%s: Fatal error due to old name allocation failure",
+            __func__);
     }
     result.params.actor_set_name.new_name = strdup(new_name);
     if (!result.params.actor_set_name.new_name)
     {
-        perror("[FATAL] New name allocation failure");
-        exit(EXIT_FAILURE);
+        log_perror("New name allocation failure");
+        log_fatal(
+            "%s: Fatal error due to new name allocation failure",
+            __func__);
     }
 
     return result;
