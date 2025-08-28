@@ -26,4 +26,9 @@
     5. Notify the user that the branch is ready for action items.
   - **Action Command:**
     - A general command for executing the specific implementation steps within a task.
+
+- **Future Task (from PLAN.md):** Error Handling in `array_macros`
+    - **Topic:** Revisit the `array_macros` library to design a robust error handling strategy (e.g., returning error codes) that avoids direct logging, keeping the library decoupled.
+
+- **Topic for Later:** Look into the "Kanban" methodology for project management.
 </notes>

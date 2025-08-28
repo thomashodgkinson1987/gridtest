@@ -1,14 +1,14 @@
 <overview>
 # Project Overview: GridTest
 
-## 1. High-Level Summary
+### High-Level Summary
 
 -   **Project:** GridTest, a rogikuelike prototype written in C.
 -   **Developer:** Thomas Hodgkinson (Tom)
 -   **Email:** thomashodgkinson1987@gmail.com
 -   **Core Philosophy:** "Productive Laziness" - building a clean, maintainable, and well-documented project now to save time and effort later.
 
-## 2. Architecture
+### Architecture
 
 -   **Model:** A pragmatic, layered **Actor Model**. It is not a pure Entity-Component-System (ECS).
 -   **Core Objects:** `Actor` structs are concrete objects with intrinsic properties (`x`, `y`, `glyph`, `colour`, `name`) and optional `Components` for extensible data (health, combat, AI).
@@ -18,22 +18,23 @@
     -   A `command_execute` function processes commands and returns a "Result" object.
     -   The main game loop inspects the `Result` to handle consequences (e.g., actor death, dirtying the renderer).
 
-## 3. Project Conventions
+### Project Conventions
 
 -   **API Design:** Prefer passing explicit context (e.g., `Game*`, `Renderer*`) over using singletons. Strive for `const`-correctness with both `const` and `_mut` variants for getters where appropriate.
 -   **Memory Management:** Ownership is clear and encapsulated. `_create` functions `malloc`, and corresponding `_free` functions `free`. The calling code does not manage memory for objects it receives.
 -   **Formatting:** Adhere to an 80-column limit. Use include guards and a standard include order (primary header, system headers, library headers, project headers).
 -   **Git Workflow:** See section below.
 
-### Task-Based Workflow
+### Kanban-Style Task Workflow
 
-Our collaboration follows a structured, task-based workflow managed via `PLAN.md`.
+Our collaboration follows a structured, Kanban-style workflow managed via `PLAN.md`. The plan is divided into three sections: `Current Task`, `Upcoming Tasks (Backlog)`, and `Completed Tasks`.
 
-1.  **Initiate Task:** We will review the task group in `PLAN.md` to ensure we are synchronized.
-2.  **Execute Sub-Tasks:** We will work through each sub-task sequentially.
-3.  **Update Plan:** We will keep `PLAN.md` updated by marking tasks as `[Doing]` when active and `[Done]` upon completion. The parent task group is marked `[Done]` only when all its sub-tasks are finished.
+1.  **Initiate Task:** We select the highest-priority task from the `Upcoming Tasks` backlog.
+2.  **Set as Current:** The task is moved from the backlog into the `Current Task` section. This change is the very first commit on a new feature branch.
+3.  **Execute:** We work through the task's action items.
+4.  **Complete Task:** Once all work is done, the task is moved from `Current Task` to the top of the `Completed Tasks` list. This is typically done in the final commit before merging the feature branch.
 
-## 4. Git & Repository
+### Git & Repository
 
 -   **URLs:**
     -   Main Project: `https://github.com/thomashodgkinson1987/gridtest.git`
@@ -62,14 +63,13 @@ This project uses a CMake configuration that simplifies the build and run proces
 
 ### Managing Metadata (`PLAN.md`, `NOTES.md`)
 
-To keep the `develop` branch history clean and contextually relevant, changes to metadata files are committed as part of the feature lifecycle, not in separate commits.
+To keep the `develop` branch history clean and contextually relevant, changes to metadata files are committed as part of the feature lifecycle.
 
-1.  **Start of Task:** On a new feature branch, the *first commit* should be an update to `PLAN.md`, marking the current parent task as `[Doing]`.
-2.  **During Task:** As individual `Action` or `Branch` sub-tasks are completed, they should be marked `[Done]` in `PLAN.md`. These changes can be committed along with the relevant code.
-3.  **End of Task:** Before merging, the *final commit* on the feature branch should be a `docs(plan)` commit. This commit's sole purpose is to update `PLAN.md` by marking the parent task and all remaining sub-tasks (like the `Git` step) as `[Done]`.
-4.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
+1.  **Start of Task:** On a new feature branch, the **first commit** must be a `docs(plan)` commit that moves a task from the `Upcoming Tasks` section to the `Current Task` section in `PLAN.md`.
+2.  **End of Task:** Before merging, the **final commit** on the feature branch should be another `docs(plan)` commit. This commit's sole purpose is to move the task from `Current Task` to the `Completed Tasks` section.
+3.  **Squash and Merge:** When the feature branch is squashed and merged, all changes—including the initial and final plan updates—are bundled into a single, clean commit on `develop`. This ensures the plan always reflects the state of the codebase at the time of the merge.
 
-## 5. Directory Structure
+### Directory Structure
 
 The project is organized into the following key directories:
 

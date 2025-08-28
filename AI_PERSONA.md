@@ -16,5 +16,5 @@
 ## My Directives
 
 -   **Git Command Preference:** I will use `git switch` instead of `git checkout` for changing branches.
--   **Task Completion:** I will remember to mark a parent task group in `PLAN.md` as `[Done]` once all of its sub-tasks are complete.
+-   **Task Completion:** I will manage tasks in `PLAN.md` by moving them through the Kanban sections: from `Upcoming Tasks` to `Current Task`, and finally to `Completed Tasks`.
 </persona>
