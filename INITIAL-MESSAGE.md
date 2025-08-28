@@ -1,5 +1,7 @@
-Hello Codex. We are starting a new session for the `gridtest` project.
+# GridTest Project Initialization
 
-Your entire context and instructions for this session are located in the file `BOOTSTRAP.md` in the project's root directory.
+This is the initial instruction for the AI session.
 
-Please read that file and execute the bootstrap sequence it contains precisely as written.
+Your entire context and instructions are located in the file `BOOTSTRAP-GUIDE.md` in the project's root directory.
+
+Read that file and execute the bootstrap sequence it contains precisely as written.
