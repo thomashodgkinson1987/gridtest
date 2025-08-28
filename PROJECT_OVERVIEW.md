@@ -16,7 +16,7 @@
     -   Gameplay logic generates "Commands" (atomic state changes).
     -   A central queue in the `game` module holds these commands.
     -   A `command_execute` function processes commands and returns a "Result" object.
-    -   The main game loop inspects the `Result` to handle consequences (e.g., actor death, dirtying the renderer).
+    -   The main game loop inspects the `Result` to handle consequences (e.g., actor death, dirtying the renderer). This system is slated to be encapsulated within a dedicated `CommandSystem` module to improve separation of concerns.
 
 ### Project Conventions
 

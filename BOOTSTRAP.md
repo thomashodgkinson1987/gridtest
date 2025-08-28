@@ -19,4 +19,4 @@ This document contains the bootstrap instructions for a new AI session. Upon ini
     -   `git branch --all`
     -   `git log --graph --oneline --decorate --all -n 15` (showing the last 15 commits for a good overview)
 
-6.  **Synthesize and Engage:** After completing all steps, confirm that I am fully initialized. I will then provide a brief summary of the current project status and recommend the most logical next task from the `PLAN.md` to begin with, based on the current Git state and our established goals.
+6.  **Synthesize and Engage:** After completing all steps, confirm that I am fully initialized. I will then provide a brief summary of the current project status and propose the next task from the backlog for discussion, based on the current Git state and our established goals.
