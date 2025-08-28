@@ -8,6 +8,19 @@
 -   **Email:** thomashodgkinson1987@gmail.com
 -   **Core Philosophy:** "Productive Laziness" - building a clean, maintainable, and well-documented project now to save time and effort later.
 
+## Session Workflow
+
+Our collaboration follows a structured lifecycle for each development session, ensuring a clean start and a clear end.
+
+### Bootstrap Sequence
+At the beginning of each session, a bootstrap sequence is performed to bring me up to speed on the current state of the project. This involves reading all core metadata files and analyzing the live Git state. The full, detailed steps for this process are documented in `BOOTSTRAP-GUIDE.md`.
+
+### Shutdown Sequence
+At the end of each session, a shutdown sequence is performed to ensure the project is left in a clean, predictable state. This involves:
+1.  **State Analysis:** I will check the Git status, the current branch, the active task in `PLAN.md`, and any unresolved topics in `NOTES.md`.
+2.  **Shutdown Report:** I will provide a concise summary of the project's state.
+3.  **Final Actions:** Based on the report, we will take any necessary actions (e.g., committing final changes) to ensure a clean handoff for the next session.
+
 ## Development Modes
 
 Our collaboration is structured around three distinct modes of operation to ensure flexibility and efficiency. We default to **Plan Mode** at the start of every session.

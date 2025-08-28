@@ -7,13 +7,6 @@
   - Tom can provide a simple, high-level list (e.g., "make task list: 1. review notes, 2. commit changes").
   - I will parse this and generate a formal, structured task group in `PLAN.md` using our established `BRANCH`, `ACTION`, `GIT` format.
 
-- **Workflow Idea:** Shutdown Procedure.
-  - **Goal:** Create a structured shutdown sequence, similar to the bootstrap process.
-  - **Actions:**
-    -   Check for any "in-progress" but un-paused tasks.
-    -   Review notes for any unresolved topics.
-    -   Ensure the project is left in a clean, ready state for the next session.
-
 - **Future Task (from PLAN.md):** Error Handling in `array_macros`
     - **Topic:** Revisit the `array_macros` library to design a robust error handling strategy (e.g., returning error codes) that avoids direct logging, keeping the library decoupled.
 </notes>
