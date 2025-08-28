@@ -15,4 +15,15 @@
 - **Workflow Idea:** Dynamic Task List Generation.
   - Tom can provide a simple, high-level list (e.g., "make task list: 1. review notes, 2. commit changes").
   - I will parse this and generate a formal, structured task group in `PLAN.md` using our established `BRANCH`, `ACTION`, `GIT` format.
+
+- **Workflow Refinement Proposal (from Tom):**
+  - Define a more formal protocol for initiating tasks.
+  - **Task Command (Feature/Fix/Refactor):**
+    1. Perform initial checks (ensure `develop` is clean).
+    2. Create a new branch with a suitable name.
+    3. Update `PLAN.md` to mark the task as `[Doing]`.
+    4. **Immediately commit** this change with a standard `docs(plan)` message.
+    5. Notify the user that the branch is ready for action items.
+  - **Action Command:**
+    - A general command for executing the specific implementation steps within a task.
 </notes>

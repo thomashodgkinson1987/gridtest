@@ -31,6 +31,7 @@ set(SOURCES
     src/actor_array.c
     src/command.c
     src/command_array.c
+    src/command_processing_system.c
     src/command_result.c
     src/components.c
     src/game.c

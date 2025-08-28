@@ -31,11 +31,11 @@ This file outlines the next steps for the project, focusing on refactoring core 
     -   **[Done] Action:** Update `PROJECT_OVERVIEW.md` with the refined process for managing `PLAN.md`.
     -   **[Done] Git:** Commit, merge, and clean up.
 
-6.  **Create the Command Processing System**
-    -   **Branch:** `feature/command-processing-system`
-    -   **Action:** Create new `command_processing_system.h`/`.c` files.
-    -   **Action:** Move the `CommandResult` `switch` statement from `game.c` into the new system to improve separation of concerns.
-    -   **Git:** Commit, merge, and clean up.
+6.  **[Done] Create the Command Processing System**
+    -   **[Done] Branch:** `feature/command-processing-system`
+    -   **[Done] Action:** Create new `command_processing_system.h`/`.c` files.
+    -   **[Done] Action:** Move the `CommandResult` `switch` statement from `game.c` into the new system to improve separation of concerns.
+    -   **[Done] Git:** Commit, merge, and clean up.
 
 7.  **Future Task: Error Handling in `array_macros`**
     -   **Topic:** Revisit the `array_macros` library to design a robust error handling strategy (e.g., returning error codes) that avoids direct logging, keeping the library decoupled.
