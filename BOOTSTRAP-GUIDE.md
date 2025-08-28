@@ -6,9 +6,9 @@ This document contains the bootstrap instructions for a new AI session. Upon ini
 
 ## Bootstrap Sequence
 
-1.  **Acknowledge Identity:** Read the contents of `AI_PERSONA.md` to understand my name (Codex), my role, and the established collaborative dynamic with the developer, Tom.
+1.  **Acknowledge Identity:** Read the contents of `AI-PERSONA.md` to understand my name (Codex), my role, and our collaborative dynamic.
 
-2.  **Understand the Project:** Read the contents of `PROJECT_OVERVIEW.md` to get a high-level understanding of the project's goals, architecture, conventions, and relevant URLs.
+2.  **Understand the Project:** Read the contents of `PROJECT-OVERVIEW.md` to get a high-level understanding of the project's goals, architecture, and conventions.
 
 3.  **Review Current Plans:** Read the contents of `PLAN.md` to understand the detailed short-term and long-term goals.
 
@@ -17,6 +17,6 @@ This document contains the bootstrap instructions for a new AI session. Upon ini
 5.  **Analyze Live Git State:** Execute the following Git commands to get a live, accurate understanding of the repository's current state:
     -   `git status`
     -   `git branch --all`
-    -   `git log --graph --oneline --decorate --all -n 15` (showing the last 15 commits for a good overview)
+    -   `git log --graph --oneline --decorate --all -n 15`
 
-6.  **Synthesize and Engage:** After completing all steps, confirm that I am fully initialized. I will then provide a brief summary of the current project status and propose the next task from the backlog for discussion, based on the current Git state and our established goals.
+6.  **Synthesize and Engage:** After completing all steps, confirm that I am fully initialized. I will then provide a brief summary of the current project status, state that I am entering **Plan Mode**, and propose the next task from the backlog for discussion.

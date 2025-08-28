@@ -10,16 +10,7 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Upcoming Tasks (Backlog)
 
-### 1. (Topic) Kanban Methodology Overview
--   **Type:** `docs`
--   **Priority:** High
--   **Action:** Discuss the core principles of the Kanban methodology, including:
-    -   Visualizing the workflow (our `PLAN.md`).
-    -   Limiting Work in Progress (WIP).
-    -   Managing flow and continuous improvement.
--   **Goal:** Ensure we have a shared, solid understanding of the workflow system we've adopted.
-
-### 2. Refactor: Centralize Command Logic into `CommandSystem`
+### Refactor: Centralize Command Logic into `CommandSystem`
 -   **Type:** `refactor`
 -   **Priority:** Medium
 -   **Branch:** `refactor/command-system`
@@ -30,7 +21,7 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Action:** Refactor `game.c` to delegate all command operations (adding, processing) to the new `CommandSystem` module.
 -   **Git:** Commit, merge, and clean up.
 
-### 3. Refactor: Standardize Core Object Logging
+### Refactor: Standardize Core Object Logging
 -   **Type:** `refactor`
 -   **Priority:** Low
 -   **Branch:** `refactor/standardized-logging`
@@ -42,6 +33,12 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 3. Completed Tasks
 *Most recent at the top.*
+
+-   **(Topic) Kanban Methodology Overview**
+    -   **Type:** `docs`
+    -   **Priority:** High
+    -   **Action:** Discuss the core principles of the Kanban methodology.
+    -   **Goal:** Ensure we have a shared, solid understanding of the workflow system we've adopted.
 
 -   **Create the Command Processing System**
     -   **Branch:** `feature/command-processing-system`
