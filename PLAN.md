@@ -14,12 +14,18 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Type:** `refactor`
 -   **Priority:** Medium
 -   **Branch:** `refactor/command-system`
--   **Action:** Rename `command_processing_system.h`/`.c` to `command_system.h`/`.c` and update `CMakeLists.txt`.
--   **Action:** Refactor all public function names from `cps_*` to the `cmdsys_*` prefix.
--   **Action:** Create an opaque `CommandSystem` struct and move the `CommandQueue` from the `Game` struct into it.
--   **Action:** Update the `Game` struct to hold a `CommandSystem*` handle instead of the queue.
--   **Action:** Refactor `game.c` to delegate all command operations (adding, processing) to the new `CommandSystem` module.
--   **Git:** Commit, merge, and clean up.
+-   **Action 1 (File Renaming):** Rename `command_processing_system.h` to `command_system.h` and `command_processing_system.c` to `command_system.c`.
+-   **Action 2 (Build System):** Update `CMakeLists.txt` to reflect the file renames.
+-   **Action 3 (API Refactoring):** Refactor all public function prefixes from `cps_*` to `command_system_*`.
+-   **Action 4 (Opaque Struct):**
+    -   In `command_system.h`, replace the existing content with a forward declaration for `struct CommandSystem;` and the new public function signatures that operate on a `CommandSystem*` handle.
+    -   In `command_system.c`, define the `struct CommandSystem`, which will now encapsulate the `CommandQueue`.
+-   **Action 5 (Game Integration):**
+    -   Update the `Game` struct to hold a `CommandSystem*` handle.
+    -   Remove the `CommandQueue` from the `Game` struct.
+    -   Update `game_create` and `game_free` to manage the lifecycle of the `CommandSystem` instance.
+-   **Action 6 (Delegation):** Refactor `game.c` to delegate all command operations (e.g., adding commands, processing the queue) to the new `command_system_*` functions.
+-   **Action 7 (Git):** Commit, merge, and clean up.
 
 ### Refactor: Standardize Core Object Logging
 -   **Type:** `refactor`
