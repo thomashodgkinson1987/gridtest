@@ -10,6 +10,19 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Upcoming Tasks (Backlog)
 
+### Refactor: Standardize Core Object Logging
+-   **Type:** `refactor`
+-   **Priority:** Low
+-   **Branch:** `refactor/standardized-logging`
+-   **Action:** Create helper functions (e.g., `command_to_string`, `actor_to_string`) that produce consistent, formatted string representations of core game objects.
+-   **Action:** Refactor logging calls throughout the codebase (e.g., in `game.c`, `cmdsys.c`) to use these new helper functions, improving consistency and reducing code duplication.
+-   **Git:** Commit, merge, and clean up.
+
+---
+
+## 3. Completed Tasks
+*Most recent at the top.*
+
 ### Refactor: Centralize Command Logic into `CommandSystem`
 -   **Type:** `refactor`
 -   **Priority:** Medium
@@ -26,19 +39,6 @@ This file tracks our development progress using a Kanban-style workflow.
     -   Update `game_create` and `game_free` to manage the lifecycle of the `CommandSystem` instance.
 -   **Action 6 (Delegation):** Refactor `game.c` to delegate all command operations (e.g., adding commands, processing the queue) to the new `command_system_*` functions.
 -   **Action 7 (Git):** Commit, merge, and clean up.
-
-### Refactor: Standardize Core Object Logging
--   **Type:** `refactor`
--   **Priority:** Low
--   **Branch:** `refactor/standardized-logging`
--   **Action:** Create helper functions (e.g., `command_to_string`, `actor_to_string`) that produce consistent, formatted string representations of core game objects.
--   **Action:** Refactor logging calls throughout the codebase (e.g., in `game.c`, `cmdsys.c`) to use these new helper functions, improving consistency and reducing code duplication.
--   **Git:** Commit, merge, and clean up.
-
----
-
-## 3. Completed Tasks
-*Most recent at the top.*
 
 -   **(Topic) Kanban Methodology Overview**
     -   **Type:** `docs`

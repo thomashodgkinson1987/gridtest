@@ -1,12 +1,13 @@
 #include "game.h"
 
+#include <stdlib.h>
+
 #include "raylib.h"
 
 #include "actor.h"
 #include "colour.h"
 #include "command.h"
-#include "command_array.h"
-#include "command_processing_system.h"
+#include "command_system.h"
 #include "command_result.h"
 #include "log.h"
 #include "renderer.h"
@@ -18,6 +19,7 @@ struct game
     // --- Core Subsystems ---
     Renderer *renderer;
     World *world;
+    CommandSystem *command_system;
 
     // --- Game State ---
     bool is_running;
@@ -25,9 +27,6 @@ struct game
 
     // --- Player Reference ---
     Actor *player;
-
-    // --- Command Processing ---
-    CommandArray command_queue;
 };
 
 // A single static instance of the game state. This is a simple way to manage
@@ -56,6 +55,7 @@ void game_init(void)
 
     game_instance->renderer = renderer_create(512, 512, "gridtest");
     game_instance->world = world_create(16, 16);
+    game_instance->command_system = command_system_create();
     game_instance->is_running = true;
     game_instance->is_player_turn_complete = false;
 
@@ -76,9 +76,6 @@ void game_init(void)
     actor_add_combat_component(monster, 5);
     actor_add_ai_component(monster);
     world_add_actor(game_instance->world, monster);
-
-    // Init command array
-    game_instance->command_queue = command_array_create(1);
 }
 
 void game_run(void)
@@ -99,16 +96,7 @@ void game_run(void)
 
 void game_shutdown(void)
 {
-    for (
-        size_t i = 0;
-        i < command_array_get_count(&game_instance->command_queue);
-        ++i)
-    {
-        Command command = command_array_get(&game_instance->command_queue, i);
-        command_free(&command);
-    }
-    command_array_free(&game_instance->command_queue);
-
+    command_system_free(game_instance->command_system);
     world_free(game_instance->world);
     renderer_free(game_instance->renderer);
     free(game_instance);
@@ -116,7 +104,7 @@ void game_shutdown(void)
 
 void game_add_command(Game *game, Command command)
 {
-    command_array_push(&game->command_queue, command);
+    command_system_add_command(game->command_system, command);
 }
 
 // --- Static Function Implementations ---
@@ -200,32 +188,11 @@ static void update(void)
     // has player took their turn?
     if (game_instance->is_player_turn_complete)
     {
-        // go through all commands from players turn
-        for (
-            size_t i = 0;
-            i < command_array_get_count(&game_instance->command_queue);
-            ++i)
-        {
-            // grab next command
-            Command command =
-                command_array_get(&game_instance->command_queue, i);
-
-            // execute command and get result
-            CommandResult result = command_execute(&command);
-
-            // pass result to command processor
-            command_processing_system_process_command_result(
-                game_instance->renderer,
-                game_instance->world,
-                result);
-
-            // free result and command
-            command_result_free(&result);
-            command_free(&command);
-        }
-
-        // clear command queue
-        command_array_clear(&game_instance->command_queue);
+        // Process all commands in the queue
+        command_system_process_queue(
+            game_instance->command_system,
+            game_instance->renderer,
+            game_instance->world);
 
         world_update_actors(game_instance->world);
         game_instance->is_player_turn_complete = false;
