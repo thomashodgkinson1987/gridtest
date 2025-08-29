@@ -11,7 +11,7 @@ This file tracks our development progress using a Kanban-style workflow.
 ## 2. Backlog
 
 ### Refactor: Standardize Core Object Logging
--   **Goal:** All Command and Component logging calls will use a .
+-   **Goal:** All Command and Component logging calls will use a lookup table to retrieve object name.
 -   **Type:** `refactor`
 -   **Priority:** Low
 -   **Branch:** `refactor/standardized-logging`
