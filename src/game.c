@@ -102,7 +102,7 @@ void game_shutdown(void)
     free(game_instance);
 }
 
-void game_add_command(Game *game, Command command)
+void game_add_command(Game *game, const Command *command)
 {
     command_system_add_command(game->command_system, command);
 }
@@ -166,7 +166,7 @@ static void handle_input(void)
 
             if (command.type != COMMAND_TYPE_NULL)
             {
-                game_add_command(game_instance, command);
+                game_add_command(game_instance, &command);
             }
         }
         else if (
@@ -176,7 +176,7 @@ static void handle_input(void)
                 game_instance->player,
                 target_x,
                 target_y);
-            game_add_command(game_instance, command);
+            game_add_command(game_instance, &command);
         }
 
         game_instance->is_player_turn_complete = true;

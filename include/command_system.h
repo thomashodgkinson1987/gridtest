@@ -1,8 +1,6 @@
 #ifndef COMMAND_SYSTEM_H
 #define COMMAND_SYSTEM_H
 
-#include "command.h"
-
 // --- Opaque Pointer ---
 // The user of this API does not need to know the internal details of the
 // CommandSystem struct, so we forward-declare it here. The full definition
@@ -12,6 +10,7 @@ typedef struct command_system CommandSystem;
 // --- Forward Declarations for Dependencies ---
 // We only need pointers to these types in the header, so we can forward-declare
 // them to avoid including their full headers, which speeds up compilation.
+typedef struct command Command;
 typedef struct renderer Renderer;
 typedef struct world World;
 
@@ -34,9 +33,11 @@ void command_system_free(CommandSystem *command_system);
 /**
  * @brief Adds a command to the command queue for later processing.
  * @param command_system A pointer to the CommandSystem instance.
- * @param command The command to be added.
+ * @param command A pointer to the command to be added.
  */
-void command_system_add_command(CommandSystem *command_system, Command command);
+void command_system_add_command(
+    CommandSystem *command_system,
+    const Command *command);
 
 /**
  * @brief Processes all commands currently in the queue.

@@ -56,9 +56,11 @@ void command_system_free(CommandSystem *command_system)
     free(command_system);
 }
 
-void command_system_add_command(CommandSystem *command_system, Command command)
+void command_system_add_command(
+    CommandSystem *command_system,
+    const Command *command)
 {
-    command_array_push(&command_system->command_queue, command);
+    command_array_push(&command_system->command_queue, *command);
 }
 
 void command_system_process_queue(
@@ -82,8 +84,10 @@ void command_system_process_queue(
 
 // --- Static Function Implementations ---
 
-static void
-process_result(Renderer *renderer, World *world, CommandResult result)
+static void process_result(
+    Renderer *renderer,
+    World *world,
+    CommandResult result)
 {
     bool is_set_renderer_dirty = false;
 

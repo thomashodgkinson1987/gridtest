@@ -3,20 +3,12 @@
 This file tracks our development progress using a Kanban-style workflow.
 
 ## 1. Current Task
-*No active task. Ready to select from the backlog.*
+
+*empty*
 
 ---
 
 ## 2. Backlog
-
-### Change Command API to Use Pointers
--   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
--   **Type:** refactor
--   **Priority:** Medium
--   **Branch:** refactor/command-by-pointer
--   **Action 1:** Update `command_system.h` and `command_system.c` to accept `const Command*`.
--   **Action 2:** Update all call sites in `game.c` to pass the address of the Command struct.
--   **Action 3:** Replace `#include "command.h"` with a forward declaration in headers where possible.
 
 ### Remove Redundant Null Checks
 -   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
@@ -45,6 +37,15 @@ This file tracks our development progress using a Kanban-style workflow.
 ---
 
 ## 3. Completed Tasks (Most Recent At The Top)
+
+### Change Command API to Use Pointers
+-   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
+-   **Type:** refactor
+-   **Priority:** Medium
+-   **Branch:** refactor/command-by-pointer
+-   **Action 1:** Update `command_system.h` and `command_system.c` to accept `const Command*`.
+-   **Action 2:** Update all call sites in `game.c` to pass the address of the Command struct.
+-   **Action 3:** Replace `#include "command.h"` with a forward declaration in headers where possible.
 
 ### Amend Commit Type
 -   **Goal:** Amend 98a20a0 to use the `chore` type for better adherence to Conventional Commits.
