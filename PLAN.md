@@ -1,4 +1,3 @@
-<plan>
 # Development Plan
 
 This file tracks our development progress using a Kanban-style workflow.
@@ -8,22 +7,24 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ---
 
-## 2. Upcoming Tasks (Backlog)
+## 2. Backlog
 
 ### Refactor: Standardize Core Object Logging
+-   **Goal:** All Command and Component logging calls will use a .
 -   **Type:** `refactor`
 -   **Priority:** Low
 -   **Branch:** `refactor/standardized-logging`
--   **Action:** Create helper functions (e.g., `command_to_string`, `actor_to_string`) that produce consistent, formatted string representations of core game objects.
--   **Action:** Refactor logging calls throughout the codebase (e.g., in `game.c`, `cmdsys.c`) to use these new helper functions, improving consistency and reducing code duplication.
+-   **Action 1 (Lookup Table):** Create a lookup table that contains the formatted name strings of commands and components (enum-to-char*).
+-   **Action 2 (Implement):** Refactor logging calls throughout the codebase (e.g., in `game.c`, `command_system.c`) to use these lookup tables.
 -   **Git:** Commit, merge, and clean up.
 
 ---
 
-## 3. Completed Tasks
-*Most recent at the top.*
+## 3. Completed Tasks (Most Recent At The Top)
+*empty*
 
 ### Refactor: Centralize Command Logic into `CommandSystem`
+-   **Goal:** Create a new core subsystem for the Game module that manages the command queue.
 -   **Type:** `refactor`
 -   **Priority:** Medium
 -   **Branch:** `refactor/command-system`
@@ -40,15 +41,17 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Action 6 (Delegation):** Refactor `game.c` to delegate all command operations (e.g., adding commands, processing the queue) to the new `command_system_*` functions.
 -   **Action 7 (Git):** Commit, merge, and clean up.
 
--   **(Topic) Kanban Methodology Overview**
-    -   **Type:** `docs`
-    -   **Priority:** High
-    -   **Action:** Discuss the core principles of the Kanban methodology.
-    -   **Goal:** Ensure we have a shared, solid understanding of the workflow system we've adopted.
+### Topic: Kanban Methodology Overview
+-   **Goal:** Ensure we have a shared, solid understanding of the workflow system we've adopted.
+-   **Type:** `lesson`
+-   **Priority:** High
+-   **Action (Chat):** Discuss the core principles of the Kanban methodology.
 
--   **Create the Command Processing System**
-    -   **Branch:** `feature/command-processing-system`
-    -   **Action:** Create new `command_processing_system.h`/`.c` files.
-    -   **Action:** Move the `CommandResult` `switch` statement from `game.c` into the new system to improve separation of concerns.
-    -   **Git:** Commit, merge, and clean up.
-</plan>
+### Create the Command Processing System
+-   **Goal:** Move responsibiility of CommandResult processing into dedicated command system.
+-   **Type:** `feature`
+-   **Priority:** Medium
+-   **Branch:** `feature/command-processing-system`
+-   **Action 1 (Files Creation):** Create new `command_processing_system.h`/`.c` files.
+-   **Action 2 (Separate Conserns):** Move the `CommandResult` `switch` statement from `game.c` into the new system to improve separation of concerns.
+-   **Action 3 (Git)** Commit, merge, and clean up.

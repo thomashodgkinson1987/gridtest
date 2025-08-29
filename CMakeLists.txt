@@ -4,27 +4,20 @@ cmake_minimum_required(VERSION 3.10)
 # Define the project name, version, and language.
 project(GridTest VERSION 1.0 LANGUAGES C)
 
-# Set the C standard you want to use (C11 or C17 are good choices).
+# Set the C standard.
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# --- Dependency Handling (Raylib) ---
-# Since you have raylib pre-compiled, we'll tell CMake where to find its
-# header and library files directly.
-
-# Add your 'include' directory to the list of directories to search for headers.
+# Add 'include' directory to the list of directories to search for headers.
 include_directories(include)
 
 # Define a variable for the raylib library path.
 set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
 
 # --- Submodules ---
-# Add the array_macros library from the vendor directory.
-# This makes the 'array_macros' INTERFACE target available.
 add_subdirectory(vendor/array_macros)
 
 # --- Project Sources ---
-# List all your .c source files in the 'src' directory explicitly.
 set(SOURCES
     src/main.c
     src/actor.c
@@ -60,7 +53,7 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
 # --- Linking ---
-# Link your executable against all required libraries.
+# Link the executable against all required libraries.
 target_link_libraries(gridtest
     PRIVATE
     array_macros
@@ -70,7 +63,7 @@ target_link_libraries(gridtest
 )
 
 # --- Optional: For Development ---
-# If you're using VSCode with the CMake Tools extension, this helps it find headers.
+# If using VSCode with the CMake Tools extension, this helps it find headers.
 target_include_directories(gridtest PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # --- Custom Run Target ---
@@ -82,4 +75,3 @@ add_custom_target(run
     DEPENDS gridtest
     COMMENT "Running gridtest from ${CMAKE_SOURCE_DIR}"
 )
-
