@@ -175,5 +175,6 @@ Command command_actor_translate_health_create(Actor *actor, int translation);
 
 void command_free(Command *command);
 CommandResult command_execute(Command *command);
+const char *command_get_name_from_type(CommandType type);
 
 #endif // COMMAND_H

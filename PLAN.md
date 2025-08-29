@@ -10,14 +10,6 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
-### Refactor: Standardize Command Object Logging
--   **Goal:** All Command logging calls will use a lookup table to retrieve the object's name.
--   **Type:** `refactor`
--   **Priority:** Low
--   **Branch:** `refactor/standardized-command-logging`
--   **Action 1 (Implement Naming Function):** In `command.h/.c`, create `const char* command_get_name_from_type(CommandType type);`. The function will be implemented with a private, static lookup table and will return a safe default string on error.
--   **Action 2 (Refactor Logging Calls):** Search the codebase and replace any manual logging of command names with calls to the new helper function.
-
 ### Refactor: Standardize Component Object Logging
 -   **Goal:** All Component logging calls will use a lookup table to retrieve the object's name.
 -   **Type:** `refactor`
@@ -26,6 +18,18 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Action 1 (Create `ComponentType` enum):** Create and populate `enum component_type` in `components.h` and wrap it in a typedef to create the public `ComponentType`.
 -   **Action 2 (Implement Naming Function):** In `components.h/.c`, create `const char* component_get_name_from_type(ComponentType type);`. The function will be implemented with a private, static lookup table and will return a safe default string on error.
 -   **Action 3 (Refactor Logging Calls):** Search the codebase and replace any manual logging of component names with calls to the new helper function.
+
+---
+
+## 3. Completed Tasks (Most Recent At The Top)
+
+### Refactor: Standardize Command Object Logging
+-   **Goal:** All Command logging calls will use a lookup table to retrieve the object's name.
+-   **Type:** `refactor`
+-   **Priority:** Low
+-   **Branch:** `refactor/standardized-command-logging`
+-   **Action 1 (Implement Naming Function):** In `command.h/.c`, create `const char* command_get_name_from_type(CommandType type);`. The function will be implemented with a private, static lookup table and will return a safe default string on error.
+-   **Action 2 (Refactor Logging Calls):** Search the codebase and replace any manual logging of command names with calls to the new helper function.
 
 ---
 

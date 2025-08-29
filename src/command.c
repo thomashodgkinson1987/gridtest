@@ -348,8 +348,9 @@ CommandResult command_execute(Command *command)
         actor_set_x(actor, new_x);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_x]: old_x=%i new_x=%i",
+            "%s [%s]: old_x=%i new_x=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_x,
             new_x);
         CommandResult result = command_result_actor_set_x_create(
@@ -368,8 +369,9 @@ CommandResult command_execute(Command *command)
         actor_set_y(actor, new_y);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_y]: old_y=%i new_y=%i",
+            "%s [%s]: old_y=%i new_y=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_y,
             new_y);
         CommandResult result = command_result_actor_set_y_create(
@@ -391,8 +393,9 @@ CommandResult command_execute(Command *command)
         actor_set_position(actor, new_x, new_y);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_position]: old_x=%i old_y=%i new_x=%i new_y=%i",
+            "%s [%s]: old_x=%i old_y=%i new_x=%i new_y=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_x,
             old_y,
             new_x,
@@ -415,8 +418,9 @@ CommandResult command_execute(Command *command)
         actor_set_glyph(actor, new_glyph);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_glyph]: old_glyph=%c new_glyph=%c",
+            "%s [%s]: old_glyph=%c new_glyph=%c",
             __func__,
+            command_get_name_from_type(command->type),
             old_glyph,
             new_glyph);
         CommandResult result = command_result_actor_set_glyph_create(
@@ -436,10 +440,11 @@ CommandResult command_execute(Command *command)
         actor_set_colour(actor, new_colour);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_colour]: "
+            "%s [%s]: "
             "old_colour={%hhu. %hhu, %hhu, %hhu} "
             "new_colour={%hhu. %hhu, %hhu, %hhu}",
             __func__,
+            command_get_name_from_type(command->type),
             old_colour.r,
             old_colour.g,
             old_colour.b,
@@ -464,8 +469,9 @@ CommandResult command_execute(Command *command)
         actor_set_r(actor, new_r);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_r]: old_r=%hhu new_r=%hhu",
+            "%s [%s]: old_r=%hhu new_r=%hhu",
             __func__,
+            command_get_name_from_type(command->type),
             old_r,
             new_r);
         CommandResult result = command_result_actor_set_r_create(
@@ -484,8 +490,9 @@ CommandResult command_execute(Command *command)
         actor_set_g(actor, new_g);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_g]: old_g=%hhu new_g=%hhu",
+            "%s [%s]: old_g=%hhu new_g=%hhu",
             __func__,
+            command_get_name_from_type(command->type),
             old_g,
             new_g);
         CommandResult result = command_result_actor_set_g_create(
@@ -504,8 +511,9 @@ CommandResult command_execute(Command *command)
         actor_set_b(actor, new_b);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_b]: old_b=%hhu new_b=%hhu",
+            "%s [%s]: old_b=%hhu new_b=%hhu",
             __func__,
+            command_get_name_from_type(command->type),
             old_b,
             new_b);
         CommandResult result = command_result_actor_set_b_create(
@@ -524,8 +532,9 @@ CommandResult command_execute(Command *command)
         actor_set_a(actor, new_a);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_a]: old_a=%hhu new_a=%hhu",
+            "%s [%s]: old_a=%hhu new_a=%hhu",
             __func__,
+            command_get_name_from_type(command->type),
             old_a,
             new_a);
         CommandResult result = command_result_actor_set_a_create(
@@ -558,8 +567,9 @@ CommandResult command_execute(Command *command)
             health_component->current_hp = health_component->max_hp;
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_current_hp]: old_current_hp=%i new_current_hp=%i",
+            "%s [%s]: old_current_hp=%i new_current_hp=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_current_hp,
             health_component->current_hp);
         CommandResult result = command_result_actor_set_current_hp_create(
@@ -591,8 +601,9 @@ CommandResult command_execute(Command *command)
         // TODO: Add old/new current_hp it could be changed
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_max_hp]: old_max_hp=%i new_max_hp=%i",
+            "%s [%s]: old_max_hp=%i new_max_hp=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_max_hp,
             health_component->max_hp);
         CommandResult result = command_result_actor_set_max_hp_create(
@@ -628,10 +639,11 @@ CommandResult command_execute(Command *command)
             health_component->current_hp = health_component->max_hp;
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_hp]: "
+            "%s [%s]: "
             "old_current_hp=%i old_max_hp=%i "
             "new_current_hp=%i new_max_hp=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_current_hp,
             old_max_hp,
             health_component->current_hp,
@@ -666,10 +678,11 @@ CommandResult command_execute(Command *command)
             combat_component->attack_power = 0;
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_attack_power]: "
+            "%s [%s]: "
             "old_attack_power=%i "
             "new_attack_power=%i",
             __func__,
+            command_get_name_from_type(command->type),
             old_attack_power,
             combat_component->attack_power);
         CommandResult result = command_result_actor_set_attack_power_create(
@@ -688,8 +701,9 @@ CommandResult command_execute(Command *command)
         actor_set_name(actor, new_name);
         log_message(
             LOG_LEVEL_DEBUG,
-            "%s [actor_set_name]: old_name=%s new_name=%s",
+            "%s [%s]: old_name=%s new_name=%s",
             __func__,
+            command_get_name_from_type(command->type),
             old_name,
             new_name);
         CommandResult result = command_result_actor_set_name_create(
@@ -721,6 +735,12 @@ CommandResult command_execute(Command *command)
         else if (health_component->current_hp > health_component->max_hp)
             health_component->current_hp = health_component->max_hp;
         bool did_die = health_component->current_hp == 0 && old_current_hp > 0;
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [%s]: translation=%i",
+            __func__,
+            command_get_name_from_type(command->type),
+            translation);
         CommandResult result = command_result_actor_took_damage_create(
             actor,
             -translation,
@@ -732,9 +752,66 @@ CommandResult command_execute(Command *command)
     {
         log_message(
             LOG_LEVEL_ERROR,
-            "Warning: Unknown command type %d",
-            command->type);
+            "Warning: Unknown command type [%s]",
+            command_get_name_from_type(command->type));
         break;
     }
+    }
+}
+
+const char *command_get_name_from_type(CommandType type)
+{
+    switch (type)
+    {
+    case COMMAND_TYPE_NULL:
+        return "NULL";
+
+    case COMMAND_TYPE_ACTOR_SET_X:
+        return "ACTOR_SET_X";
+
+    case COMMAND_TYPE_ACTOR_SET_Y:
+        return "ACTOR_SET_Y";
+
+    case COMMAND_TYPE_ACTOR_SET_POSITION:
+        return "ACTOR_SET_POSITION";
+
+    case COMMAND_TYPE_ACTOR_SET_GLYPH:
+        return "ACTOR_SET_GLYPH";
+
+    case COMMAND_TYPE_ACTOR_SET_COLOUR:
+        return "ACTOR_SET_COLOUR";
+
+    case COMMAND_TYPE_ACTOR_SET_R:
+        return "ACTOR_SET_R";
+
+    case COMMAND_TYPE_ACTOR_SET_G:
+        return "ACTOR_SET_G";
+
+    case COMMAND_TYPE_ACTOR_SET_B:
+        return "ACTOR_SET_B";
+
+    case COMMAND_TYPE_ACTOR_SET_A:
+        return "ACTOR_SET_A";
+
+    case COMMAND_TYPE_ACTOR_SET_CURRENT_HP:
+        return "ACTOR_SET_CURRENT_HP";
+
+    case COMMAND_TYPE_ACTOR_SET_MAX_HP:
+        return "ACTOR_SET_MAX_HP";
+
+    case COMMAND_TYPE_ACTOR_SET_HP:
+        return "ACTOR_SET_HP";
+
+    case COMMAND_TYPE_ACTOR_SET_ATTACK_POWER:
+        return "ACTOR_SET_ATTACK_POWER";
+
+    case COMMAND_TYPE_ACTOR_SET_NAME:
+        return "ACTOR_SET_NAME";
+
+    case COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH:
+        return "ACTOR_TRANSLATE_HEALTH";
+
+    default:
+        return "UNKNOWN";
     }
 }
