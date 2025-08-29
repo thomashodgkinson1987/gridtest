@@ -9,14 +9,6 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
-### Amend Commit Type
--   **Goal:** Amend the most recent commit on develop to use the `chore` type for better adherence to Conventional Commits.
--   **Type:** chore
--   **Priority:** High
--   **Branch:** chore/amend-commit-type
--   **Action 1:** Run `git commit --amend -m "chore(core): Adjust project records and metadata"`.
--   **Action 2:** Push the change using `git push --force-with-lease`.
-
 ### Change Command API to Use Pointers
 -   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
 -   **Type:** refactor
@@ -53,7 +45,14 @@ This file tracks our development progress using a Kanban-style workflow.
 ---
 
 ## 3. Completed Tasks (Most Recent At The Top)
-*empty*
+
+### Amend Commit Type
+-   **Goal:** Amend 98a20a0 to use the `chore` type for better adherence to Conventional Commits.
+-   **Type:** chore
+-   **Priority:** High
+-   **Branch:** develop
+-   **Action 1:** Run `git rebase -i HEAD~3 ` and complete changes.
+-   **Action 2:** Push the change using `git push --force-with-lease`.
 
 ### Refactor: Centralize Command Logic into `CommandSystem`
 -   **Goal:** Create a new core subsystem for the Game module that manages the command queue.
