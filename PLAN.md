@@ -10,13 +10,6 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
-### Reorder `#include`s In Game Module
--   **Goal:** To have `game.c/.h` include directives to be alphabetically ordererd.
--   **Type:** refactor
--   **Priority:** Low
--   **Branch:** refactor/reorder-game-module-includes
--   **Action 1:** Reorder Game module `#include`s.
-
 ### Refactor: Standardize Core Object Logging
 -   **Goal:** All Command and Component logging calls will use a .
 -   **Type:** `refactor`
@@ -29,6 +22,13 @@ This file tracks our development progress using a Kanban-style workflow.
 ---
 
 ## 3. Completed Tasks (Most Recent At The Top)
+
+### Reorder `#include`s In Game Module
+-   **Goal:** To have `game.c/.h` include directives to be alphabetically ordererd.
+-   **Type:** refactor
+-   **Priority:** Low
+-   **Branch:** refactor/reorder-game-module-includes
+-   **Action 1:** Reorder Game module `#include`s.
 
 ### Remove Redundant Null Checks
 -   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
