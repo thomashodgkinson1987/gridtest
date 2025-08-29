@@ -9,6 +9,38 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
+### Amend Commit Type
+-   **Goal:** Amend the most recent commit on develop to use the `chore` type for better adherence to Conventional Commits.
+-   **Type:** chore
+-   **Priority:** High
+-   **Branch:** chore/amend-commit-type
+-   **Action 1:** Run `git commit --amend -m "chore(core): Adjust project records and metadata"`.
+-   **Action 2:** Push the change using `git push --force-with-lease`.
+
+### Change Command API to Use Pointers
+-   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
+-   **Type:** refactor
+-   **Priority:** Medium
+-   **Branch:** refactor/command-by-pointer
+-   **Action 1:** Update `command_system.h` and `command_system.c` to accept `const Command*`.
+-   **Action 2:** Update all call sites in `game.c` to pass the address of the Command struct.
+-   **Action 3:** Replace `#include "command.h"` with a forward declaration in headers where possible.
+
+### Remove Redundant Null Checks
+-   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
+-   **Type:** refactor
+-   **Priority:** Low
+-   **Branch:** refactor/remove-redundant-null-checks
+-   **Action 1:** Search the project for any instances of `if (ptr) { free(ptr); }`.
+-   **Action 2:** Replace all instances with a direct `free(ptr)` call.
+
+### Reorder `#include`s In Game Module
+-   **Goal:** To have `game.c/.h` include directives to be alphabetically ordererd.
+-   **Type:** refactor
+-   **Priority:** Low
+-   **Branch:** refactor/reorder-game-module-includes
+-   **Action 1:** Reorder Game module `#include`s.
+
 ### Refactor: Standardize Core Object Logging
 -   **Goal:** All Command and Component logging calls will use a .
 -   **Type:** `refactor`
