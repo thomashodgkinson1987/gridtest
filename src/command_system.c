@@ -39,11 +39,6 @@ CommandSystem *command_system_create(void)
 
 void command_system_free(CommandSystem *command_system)
 {
-    if (!command_system)
-    {
-        return;
-    }
-
     for (
         size_t i = 0;
         i < command_array_get_count(&command_system->command_queue);

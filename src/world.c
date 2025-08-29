@@ -99,11 +99,6 @@ World *world_create(int width, int height)
 
 void world_free(World *world)
 {
-    if (!world)
-    {
-        return;
-    }
-
     // Free all the actors stored in the dynamic array
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {

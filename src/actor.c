@@ -65,11 +65,6 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 
 void actor_free(Actor *actor)
 {
-    if (!actor)
-    {
-        return;
-    }
-
     free(actor->name);
 
     // Free each component if it exists.

@@ -10,14 +10,6 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
-### Remove Redundant Null Checks
--   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
--   **Type:** refactor
--   **Priority:** Low
--   **Branch:** refactor/remove-redundant-null-checks
--   **Action 1:** Search the project for any instances of `if (ptr) { free(ptr); }`.
--   **Action 2:** Replace all instances with a direct `free(ptr)` call.
-
 ### Reorder `#include`s In Game Module
 -   **Goal:** To have `game.c/.h` include directives to be alphabetically ordererd.
 -   **Type:** refactor
@@ -37,6 +29,14 @@ This file tracks our development progress using a Kanban-style workflow.
 ---
 
 ## 3. Completed Tasks (Most Recent At The Top)
+
+### Remove Redundant Null Checks
+-   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
+-   **Type:** refactor
+-   **Priority:** Low
+-   **Branch:** refactor/remove-redundant-null-checks
+-   **Action 1:** Search the project for any instances of `if (ptr) { free(ptr); }`.
+-   **Action 2:** Replace all instances with a direct `free(ptr)` call.
 
 ### Change Command API to Use Pointers
 -   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
