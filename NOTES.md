@@ -7,3 +7,5 @@
 
 -   **Future Task (from PLAN.md):** Error Handling in `array_macros`
     -   **Topic:** Revisit the `array_macros` library to design a robust error handling strategy (e.g., returning error codes) that avoids direct logging, keeping the library decoupled.
+
+-   **Workflow Improvement:** Split `PLAN.md` into three files (`KANBAN_CURRENT.md`, `KANBAN_BACKLOG.md`, `KANBAN_COMPLETED.md`) to improve token efficiency and scalability.
