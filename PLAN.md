@@ -15,9 +15,12 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Type:** `refactor`
 -   **Priority:** Low
 -   **Branch:** `refactor/standardized-logging`
--   **Action 1 (Lookup Table):** Create a lookup table that contains the formatted name strings of commands and components (enum-to-char*).
--   **Action 2 (Implement):** Refactor logging calls throughout the codebase (e.g., in `game.c`, `command_system.c`) to use these lookup tables.
--   **Git:** Commit, merge, and clean up.
+-   **Action 1 (Create `ComponentType` enum):** Create and populate `enum component_type` in `components.h` and wrap it in a typedef to create the public ComponentType.
+-   **Action 2 (Implement Naming Functions):**
+    -   In command.h/.c, create const char* command_get_name_from_type(CommandType type);.
+    -   In components.h/.c, create const char* component_get_name_from_type(ComponentType type);.
+    -   Both functions will be implemented with a private, static lookup table and will return a safe default string on error.
+-   **Action 3 (Refactor Logging Calls):** Search the codebase and replace any manual logging of command or component names with calls to our new helper functions.
 
 ---
 
