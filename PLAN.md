@@ -10,14 +10,17 @@ This file tracks our development progress using a Kanban-style workflow.
 
 ## 2. Backlog
 
-### Refactor: Standardize Component Object Logging
--   **Goal:** All Component logging calls will use a lookup table to retrieve the object's name.
+### Refactor: Overhaul Component System
+-   **Goal:** Refactor the component system to be a generic, type-safe, and extensible system, mirroring the design of the Command system.
 -   **Type:** `refactor`
--   **Priority:** Low
--   **Branch:** `refactor/standardized-component-logging`
--   **Action 1 (Create `ComponentType` enum):** Create and populate `enum component_type` in `components.h` and wrap it in a typedef to create the public `ComponentType`.
--   **Action 2 (Implement Naming Function):** In `components.h/.c`, create `const char* component_get_name_from_type(ComponentType type);`. The function will be implemented with a private, static lookup table and will return a safe default string on error.
--   **Action 3 (Refactor Logging Calls):** Search the codebase and replace any manual logging of component names with calls to the new helper function.
+-   **Priority:** High
+-   **Branch:** `refactor/overhaul-component-system`
+-   **Action 1 (File Renaming):** Rename `components.h/.c` to `component.h/.c` and update `CMakeLists.txt`.
+-   **Action 2 (Define Generic Component):** In `component.h`, define `ComponentType` enum, `ComponentParams*` structs, and a main `Component` struct with a `union`.
+-   **Action 3 (Implement New API):** In `component.c`, implement `component_*_create`, a unified `component_free`, and `component_get_name_from_type`.
+-   **Action 4 (Overhaul Actor Internals):** In `actor.c`, replace named component pointers with a dynamic array of `Component*`. Update `actor_create` and `actor_free` to manage this array.
+-   **Action 5 (Overhaul Actor API):** In `actor.h/.c`, replace all old component functions with new generic ones: `actor_add_component`, `actor_get_component`, `actor_get_component_mut`, and `actor_remove_component`.
+-   **Action 6 (Update Codebase):** Sweep the project to replace all calls to the old component API with the new one.
 
 ---
 
