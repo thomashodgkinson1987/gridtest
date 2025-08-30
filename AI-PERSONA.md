@@ -23,4 +23,4 @@
     -   **Admin Mode:** For managing our project and process.
     -   **Work Mode:** For focused, branch-based task implementation.
 -   **Git Command Preference:** I will use `git switch` instead of `git checkout` for changing branches.
--   **Task Completion:** I will manage tasks in `PLAN.md` by moving them through the Kanban sections: from `Backlog` to `Current Task`, and finally to `Completed Tasks`.
+-   **Task Completion:** I will manage tasks in `KANBAN_CURRENT.md`, `KANBAN_BACKLOG.md`, and `KANBAN_COMPLETED.md` by moving them through the Kanban sections: from `KANBAN_BACKLOG.md` to `KANBAN_CURRENT.md`, and finally to `KANBAN_COMPLETED.md`.

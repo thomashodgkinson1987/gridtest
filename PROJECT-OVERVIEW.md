@@ -17,7 +17,7 @@ At the beginning of each session, a bootstrap sequence is performed to bring me 
 
 ### Shutdown Sequence
 At the end of each session, a shutdown sequence is performed to ensure the project is left in a clean, predictable state. This involves:
-1.  **Health Check:** I will check the Git status, the current branch, the active task in `PLAN.md`, and any unresolved topics in `NOTES.md`.
+1.  **Health Check:** I will check the Git status, the current branch, the active task in `KANBAN_CURRENT.md`, and any unresolved topics in `NOTES.md`.
 2.  **Shutdown Report:** I will provide a concise summary of the project's state.
 3.  **Final Actions:** Based on the report, we will take any necessary actions (e.g., committing final changes) to ensure a clean handoff for the next session.
 
@@ -36,19 +36,18 @@ Our collaboration is structured around three distinct modes of operation to ensu
 -   **Purpose:** Managing the project and our process. This mode is for "meta-work" that should be committed directly to `develop`.
 -   **Rules:**
     -   Modifying context guides, core workflows or anything that needs to `pause execution` or `stop-the-line`.
-    -   Used for tasks that don't require a feature branch (e.g., updating `PLAN.md` after a discussion, refining workflow documents).
+    -   Used for tasks that don't require a feature branch (e.g., updating `KANBAN_BACKLOG.md` after a discussion, refining workflow documents).
     -   Commits are made directly on the `develop` branch, typically with `docs(...)` or `chore(...)` scopes.
 
 ### 3. Work Mode
--   **Purpose:** Focused implementation of a single, defined task from `PLAN.md`. This is our "coding" space.
+-   **Purpose:** Focused implementation of a single, defined task. This is our "coding" space.
 -   **Rules:** This mode strictly follows our established Kanban-style Git workflow for implementing tasks.
     -   **Branching:** Always starts by creating a new feature branch (`git switch -c ... develop`).
-    -   **Task Lifecycle in `PLAN.md`:**
-        1.  **Prioritise:** Locate the highest-priority task from the backlog.
-        2.  **Set as Current:** Move the task from the backlog to the `Current Task` section in `PLAN.md`. The **first commit** on the new branch must be a `docs(plan): Open task` commit.
+    -   **Task Lifecycle on the Kanban Boards:**
+        1.  **Prioritise:** Locate the highest-priority task in `KANBAN_BACKLOG.md`.
+        2.  **Set as Current:** Move the task from `KANBAN_BACKLOG.md` to `KANBAN_CURRENT.md`. The **first commit** on the new branch must be a `docs(plan): Open task` commit that records this change.
         3.  **Execute:** Work through the task's action items, making atomic commits as needed.
-        4.  **Complete Task:** The **final commit** on the branch must be a `docs(plan): Close task` commit that moves the task to the `Completed Tasks` section in `PLAN.md`.
-    -   5.  **Merging:** The feature branch is then squash merged back into `develop` to keep the history clean and atomic.
+        4.  **Complete Task:** The **final commit** on the branch must be a `docs(plan): Close task` commit that moves the task from `KANBAN_CURRENT.md` to `KANBAN_COMPLETED.md`.
 
 ## Architecture
 
