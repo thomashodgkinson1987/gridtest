@@ -65,16 +65,18 @@ void game_init(void)
     // Create the player
     Colour player_colour = {255, 255, 255, 255};
     game_instance->player = actor_create(4, 4, '@', player_colour, "Player");
-    actor_add_health_component(game_instance->player, 100);
-    actor_add_combat_component(game_instance->player, 10);
+    actor_add_component(
+        game_instance->player,
+        component_health_create(100, 100));
+    actor_add_component(game_instance->player, component_combat_create(10));
     world_add_actor(game_instance->world, game_instance->player);
 
     // Create a monster
     Colour monster_colour = {0, 255, 0, 255};
     Actor *monster = actor_create(6, 4, 'g', monster_colour, "Goblin");
-    actor_add_health_component(monster, 20);
-    actor_add_combat_component(monster, 5);
-    actor_add_ai_component(monster);
+    actor_add_component(monster, component_health_create(10, 10));
+    actor_add_component(monster, component_combat_create(5));
+    actor_add_component(monster, component_ai_create());
     world_add_actor(game_instance->world, monster);
 }
 

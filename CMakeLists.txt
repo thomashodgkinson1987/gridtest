@@ -26,7 +26,8 @@ set(SOURCES
     src/command_array.c
     src/command_result.c
     src/command_system.c
-    src/components.c
+    src/component.c
+    src/component_array.c
     src/game.c
     src/log.c
     src/renderer.c

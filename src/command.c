@@ -116,8 +116,8 @@ Command command_actor_set_current_hp_create(Actor *actor, int current_hp)
     command.type = COMMAND_TYPE_ACTOR_SET_CURRENT_HP;
     command.params.actor_set_current_hp.actor = actor;
 
-    const HealthComponent *health_component =
-        actor_get_health_component(actor);
+    const Component *health_component =
+        actor_get_component(actor, COMPONENT_TYPE_HEALTH);
 
     if (!health_component)
     {
@@ -125,7 +125,7 @@ Command command_actor_set_current_hp_create(Actor *actor, int current_hp)
     }
 
     command.params.actor_set_current_hp.old_current_hp =
-        health_component->current_hp;
+        health_component->params.health.current_hp;
     command.params.actor_set_current_hp.new_current_hp = current_hp;
 
     return command;
@@ -137,15 +137,16 @@ Command command_actor_set_max_hp_create(Actor *actor, int max_hp)
     command.type = COMMAND_TYPE_ACTOR_SET_MAX_HP;
     command.params.actor_set_max_hp.actor = actor;
 
-    const HealthComponent *health_component =
-        actor_get_health_component(actor);
+    const Component *health_component =
+        actor_get_component(actor, COMPONENT_TYPE_HEALTH);
 
     if (!health_component)
     {
         log_fatal("%s: Health component does not exists\n", __func__);
     }
 
-    command.params.actor_set_max_hp.old_max_hp = health_component->max_hp;
+    command.params.actor_set_max_hp.old_max_hp =
+        health_component->params.health.max_hp;
     command.params.actor_set_max_hp.new_max_hp = max_hp;
 
     return command;
@@ -157,16 +158,18 @@ Command command_actor_set_hp_create(Actor *actor, int current_hp, int max_hp)
     command.type = COMMAND_TYPE_ACTOR_SET_HP;
     command.params.actor_set_hp.actor = actor;
 
-    const HealthComponent *health_component =
-        actor_get_health_component(actor);
+    const Component *health_component =
+        actor_get_component(actor, COMPONENT_TYPE_HEALTH);
 
     if (!health_component)
     {
         log_fatal("%s: Health component does not exists\n", __func__);
     }
 
-    command.params.actor_set_hp.old_current_hp = health_component->current_hp;
-    command.params.actor_set_hp.old_max_hp = health_component->max_hp;
+    command.params.actor_set_hp.old_current_hp =
+        health_component->params.health.current_hp;
+    command.params.actor_set_hp.old_max_hp =
+        health_component->params.health.max_hp;
     command.params.actor_set_hp.new_current_hp = current_hp;
     command.params.actor_set_hp.new_max_hp = max_hp;
 
@@ -179,8 +182,8 @@ Command command_actor_set_attack_power_create(Actor *actor, int attack_power)
     command.type = COMMAND_TYPE_ACTOR_SET_ATTACK_POWER;
     command.params.actor_set_attack_power.actor = actor;
 
-    const CombatComponent *combat_component =
-        actor_get_combat_component(actor);
+    const Component *combat_component =
+        actor_get_component(actor, COMPONENT_TYPE_COMBAT);
 
     if (!combat_component)
     {
@@ -188,7 +191,7 @@ Command command_actor_set_attack_power_create(Actor *actor, int attack_power)
     }
 
     command.params.actor_set_attack_power.old_attack_power =
-        combat_component->attack_power;
+        combat_component->params.combat.attack_power;
     command.params.actor_set_attack_power.new_attack_power = attack_power;
 
     return command;
@@ -551,8 +554,8 @@ CommandResult command_execute(Command *command)
         Actor *actor = params->actor;
         const int old_current_hp = params->old_current_hp;
         const int new_current_hp = params->new_current_hp;
-        HealthComponent *health_component =
-            actor_get_health_component_mut(actor);
+        Component *health_component =
+            actor_get_component_mut(actor, COMPONENT_TYPE_HEALTH);
         if (!health_component)
         {
             log_fatal(
@@ -560,22 +563,24 @@ CommandResult command_execute(Command *command)
                 "null\n",
                 __func__);
         }
-        health_component->current_hp = new_current_hp;
-        if (health_component->current_hp < 0)
-            health_component->current_hp = 0;
-        else if (health_component->current_hp > health_component->max_hp)
-            health_component->current_hp = health_component->max_hp;
+        health_component->params.health.current_hp = new_current_hp;
+        if (health_component->params.health.current_hp < 0)
+            health_component->params.health.current_hp = 0;
+        else if (health_component->params.health.current_hp >
+                 health_component->params.health.max_hp)
+            health_component->params.health.current_hp =
+                health_component->params.health.max_hp;
         log_message(
             LOG_LEVEL_DEBUG,
             "%s [%s]: old_current_hp=%i new_current_hp=%i",
             __func__,
             command_get_name_from_type(command->type),
             old_current_hp,
-            health_component->current_hp);
+            health_component->params.health.current_hp);
         CommandResult result = command_result_actor_set_current_hp_create(
             actor,
             old_current_hp,
-            health_component->current_hp);
+            health_component->params.health.current_hp);
         break;
     }
 
@@ -585,19 +590,21 @@ CommandResult command_execute(Command *command)
         Actor *actor = params->actor;
         const int old_max_hp = params->old_max_hp;
         const int new_max_hp = params->new_max_hp;
-        HealthComponent *health_component =
-            actor_get_health_component_mut(actor);
+        Component *health_component =
+            actor_get_component_mut(actor, COMPONENT_TYPE_HEALTH);
         if (!health_component)
         {
             log_fatal(
                 "%s: COMMAND_TYPE_ACTOR_SET_MAX_HP health component is null\n",
                 __func__);
         }
-        health_component->max_hp = new_max_hp;
-        if (health_component->max_hp < 0)
-            health_component->max_hp = 0;
-        if (health_component->current_hp > health_component->max_hp)
-            health_component->current_hp = health_component->max_hp;
+        health_component->params.health.max_hp = new_max_hp;
+        if (health_component->params.health.max_hp < 0)
+            health_component->params.health.max_hp = 0;
+        if (health_component->params.health.current_hp >
+            health_component->params.health.max_hp)
+            health_component->params.health.current_hp =
+                health_component->params.health.max_hp;
         // TODO: Add old/new current_hp it could be changed
         log_message(
             LOG_LEVEL_DEBUG,
@@ -605,11 +612,11 @@ CommandResult command_execute(Command *command)
             __func__,
             command_get_name_from_type(command->type),
             old_max_hp,
-            health_component->max_hp);
+            health_component->params.health.max_hp);
         CommandResult result = command_result_actor_set_max_hp_create(
             actor,
             old_max_hp,
-            health_component->max_hp);
+            health_component->params.health.max_hp);
         return result;
     }
 
@@ -621,22 +628,24 @@ CommandResult command_execute(Command *command)
         const int old_max_hp = params->old_max_hp;
         const int new_current_hp = params->new_current_hp;
         const int new_max_hp = params->new_max_hp;
-        HealthComponent *health_component =
-            actor_get_health_component_mut(actor);
+        Component *health_component =
+            actor_get_component_mut(actor, COMPONENT_TYPE_HEALTH);
         if (!health_component)
         {
             log_fatal(
                 "%s: COMMAND_TYPE_ACTOR_SET_HP health component is null\n",
                 __func__);
         }
-        health_component->current_hp = new_current_hp;
-        health_component->max_hp = new_max_hp;
-        if (health_component->current_hp < 0)
-            health_component->current_hp = 0;
-        if (health_component->max_hp < 0)
-            health_component->max_hp = 0;
-        if (health_component->current_hp > health_component->max_hp)
-            health_component->current_hp = health_component->max_hp;
+        health_component->params.health.current_hp = new_current_hp;
+        health_component->params.health.max_hp = new_max_hp;
+        if (health_component->params.health.current_hp < 0)
+            health_component->params.health.current_hp = 0;
+        if (health_component->params.health.max_hp < 0)
+            health_component->params.health.max_hp = 0;
+        if (health_component->params.health.current_hp >
+            health_component->params.health.max_hp)
+            health_component->params.health.current_hp =
+                health_component->params.health.max_hp;
         log_message(
             LOG_LEVEL_DEBUG,
             "%s [%s]: "
@@ -646,14 +655,14 @@ CommandResult command_execute(Command *command)
             command_get_name_from_type(command->type),
             old_current_hp,
             old_max_hp,
-            health_component->current_hp,
-            health_component->max_hp);
+            health_component->params.health.current_hp,
+            health_component->params.health.max_hp);
         CommandResult result = command_result_actor_set_hp_create(
             actor,
             old_current_hp,
             old_max_hp,
-            health_component->current_hp,
-            health_component->max_hp);
+            health_component->params.health.current_hp,
+            health_component->params.health.max_hp);
         return result;
     }
 
@@ -664,8 +673,8 @@ CommandResult command_execute(Command *command)
         Actor *actor = params->actor;
         const int old_attack_power = params->old_attack_power;
         const int new_attack_power = params->new_attack_power;
-        CombatComponent *combat_component =
-            actor_get_combat_component_mut(actor);
+        Component *combat_component =
+            actor_get_component_mut(actor, COMPONENT_TYPE_COMBAT);
         if (!combat_component)
         {
             log_fatal(
@@ -673,9 +682,9 @@ CommandResult command_execute(Command *command)
                 "null\n",
                 __func__);
         }
-        combat_component->attack_power = new_attack_power;
-        if (combat_component->attack_power < 0)
-            combat_component->attack_power = 0;
+        combat_component->params.combat.attack_power = new_attack_power;
+        if (combat_component->params.combat.attack_power < 0)
+            combat_component->params.combat.attack_power = 0;
         log_message(
             LOG_LEVEL_DEBUG,
             "%s [%s]: "
@@ -684,11 +693,11 @@ CommandResult command_execute(Command *command)
             __func__,
             command_get_name_from_type(command->type),
             old_attack_power,
-            combat_component->attack_power);
+            combat_component->params.combat.attack_power);
         CommandResult result = command_result_actor_set_attack_power_create(
             actor,
             old_attack_power,
-            combat_component->attack_power);
+            combat_component->params.combat.attack_power);
         return result;
     }
 
@@ -719,8 +728,8 @@ CommandResult command_execute(Command *command)
             &command->params.actor_translate_health;
         Actor *actor = params->actor;
         const int translation = params->translation;
-        HealthComponent *health_component =
-            actor_get_health_component_mut(actor);
+        Component *health_component =
+            actor_get_component_mut(actor, COMPONENT_TYPE_HEALTH);
         if (!health_component)
         {
             log_fatal(
@@ -728,13 +737,15 @@ CommandResult command_execute(Command *command)
                 "null\n",
                 __func__);
         }
-        const int old_current_hp = health_component->current_hp;
-        health_component->current_hp += translation;
-        if (health_component->current_hp < 0)
-            health_component->current_hp = 0;
-        else if (health_component->current_hp > health_component->max_hp)
-            health_component->current_hp = health_component->max_hp;
-        bool did_die = health_component->current_hp == 0 && old_current_hp > 0;
+        const int old_current_hp = health_component->params.health.current_hp;
+        health_component->params.health.current_hp += translation;
+        if (health_component->params.health.current_hp < 0)
+            health_component->params.health.current_hp = 0;
+        else if (health_component->params.health.current_hp >
+                 health_component->params.health.max_hp)
+            health_component->params.health.current_hp =
+                health_component->params.health.max_hp;
+        bool did_die = health_component->params.health.current_hp == 0 && old_current_hp > 0;
         log_message(
             LOG_LEVEL_DEBUG,
             "%s [%s]: translation=%i",

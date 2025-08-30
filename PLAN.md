@@ -2,6 +2,10 @@
 
 This file tracks our development progress using a Kanban-style workflow.
 
+# Development Plan
+
+This file tracks our development progress using a Kanban-style workflow.
+
 ## 1. Current Task
 
 *empty*
@@ -9,6 +13,12 @@ This file tracks our development progress using a Kanban-style workflow.
 ---
 
 ## 2. Backlog
+
+*empty*
+
+---
+
+## 3. Completed Tasks (Most Recent At The Top)
 
 ### Refactor: Overhaul Component System
 -   **Goal:** Refactor the component system to be a generic, type-safe, and extensible system, mirroring the design of the Command system.
@@ -21,10 +31,6 @@ This file tracks our development progress using a Kanban-style workflow.
 -   **Action 4 (Overhaul Actor Internals):** In `actor.c`, replace named component pointers with a dynamic array of `Component*`. Update `actor_create` and `actor_free` to manage this array.
 -   **Action 5 (Overhaul Actor API):** In `actor.h/.c`, replace all old component functions with new generic ones: `actor_add_component`, `actor_get_component`, `actor_get_component_mut`, and `actor_remove_component`.
 -   **Action 6 (Update Codebase):** Sweep the project to replace all calls to the old component API with the new one.
-
----
-
-## 3. Completed Tasks (Most Recent At The Top)
 
 ### Refactor: Standardize Command Object Logging
 -   **Goal:** All Command logging calls will use a lookup table to retrieve the object's name.

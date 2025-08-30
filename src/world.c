@@ -164,8 +164,8 @@ void world_update_actors(World *world)
     // This is the core of the monster turn logic.
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
     {
-        const Actor *actor = actor_array_get(&world->actors, i);
-        if (actor_get_ai_component(actor))
+        Actor *actor = actor_array_get(&world->actors, i);
+        if (actor_get_component(actor, COMPONENT_TYPE_AI))
         {
             log_message(LOG_LEVEL_INFO, "AI actor takes its turn.");
         }
@@ -177,20 +177,22 @@ Command world_actor_attack_actor(
     Actor *attacker,
     Actor *defender)
 {
-    const CombatComponent *attacker_combat_component =
-        actor_get_combat_component(attacker);
+    const Component *combat_component = actor_get_component(
+        attacker,
+        COMPONENT_TYPE_COMBAT);
 
-    if (!attacker_combat_component)
+    if (!combat_component)
     {
         log_fatal(
-            "%s: Attacker '%s' does not have combat component",
+            "%s: Attacker '%s' does not have [%s] component",
             __func__,
-            actor_get_name(attacker));
+            actor_get_name(attacker),
+            component_get_name_from_type(COMPONENT_TYPE_COMBAT));
     }
 
     Command command = command_actor_translate_health_create(
         defender,
-        -attacker_combat_component->attack_power);
+        -combat_component->params.combat.attack_power);
 
     return command;
 }

@@ -1,15 +1,14 @@
 #include "actor.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "colour.h"
-#include "components.h"
+#include "component.h"
+#include "component_array.h"
 #include "log.h"
 
 // The concrete definition of the actor struct.
-// This is hidden from other modules, which only see the opaque pointer.
+
 struct actor
 {
     int x;
@@ -17,12 +16,31 @@ struct actor
     Colour colour;
     char glyph;
     char *name;
-
-    // Components (can be NULL)
-    HealthComponent *health_component;
-    CombatComponent *combat_component;
-    AIComponent *ai_component;
+    ComponentArray components;
 };
+
+// --- Static Functions ---
+
+static Component *find_component(
+    Actor *actor,
+    ComponentType type,
+    size_t *out_index)
+{
+    for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
+    {
+        Component *component = component_array_get(&actor->components, i);
+        if (component->type == type)
+        {
+            if (out_index)
+                *out_index = i;
+            return component;
+        }
+    }
+
+    if (out_index)
+        *out_index = (size_t)-1;
+    return NULL;
+}
 
 // --- Actor Creation/Destruction ---
 
@@ -54,11 +72,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
             __func__);
     }
 
-    // Initialize all component pointers to NULL.
-    // Components must be created and added separately.
-    actor->health_component = NULL;
-    actor->combat_component = NULL;
-    actor->ai_component = NULL;
+    actor->components = component_array_create(1);
 
     return actor;
 }
@@ -67,139 +81,55 @@ void actor_free(Actor *actor)
 {
     free(actor->name);
 
-    // Free each component if it exists.
-    if (actor->health_component)
+    for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
     {
-        health_component_free(actor->health_component);
-    }
-    if (actor->combat_component)
-    {
-        combat_component_free(actor->combat_component);
-    }
-    if (actor->ai_component)
-    {
-        ai_component_free(actor->ai_component);
+        Component *component = component_array_get(&actor->components, i);
+        component_free(component);
     }
 
-    // Finally, free the actor struct itself.
+    component_array_free(&actor->components);
+
     free(actor);
 }
 
 // --- Actor Component Management ---
 
-void actor_add_health_component(Actor *actor, int max_hp)
+void actor_add_component(Actor *actor, Component *component)
 {
-    if (actor->health_component)
+    if (find_component(actor, component->type, NULL))
     {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component already exists",
-            __func__);
+        log_fatal(
+            "%s: Actor already has [%s] component",
+            __func__,
+            component_get_name_from_type(component->type));
     }
-    else
-    {
-        actor->health_component = health_component_create(max_hp);
-    }
-}
-void actor_add_combat_component(Actor *actor, int attack_power)
-{
-    if (actor->combat_component)
-    {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component already exists",
-            __func__);
-    }
-    else
-    {
-        actor->combat_component = combat_component_create(attack_power);
-    }
-}
-void actor_add_ai_component(Actor *actor)
-{
-    if (actor->ai_component)
-    {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component already exists",
-            __func__);
-    }
-    else
-    {
-        actor->ai_component = ai_component_create();
-    }
+
+    component_array_push(&actor->components, component);
 }
 
-void actor_remove_health_component(Actor *actor)
+void actor_remove_component(Actor *actor, ComponentType type)
 {
-    if (!actor->health_component)
+    size_t index = 0;
+
+    if (!find_component(actor, type, &index))
     {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component does not exists",
-            __func__);
+        log_fatal(
+            "%s: Actor does not have a [%s] component",
+            __func__,
+            component_get_name_from_type(type));
     }
-    else
-    {
-        health_component_free(actor->health_component);
-        actor->health_component = NULL;
-    }
-}
-void actor_remove_combat_component(Actor *actor)
-{
-    if (!actor->combat_component)
-    {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component does not exists",
-            __func__);
-    }
-    else
-    {
-        combat_component_free(actor->combat_component);
-        actor->combat_component = NULL;
-    }
-}
-void actor_remove_ai_component(Actor *actor)
-{
-    if (!actor->ai_component)
-    {
-        log_message(
-            LOG_LEVEL_WARN,
-            "%s: Component does not exists",
-            __func__);
-    }
-    else
-    {
-        ai_component_free(actor->ai_component);
-        actor->ai_component = NULL;
-    }
+
+    component_array_remove(&actor->components, index);
 }
 
-const HealthComponent *actor_get_health_component(const Actor *actor)
+const Component *actor_get_component(Actor *actor, ComponentType type)
 {
-    return actor->health_component;
-}
-const CombatComponent *actor_get_combat_component(const Actor *actor)
-{
-    return actor->combat_component;
-}
-const AIComponent *actor_get_ai_component(const Actor *actor)
-{
-    return actor->ai_component;
+    return find_component(actor, type, NULL);
 }
 
-HealthComponent *actor_get_health_component_mut(Actor *actor)
+Component *actor_get_component_mut(Actor *actor, ComponentType type)
 {
-    return actor->health_component;
-}
-CombatComponent *actor_get_combat_component_mut(Actor *actor)
-{
-    return actor->combat_component;
-}
-AIComponent *actor_get_ai_component_mut(Actor *actor)
-{
-    return actor->ai_component;
+    return find_component(actor, type, NULL);
 }
 
 // --- Actor Getters/Setters ---

@@ -2,7 +2,7 @@
 #define ACTOR_H
 
 #include "colour.h"
-#include "components.h"
+#include "component.h"
 
 // Opaque pointer type for an Actor. The struct is defined in actor.c.
 typedef struct actor Actor;
@@ -14,21 +14,10 @@ void actor_free(Actor *actor);
 
 // --- Actor Component Management ---
 
-void actor_add_health_component(Actor *actor, int max_hp);
-void actor_add_combat_component(Actor *actor, int attack_power);
-void actor_add_ai_component(Actor *actor);
-
-void actor_remove_health_component(Actor *actor);
-void actor_remove_combat_component(Actor *actor);
-void actor_remove_ai_component(Actor *actor);
-
-const HealthComponent *actor_get_health_component(const Actor *actor);
-const CombatComponent *actor_get_combat_component(const Actor *actor);
-const AIComponent *actor_get_ai_component(const Actor *actor);
-
-HealthComponent *actor_get_health_component_mut(Actor *actor);
-CombatComponent *actor_get_combat_component_mut(Actor *actor);
-AIComponent *actor_get_ai_component_mut(Actor *actor);
+void actor_add_component(Actor *actor, Component *component);
+void actor_remove_component(Actor *actor, ComponentType type);
+const Component *actor_get_component(Actor *actor, ComponentType type);
+Component *actor_get_component_mut(Actor *actor, ComponentType type);
 
 // --- Actor Getters/Setters ---
 
