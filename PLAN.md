@@ -2,10 +2,6 @@
 
 This file tracks our development progress using a Kanban-style workflow.
 
-# Development Plan
-
-This file tracks our development progress using a Kanban-style workflow.
-
 ## 1. Current Task
 
 *empty*
