@@ -1,5 +1,6 @@
 #include "actor.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "colour.h"
@@ -7,10 +8,11 @@
 #include "component_array.h"
 #include "log.h"
 
-// The concrete definition of the actor struct.
+static uint64_t next_id = 1;
 
 struct actor
 {
+    uint64_t id;
     int x;
     int y;
     Colour colour;
@@ -42,7 +44,7 @@ static Component *find_component(
     return NULL;
 }
 
-// --- Actor Creation/Destruction ---
+// --- Creation/Destruction ---
 
 Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 {
@@ -55,9 +57,10 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
     if (!actor)
     {
         log_perror("Actor allocation failure");
-        log_fatal("%s: Fatal error due to actor allocation failure", __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
 
+    actor->id = next_id++;
     actor->x = x;
     actor->y = y;
     actor->glyph = glyph;
@@ -67,9 +70,7 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
     if (!actor->name)
     {
         log_perror("Actor name allocation failure");
-        log_fatal(
-            "%s: Fatal error due to actor name allocation failure",
-            __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
 
     actor->components = component_array_create(1);
@@ -79,20 +80,18 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 
 void actor_free(Actor *actor)
 {
-    free(actor->name);
-
     for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
     {
         Component *component = component_array_get(&actor->components, i);
         component_free(component);
     }
-
     component_array_free(&actor->components);
 
+    free(actor->name);
     free(actor);
 }
 
-// --- Actor Component Management ---
+// --- Component Management ---
 
 void actor_add_component(Actor *actor, Component *component)
 {
@@ -132,7 +131,12 @@ Component *actor_get_component_mut(Actor *actor, ComponentType type)
     return find_component(actor, type, NULL);
 }
 
-// --- Actor Getters/Setters ---
+// --- Getters/Setters ---
+
+uint64_t actor_get_id(const Actor *actor)
+{
+    return actor->id;
+}
 
 int actor_get_x(const Actor *actor)
 {
@@ -142,10 +146,10 @@ int actor_get_y(const Actor *actor)
 {
     return actor->y;
 }
-void actor_get_position(const Actor *actor, int *x, int *y)
+void actor_get_position(const Actor *actor, int *out_x, int *out_y)
 {
-    *x = actor->x;
-    *y = actor->y;
+    *out_x = actor->x;
+    *out_y = actor->y;
 }
 char actor_get_glyph(const Actor *actor)
 {

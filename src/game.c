@@ -7,101 +7,93 @@
 #include "actor.h"
 #include "colour.h"
 #include "command.h"
-#include "command_result.h"
 #include "command_system.h"
 #include "log.h"
 #include "renderer.h"
 #include "world.h"
 
-// The concrete definition of the game struct.
 struct game
 {
-    // --- Core Subsystems ---
     Renderer *renderer;
     World *world;
     CommandSystem *command_system;
 
-    // --- Game State ---
     bool is_running;
     bool is_player_turn_complete;
 
-    // --- Player Reference ---
     Actor *player;
 };
 
-// A single static instance of the game state. This is a simple way to manage
-// the global state of the game without passing the Game pointer everywhere.
-static struct game *game_instance = NULL;
-
 // --- Static Function Prototypes ---
 
-static void handle_input(void);
-static void update(void);
-static void render(void);
+static void handle_input(Game *game);
+static void update(Game *game);
+static void render(Game *game);
 static void create_map(World *world);
 
 // --- Public Function Implementations ---
 
-void game_init(void)
+Game *game_create(
+    Renderer *renderer,
+    World *world,
+    CommandSystem *command_system)
 {
-    game_instance = malloc(sizeof(*game_instance));
-    if (!game_instance)
+    Game *game = malloc(sizeof(*game));
+    if (!game)
     {
         log_perror("Game instance allocation failure");
-        log_fatal(
-            "%s: Fatal error due to game instance allocation failure",
-            __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
 
-    game_instance->renderer = renderer_create(512, 512, "gridtest");
-    game_instance->world = world_create(16, 16);
-    game_instance->command_system = command_system_create();
-    game_instance->is_running = true;
-    game_instance->is_player_turn_complete = false;
+    game->renderer = renderer;
+    game->world = world;
+    game->command_system = command_system;
+    game->is_running = true;
+    game->is_player_turn_complete = false;
 
-    // Create a simple map layout
-    create_map(game_instance->world);
+    return game;
+}
 
-    // Create the player
+void game_init(Game *game)
+{
+    create_map(game->world);
+
     Colour player_colour = {255, 255, 255, 255};
-    game_instance->player = actor_create(4, 4, '@', player_colour, "Player");
-    actor_add_component(
-        game_instance->player,
-        component_health_create(100, 100));
-    actor_add_component(game_instance->player, component_combat_create(10));
-    world_add_actor(game_instance->world, game_instance->player);
+    game->player = actor_create(4, 4, '@', player_colour, "Player");
+    actor_add_component(game->player, component_health_create(100, 100));
+    actor_add_component(game->player, component_combat_create(10));
+    world_add_actor(game->world, game->player);
 
-    // Create a monster
     Colour monster_colour = {0, 255, 0, 255};
     Actor *monster = actor_create(6, 4, 'g', monster_colour, "Goblin");
     actor_add_component(monster, component_health_create(10, 10));
     actor_add_component(monster, component_combat_create(5));
     actor_add_component(monster, component_ai_create());
-    world_add_actor(game_instance->world, monster);
+    world_add_actor(game->world, monster);
 }
 
-void game_run(void)
+void game_run(Game *game)
 {
-    while (game_instance->is_running)
+    while (game->is_running)
     {
         if (renderer_should_close())
         {
-            game_instance->is_running = false;
+            game->is_running = false;
             continue;
         }
 
-        handle_input();
-        update();
-        render();
+        handle_input(game);
+        update(game);
+        render(game);
     }
 }
 
-void game_shutdown(void)
+void game_free(Game *game)
 {
-    command_system_free(game_instance->command_system);
-    world_free(game_instance->world);
-    renderer_free(game_instance->renderer);
-    free(game_instance);
+    command_system_free(game->command_system);
+    world_free(game->world);
+    renderer_free(game->renderer);
+    free(game);
 }
 
 void game_add_command(Game *game, const Command *command)
@@ -111,7 +103,7 @@ void game_add_command(Game *game, const Command *command)
 
 // --- Static Function Implementations ---
 
-static void handle_input(void)
+static void handle_input(Game *game)
 {
     int dx = 0;
     int dy = 0;
@@ -148,66 +140,62 @@ static void handle_input(void)
     if (dx != 0 || dy != 0)
     {
         int player_x, player_y;
-        actor_get_position(game_instance->player, &player_x, &player_y);
+        actor_get_position(game->player, &player_x, &player_y);
 
         int target_x = player_x + dx;
         int target_y = player_y + dy;
 
-        // Check for actors at the target location
         Actor *target_actor = world_get_actor_at_mut(
-            game_instance->world,
+            game->world,
             target_x,
             target_y);
 
         if (target_actor)
         {
             Command command = world_actor_attack_actor(
-                game_instance->world,
-                game_instance->player,
+                game->world,
+                game->player,
                 target_actor);
 
             if (command.type != COMMAND_TYPE_NULL)
             {
-                game_add_command(game_instance, &command);
+                game_add_command(game, &command);
             }
         }
         else if (
-            world_is_tile_walkable(game_instance->world, target_x, target_y))
+            world_is_tile_walkable(game->world, target_x, target_y))
         {
             Command command = command_actor_set_position_create(
-                game_instance->player,
+                game->player,
                 target_x,
                 target_y);
-            game_add_command(game_instance, &command);
+            game_add_command(game, &command);
         }
 
-        game_instance->is_player_turn_complete = true;
+        game->is_player_turn_complete = true;
     }
 }
 
-static void update(void)
+static void update(Game *game)
 {
-    // has player took their turn?
-    if (game_instance->is_player_turn_complete)
+    if (game->is_player_turn_complete)
     {
-        // Process all commands in the queue
         command_system_process_queue(
-            game_instance->command_system,
-            game_instance->renderer,
-            game_instance->world);
+            game->command_system,
+            game->renderer,
+            game->world);
 
-        world_update_actors(game_instance->world);
-        game_instance->is_player_turn_complete = false;
+        world_update_actors(game->world);
+        game->is_player_turn_complete = false;
     }
 }
 
-static void render(void)
+static void render(Game *game)
 {
-    renderer_begin_frame(game_instance->renderer, game_instance->world);
-    renderer_end_frame(game_instance->renderer);
+    renderer_begin_frame(game->renderer, game->world);
+    renderer_end_frame(game->renderer);
 }
 
-// A simple helper function to carve out a rectangular room.
 static void create_map(World *world)
 {
     int room_x = 1;

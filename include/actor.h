@@ -1,29 +1,32 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
+#include <stdint.h>
+
 #include "colour.h"
 #include "component.h"
 
-// Opaque pointer type for an Actor. The struct is defined in actor.c.
 typedef struct actor Actor;
 
-// --- Actor Creation/Destruction ---
+// --- Creation/Destruction ---
 
 Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name);
 void actor_free(Actor *actor);
 
-// --- Actor Component Management ---
+// --- Component Management ---
 
 void actor_add_component(Actor *actor, Component *component);
 void actor_remove_component(Actor *actor, ComponentType type);
 const Component *actor_get_component(Actor *actor, ComponentType type);
 Component *actor_get_component_mut(Actor *actor, ComponentType type);
 
-// --- Actor Getters/Setters ---
+// --- Getters/Setters ---
+
+uint64_t actor_get_id(const Actor *actor);
 
 int actor_get_x(const Actor *actor);
 int actor_get_y(const Actor *actor);
-void actor_get_position(const Actor *actor, int *x, int *y);
+void actor_get_position(const Actor *actor, int *out_x, int *out_y);
 char actor_get_glyph(const Actor *actor);
 Colour actor_get_colour(const Actor *actor);
 unsigned char actor_get_r(const Actor *actor);

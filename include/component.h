@@ -42,7 +42,6 @@ Component *component_combat_create(int attack_power);
 Component *component_ai_create(void);
 
 void component_free(Component *component);
-
 const char *component_get_name_from_type(ComponentType type);
 
 #endif // COMPONENT_H

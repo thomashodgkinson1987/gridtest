@@ -15,19 +15,16 @@
 
 struct renderer
 {
-    // --- Window Properties ---
     int screen_width;
     int screen_height;
     char *screen_title;
     int target_fps;
 
-    // --- Font & Glyph Atlas ---
     Texture2D font_texture;
     int glyph_width;
     int glyph_height;
     Rectangle glyph_atlas[256];
 
-    // --- Virtual Screen (Off-screen Buffer) ---
     RenderTexture2D virtual_screen;
     int virtual_width;
     int virtual_height;
@@ -36,7 +33,6 @@ struct renderer
 
 // --- Static Helper Functions ---
 
-// Helper to convert our custom Colour struct to a Raylib Color struct.
 static Color to_raylib_colour(Colour colour)
 {
     return (Color){
@@ -46,7 +42,6 @@ static Color to_raylib_colour(Colour colour)
         .a = colour.a};
 }
 
-// The core logic for building the glyph atlas lookup table.
 static void build_glyph_atlas(Renderer *renderer)
 {
     // Define the characters in the order they appear in the font texture.
@@ -100,7 +95,7 @@ static void build_glyph_atlas(Renderer *renderer)
     }
 }
 
-static void draw_world(const Renderer *renderer, World *world)
+static void draw_world(Renderer *renderer, const World *world)
 {
     for (int y = 0; y < world_get_height(world); ++y)
     {
@@ -150,21 +145,15 @@ static void draw_world(const Renderer *renderer, World *world)
     }
 }
 
-// This is the core of the new system. It draws the entire game world
-// to the off-screen render texture.
-static void redraw_virtual_screen(Renderer *renderer, World *world)
+static void redraw_virtual_screen(Renderer *renderer, const World *world)
 {
-    // Activate drawing to our off-screen buffer
     BeginTextureMode(renderer->virtual_screen);
-    ClearBackground(BLACK); // Clear the buffer
+    ClearBackground(BLACK);
 
-    // Render current world state to off-screen buffer
     draw_world(renderer, world);
 
-    // Deactivate drawing to the off-screen buffer
     EndTextureMode();
 
-    // Mark the screen as clean
     renderer->is_dirty = false;
 }
 
@@ -179,9 +168,7 @@ Renderer *renderer_create(
     if (!renderer)
     {
         log_perror("Renderer allocation failure");
-        log_fatal(
-            "%s: Fatal error due to renderer allocation failure",
-            __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
 
     renderer->screen_width = screen_width;
@@ -190,9 +177,7 @@ Renderer *renderer_create(
     if (!renderer->screen_title)
     {
         log_perror("Screen title allocation failure");
-        log_fatal(
-            "%s: Fatal error due to screen title allocation failure",
-            __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
     renderer->target_fps = 60;
 
@@ -202,29 +187,24 @@ Renderer *renderer_create(
         renderer->screen_title);
     SetTargetFPS(renderer->target_fps);
 
-    // Load the font texture
     renderer->font_texture = LoadTexture("res/bitmap_font_0001.png");
     if (renderer->font_texture.id == 0)
     {
-        // A simple way to handle the error if the texture is not found
         log_fatal(
             "%s: Failed to load font texture 'res/bitmap_font_0001.png'\n",
             __func__);
     }
 
-    // Build the lookup table
     renderer->glyph_width = 12;
     renderer->glyph_height = 12;
     build_glyph_atlas(renderer);
 
-    // Calculate virtual screen dimensions and create the render texture
-    renderer->virtual_width = 256;  // manually linked with screen size
-    renderer->virtual_height = 256; // in game.c
+    renderer->virtual_width = 256;
+    renderer->virtual_height = 256;
     renderer->virtual_screen = LoadRenderTexture(
         renderer->virtual_width,
         renderer->virtual_height);
 
-    // Force an initial draw on the first frame
     renderer->is_dirty = true;
 }
 
@@ -232,11 +212,10 @@ void renderer_free(Renderer *renderer)
 {
     UnloadRenderTexture(renderer->virtual_screen);
     UnloadTexture(renderer->font_texture);
+    CloseWindow();
 
     free(renderer->screen_title);
     free(renderer);
-
-    CloseWindow();
 }
 
 void renderer_begin_frame(Renderer *renderer, World *world)
@@ -250,15 +229,12 @@ void renderer_begin_frame(Renderer *renderer, World *world)
     ClearBackground(BLACK);
 }
 
-void renderer_end_frame(const Renderer *renderer)
+void renderer_end_frame(Renderer *renderer)
 {
-    // Draw the entire virtual screen texture to the window in one go.
-    // This is where scaling happens. We use DrawTexturePro for flexibility.
     Rectangle source_rect = {
         0.0f,
         0.0f,
         (float)renderer->virtual_screen.texture.width,
-        // Inverting height is needed because OpenGL textures are upside-down.
         -(float)renderer->virtual_screen.texture.height};
 
     Rectangle dest_rect = {
@@ -271,9 +247,9 @@ void renderer_end_frame(const Renderer *renderer)
         renderer->virtual_screen.texture,
         source_rect,
         dest_rect,
-        (Vector2){0, 0}, // Origin
-        0.0f,            // Rotation
-        WHITE);          // Tint
+        (Vector2){0, 0},
+        0.0f,
+        WHITE);
 
     EndDrawing();
 }
@@ -286,15 +262,12 @@ void renderer_draw_glyph(
     Colour fg_colour,
     Colour bg_colour)
 {
-    // Calculate the destination pixel position on the screen
     const float dest_x = (float)grid_x * renderer->glyph_width;
     const float dest_y = (float)grid_y * renderer->glyph_height;
 
-    // Convert our custom Colour to Raylib Color
     const Color raylib_bg = to_raylib_colour(bg_colour);
     const Color raylib_fg = to_raylib_colour(fg_colour);
 
-    // Draw the background cell colour
     DrawRectangle(
         dest_x,
         dest_y,
@@ -332,8 +305,6 @@ void renderer_draw_text(
     Colour colour,
     int size)
 {
-    // This is a simple wrapper around Raylib's default font drawing,
-    // not our bitmap font. Useful for debug text.
     DrawText(text, pixel_x, pixel_y, size, to_raylib_colour(colour));
 }
 
@@ -341,8 +312,6 @@ bool renderer_should_close(void)
 {
     return WindowShouldClose();
 }
-
-// --- State Management ---
 
 void renderer_set_dirty(Renderer *renderer)
 {

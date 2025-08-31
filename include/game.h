@@ -1,18 +1,22 @@
 #ifndef GAME_H
 #define GAME_H
 
-// Forward declarations
 typedef struct command Command;
 
-// Opaque pointer type for the Game.
+typedef struct renderer Renderer;
+typedef struct world World;
+typedef struct command_system CommandSystem;
+
 typedef struct game Game;
 
-// Manages the overall application state and main loop.
-void game_init(void);
-void game_run(void);
-void game_shutdown(void);
+Game *game_create(
+    Renderer *renderer,
+    World *world,
+    CommandSystem *command_system);
+void game_init(Game *game);
+void game_run(Game *game);
+void game_free(Game *game);
 
-// Functions to manage command queue
 void game_add_command(Game *game, const Command *command);
 
 #endif // GAME_H
