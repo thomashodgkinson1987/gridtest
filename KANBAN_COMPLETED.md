@@ -1,5 +1,22 @@
 # Completed Tasks (Most Recent At The Top)
 
+## Lesson: Implement a Hash Map in C
+-   **Goal:** Learn about and discuss the implementation of hash maps in C.
+-   **Type:** `lesson`
+-   **Priority:** High
+-   **Branch:** none
+-   **Action 1 (Research):** Independently research the theory and common implementation patterns of hash maps in C (hash functions, collision resolution, etc.).
+-   **Action 2 (Discussion):** Hold a discussion session to review findings, clarify concepts, and sketch out a potential C implementation for future use in the project.
+
+## Refactor: Standardize Enum Naming to use `_NONE`
+-   **Goal:** Refactor all enums to use `_NONE` as the zero-value member instead of `_NULL` for better semantic clarity.
+-   **Type:** `refactor`
+-   **Priority:** Medium
+-   **Branch:** `refactor/standardize-enum-naming`
+-   **Action 1:** Find all enums that use a `_NULL` suffix for their default/zero member (e.g., `CommandType`, `ComponentType`).
+-   **Action 2:** Rename the member to use the `_NONE` suffix.
+-   **Action 3:** Update all call sites throughout the codebase that reference the old `_NULL` member name.
+
 ## Chore: Split `PLAN.md` into Multiple Files
 -   **Goal:** Split the main `PLAN.md` file into separate files for each Kanban section (`Current`, `Backlog`, `Completed`) to improve token efficiency.
 -   **Type:** `chore`
