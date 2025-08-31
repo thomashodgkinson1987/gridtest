@@ -96,9 +96,17 @@ void game_free(Game *game)
     free(game);
 }
 
-void game_add_command(Game *game, const Command *command)
+bool game_add_command(Game *game, const Command *command)
 {
-    command_system_add_command(game->command_system, command);
+    if (
+        command->type != COMMAND_TYPE_NONE &&
+        command->type != COMMAND_TYPE_COUNT)
+    {
+        command_system_add_command(game->command_system, command);
+        return true;
+    }
+
+    return false;
 }
 
 // --- Static Function Implementations ---
@@ -139,31 +147,23 @@ static void handle_input(Game *game)
 
     if (dx != 0 || dy != 0)
     {
-        int player_x, player_y;
-        actor_get_position(game->player, &player_x, &player_y);
+        const int player_x = actor_get_x(game->player);
+        const int player_y = actor_get_y(game->player);
 
-        int target_x = player_x + dx;
-        int target_y = player_y + dy;
+        const int target_x = player_x + dx;
+        const int target_y = player_y + dy;
 
-        Actor *target_actor = world_get_actor_at_mut(
-            game->world,
-            target_x,
-            target_y);
+        Actor *target = world_get_actor_at_mut(game->world, target_x, target_y);
 
-        if (target_actor)
+        if (target)
         {
             Command command = world_actor_attack_actor(
                 game->world,
                 game->player,
-                target_actor);
-
-            if (command.type != COMMAND_TYPE_NONE)
-            {
-                game_add_command(game, &command);
-            }
+                target);
+            game_add_command(game, &command);
         }
-        else if (
-            world_is_tile_walkable(game->world, target_x, target_y))
+        else if (world_is_tile_walkable(game->world, target_x, target_y))
         {
             Command command = command_actor_set_position_create(
                 game->player,

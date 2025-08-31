@@ -23,7 +23,8 @@ typedef enum command_type
     COMMAND_TYPE_ACTOR_SET_HP,
     COMMAND_TYPE_ACTOR_SET_ATTACK_POWER,
     COMMAND_TYPE_ACTOR_SET_NAME,
-    COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH
+    COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH,
+    COMMAND_TYPE_COUNT
 } CommandType;
 
 typedef struct command_params_actor_set_x
