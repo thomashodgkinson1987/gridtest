@@ -5,6 +5,7 @@
 #include "raylib.h"
 
 #include "actor.h"
+#include "actor_hash_map.h"
 #include "colour.h"
 #include "command.h"
 #include "command_system.h"
@@ -70,6 +71,36 @@ void game_init(Game *game)
     actor_add_component(monster, component_combat_create(5));
     actor_add_component(monster, component_ai_create());
     world_add_actor(game->world, monster);
+
+    {
+        ActorHashMap *actor_hash_map = actor_hash_map_create(128);
+        uint64_t index = 0;
+
+        {
+            Colour colour = {255, 0, 255, 255};
+            Actor *actor = actor_create(5, 8, '!', colour, "Bob");
+            actor_hash_map_add(actor_hash_map, actor);
+            index = actor_get_id(actor);
+            log_message(LOG_LEVEL_DEBUG, "Actor added");
+        }
+
+        {
+            const Actor *actor = actor_hash_map_get(actor_hash_map, index);
+            int x = actor_get_x(actor);
+            int y = actor_get_y(actor);
+            char glyph = actor_get_glyph(actor);
+            log_message(
+                LOG_LEVEL_DEBUG,
+                "x=%i y=%i glyph=%c",
+                x,
+                y,
+                glyph);
+        }
+
+        {
+            actor_hash_map_free(actor_hash_map);
+        }
+    }
 }
 
 void game_run(Game *game)
