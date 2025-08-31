@@ -8,7 +8,7 @@ typedef struct actor Actor;
 
 typedef enum command_type
 {
-    COMMAND_TYPE_NULL,
+    COMMAND_TYPE_NONE,
     COMMAND_TYPE_ACTOR_SET_X,
     COMMAND_TYPE_ACTOR_SET_Y,
     COMMAND_TYPE_ACTOR_SET_POSITION,

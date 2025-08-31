@@ -157,7 +157,7 @@ static void handle_input(Game *game)
                 game->player,
                 target_actor);
 
-            if (command.type != COMMAND_TYPE_NULL)
+            if (command.type != COMMAND_TYPE_NONE)
             {
                 game_add_command(game, &command);
             }

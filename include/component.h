@@ -3,7 +3,7 @@
 
 typedef enum component_type
 {
-    COMPONENT_TYPE_NULL,
+    COMPONENT_TYPE_NONE,
     COMPONENT_TYPE_HEALTH,
     COMPONENT_TYPE_COMBAT,
     COMPONENT_TYPE_AI,

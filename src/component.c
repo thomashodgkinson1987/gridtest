@@ -59,9 +59,9 @@ const char *component_get_name_from_type(ComponentType type)
 {
     switch (type)
     {
-    case COMPONENT_TYPE_NULL:
+    case COMPONENT_TYPE_NONE:
     {
-        return "NULL";
+        return "NONE";
     }
 
     case COMPONENT_TYPE_HEALTH:

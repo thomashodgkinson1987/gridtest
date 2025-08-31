@@ -239,7 +239,7 @@ void command_free(Command *command)
     switch (command->type)
     {
 
-    case COMMAND_TYPE_NULL:
+    case COMMAND_TYPE_NONE:
     {
         break;
     }
@@ -337,7 +337,7 @@ CommandResult command_execute(Command *command)
     switch (command->type)
     {
 
-    case COMMAND_TYPE_NULL:
+    case COMMAND_TYPE_NONE:
     {
         break;
     }
@@ -774,8 +774,8 @@ const char *command_get_name_from_type(CommandType type)
 {
     switch (type)
     {
-    case COMMAND_TYPE_NULL:
-        return "NULL";
+    case COMMAND_TYPE_NONE:
+        return "NONE";
 
     case COMMAND_TYPE_ACTOR_SET_X:
         return "ACTOR_SET_X";
