@@ -5,8 +5,10 @@
 
 #include "colour.h"
 
+// --- Forward Declarations ---
 typedef struct actor Actor;
 
+// --- Type Definitions ---
 typedef enum command_result_type
 {
     COMMAND_RESULT_TYPE_NULL,
@@ -159,80 +161,67 @@ typedef struct command_result
     } params;
 } CommandResult;
 
+// --- Public Function Prototypes ---
 CommandResult command_result_actor_set_x_create(
     Actor *actor,
     int old_x,
     int new_x);
-
 CommandResult command_result_actor_set_y_create(
     Actor *actor,
     int old_y,
     int new_y);
-
 CommandResult command_result_actor_set_position_create(
     Actor *actor,
     int old_x,
     int old_y,
     int new_x,
     int new_y);
-
 CommandResult command_result_actor_set_glyph_create(
     Actor *actor,
     char old_glyph,
     char new_glyph);
-
 CommandResult command_result_actor_set_colour_create(
     Actor *actor,
     Colour old_colour,
     Colour new_colour);
-
 CommandResult command_result_actor_set_r_create(
     Actor *actor,
     unsigned char old_r,
     unsigned char new_r);
-
 CommandResult command_result_actor_set_g_create(
     Actor *actor,
     unsigned char old_g,
     unsigned char new_g);
-
 CommandResult command_result_actor_set_b_create(
     Actor *actor,
     unsigned char old_b,
     unsigned char new_b);
-
 CommandResult command_result_actor_set_a_create(
     Actor *actor,
     unsigned char old_a,
     unsigned char new_a);
-
 CommandResult command_result_actor_set_current_hp_create(
     Actor *actor,
     int old_current_hp,
     int new_current_hp);
-
 CommandResult command_result_actor_set_max_hp_create(
     Actor *actor,
     int old_max_hp,
     int new_max_hp);
-
 CommandResult command_result_actor_set_hp_create(
     Actor *actor,
     int old_current_hp,
     int old_max_hp,
     int new_current_hp,
     int new_max_hp);
-
 CommandResult command_result_actor_set_attack_power_create(
     Actor *actor,
     int old_attack_power,
     int new_attack_power);
-
 CommandResult command_result_actor_set_name_create(
     Actor *actor,
     const char *old_name,
     const char *new_name);
-
 CommandResult command_result_actor_took_damage_create(
     Actor *actor,
     int amount,

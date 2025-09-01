@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// --- Public Function Definitions ---
 void log_message(LogLevel level, const char *format, ...)
 {
     FILE *output_stream = stdout;
@@ -66,7 +67,6 @@ void log_message(LogLevel level, const char *format, ...)
         exit(EXIT_FAILURE);
     }
 }
-
 void log_perror(const char *format, ...)
 {
     va_list args_for_len;
@@ -83,7 +83,6 @@ void log_perror(const char *format, ...)
 
     log_message(LOG_LEVEL_ERROR, "%s: %s", msg_buf, strerror(errno));
 }
-
 ATTR_NORETURN void log_fatal(const char *format, ...)
 {
     va_list args_for_len;

@@ -4,8 +4,10 @@
 #include "colour.h"
 #include "command_result.h"
 
+// --- Forward Declarations ---
 typedef struct actor Actor;
 
+// --- Type Definitions ---
 typedef enum command_type
 {
     COMMAND_TYPE_NONE,
@@ -158,6 +160,7 @@ typedef struct command
     } params;
 } Command;
 
+// --- Public Function Prototypes ---
 Command command_actor_set_x_create(Actor *actor, int x);
 Command command_actor_set_y_create(Actor *actor, int y);
 Command command_actor_set_position_create(Actor *actor, int x, int y);
@@ -175,7 +178,9 @@ Command command_actor_set_name_create(Actor *actor, const char *name);
 Command command_actor_translate_health_create(Actor *actor, int translation);
 
 void command_free(Command *command);
+
 CommandResult command_execute(Command *command);
+
 const char *command_get_name_from_type(CommandType type);
 
 #endif // COMMAND_H

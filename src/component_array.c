@@ -4,4 +4,5 @@
 
 #include "component.h"
 
+// --- Public Function Definitions ---
 DEFINE_ARRAY_FUNCTIONS(component, Component, Component *)

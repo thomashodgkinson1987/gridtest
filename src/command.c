@@ -9,6 +9,7 @@
 #include "command_result.h"
 #include "log.h"
 
+// --- Public Function Definitions ---
 Command command_actor_set_x_create(Actor *actor, int x)
 {
     Command command = {0};
@@ -19,7 +20,6 @@ Command command_actor_set_x_create(Actor *actor, int x)
 
     return command;
 }
-
 Command command_actor_set_y_create(Actor *actor, int y)
 {
     Command command = {0};
@@ -30,7 +30,6 @@ Command command_actor_set_y_create(Actor *actor, int y)
 
     return command;
 }
-
 Command command_actor_set_position_create(Actor *actor, int x, int y)
 {
     Command command = {0};
@@ -43,7 +42,6 @@ Command command_actor_set_position_create(Actor *actor, int x, int y)
 
     return command;
 }
-
 Command command_actor_set_glyph_create(Actor *actor, char glyph)
 {
     Command command = {0};
@@ -54,7 +52,6 @@ Command command_actor_set_glyph_create(Actor *actor, char glyph)
 
     return command;
 }
-
 Command command_actor_set_colour_create(Actor *actor, Colour colour)
 {
     Command command = {0};
@@ -65,7 +62,6 @@ Command command_actor_set_colour_create(Actor *actor, Colour colour)
 
     return command;
 }
-
 Command command_actor_set_r_create(Actor *actor, unsigned char r)
 {
     Command command = {0};
@@ -76,7 +72,6 @@ Command command_actor_set_r_create(Actor *actor, unsigned char r)
 
     return command;
 }
-
 Command command_actor_set_g_create(Actor *actor, unsigned char g)
 {
     Command command = {0};
@@ -87,7 +82,6 @@ Command command_actor_set_g_create(Actor *actor, unsigned char g)
 
     return command;
 }
-
 Command command_actor_set_b_create(Actor *actor, unsigned char b)
 {
     Command command = {0};
@@ -98,7 +92,6 @@ Command command_actor_set_b_create(Actor *actor, unsigned char b)
 
     return command;
 }
-
 Command command_actor_set_a_create(Actor *actor, unsigned char a)
 {
     Command command = {0};
@@ -109,7 +102,6 @@ Command command_actor_set_a_create(Actor *actor, unsigned char a)
 
     return command;
 }
-
 Command command_actor_set_current_hp_create(Actor *actor, int current_hp)
 {
     Command command = {0};
@@ -130,7 +122,6 @@ Command command_actor_set_current_hp_create(Actor *actor, int current_hp)
 
     return command;
 }
-
 Command command_actor_set_max_hp_create(Actor *actor, int max_hp)
 {
     Command command = {0};
@@ -151,7 +142,6 @@ Command command_actor_set_max_hp_create(Actor *actor, int max_hp)
 
     return command;
 }
-
 Command command_actor_set_hp_create(Actor *actor, int current_hp, int max_hp)
 {
     Command command = {0};
@@ -175,7 +165,6 @@ Command command_actor_set_hp_create(Actor *actor, int current_hp, int max_hp)
 
     return command;
 }
-
 Command command_actor_set_attack_power_create(Actor *actor, int attack_power)
 {
     Command command = {0};
@@ -196,7 +185,6 @@ Command command_actor_set_attack_power_create(Actor *actor, int attack_power)
 
     return command;
 }
-
 Command command_actor_set_name_create(Actor *actor, const char *name)
 {
     Command command = {0};
@@ -223,7 +211,6 @@ Command command_actor_set_name_create(Actor *actor, const char *name)
 
     return command;
 }
-
 Command command_actor_translate_health_create(Actor *actor, int translation)
 {
     Command command = {0};

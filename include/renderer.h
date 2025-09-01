@@ -5,14 +5,18 @@
 
 #include "colour.h"
 
+// --- Forward Declarations ---
 typedef struct renderer Renderer;
 typedef struct world World;
 
+// --- Public Function Prototypes ---
 Renderer *renderer_create(
     int screen_width,
     int screen_height,
     const char *screen_title);
 void renderer_free(Renderer *renderer);
+
+void renderer_set_dirty(Renderer *renderer);
 
 void renderer_begin_frame(Renderer *renderer, World *world);
 void renderer_end_frame(Renderer *renderer);
@@ -33,7 +37,5 @@ void renderer_draw_text(
     int size);
 
 bool renderer_should_close(void);
-
-void renderer_set_dirty(Renderer *renderer);
 
 #endif // RENDERER_H

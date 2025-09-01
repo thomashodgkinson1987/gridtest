@@ -7,7 +7,7 @@
 
 #include "actor.h"
 
-// --- State ---
+// --- Internal Module Definitions ---
 
 typedef struct actor_hash_map_entry
 {
@@ -26,7 +26,7 @@ struct actor_hash_map
 
 static void rehash(ActorHashMap *hash_map, size_t new_capacity);
 
-// --- Public Functions ---
+// --- Public Function Definitions ---
 
 ActorHashMap *actor_hash_map_create(size_t initial_capacity)
 {

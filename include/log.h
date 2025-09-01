@@ -1,6 +1,7 @@
 #ifndef LOG_H
 #define LOG_H
 
+// --- Macro Definitions ---
 // Use the C11 standard noreturn if available
 #if __STDC_VERSION__ >= 201112L
 #include <stdnoreturn.h>
@@ -13,6 +14,7 @@
 #define ATTR_NORETURN
 #endif
 
+// --- Type Definitions ---
 typedef enum log_level
 {
     LOG_LEVEL_DEBUG,
@@ -22,6 +24,7 @@ typedef enum log_level
     LOG_LEVEL_FATAL
 } LogLevel;
 
+// --- Public Function Prototypes ---
 void log_message(LogLevel level, const char *format, ...);
 void log_perror(const char *format, ...);
 ATTR_NORETURN void log_fatal(const char *format, ...);

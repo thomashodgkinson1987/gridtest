@@ -11,8 +11,7 @@
 #include "log.h"
 #include "world.h"
 
-// --- Module-Private State ---
-
+// --- Internal Module Definitions ---
 struct renderer
 {
     int screen_width;
@@ -31,134 +30,13 @@ struct renderer
     bool is_dirty;
 };
 
-// --- Static Helper Functions ---
+// --- Static Function Prototypes ---
+static Color to_raylib_colour(Colour colour);
+static void build_glyph_atlas(Renderer *renderer);
+static void draw_world(Renderer *renderer, const World *world);
+static void redraw_virtual_screen(Renderer *renderer, const World *world);
 
-static Color to_raylib_colour(Colour colour)
-{
-    return (Color){
-        .r = colour.r,
-        .g = colour.g,
-        .b = colour.b,
-        .a = colour.a};
-}
-
-static void build_glyph_atlas(Renderer *renderer)
-{
-    // Define the characters in the order they appear in the font texture.
-    const char *chars_row0 = "abcdefghijklmnopqrstuvwxyz ";
-    const char *chars_row1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const char *chars_row2 = "1234567890";
-    const char *chars_row3 = "()[]{}<>+-?!^:#_@%~$\"'&*=`|/\\.,;";
-
-    // Process row 0 (lowercase)
-    for (int i = 0; chars_row0[i] != '\0'; ++i)
-    {
-        char c = chars_row0[i];
-        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer->glyph_width,
-            .y = 0 * renderer->glyph_height,
-            .width = renderer->glyph_width,
-            .height = renderer->glyph_height};
-    }
-
-    // Process row 1 (uppercase)
-    for (int i = 0; chars_row1[i] != '\0'; ++i)
-    {
-        char c = chars_row1[i];
-        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer->glyph_width,
-            .y = 1 * renderer->glyph_height,
-            .width = renderer->glyph_width,
-            .height = renderer->glyph_height};
-    }
-
-    // Process row 2 (numbers)
-    for (int i = 0; chars_row2[i] != '\0'; ++i)
-    {
-        char c = chars_row2[i];
-        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer->glyph_width,
-            .y = 2 * renderer->glyph_height,
-            .width = renderer->glyph_width,
-            .height = renderer->glyph_height};
-    }
-
-    // Process row 3 (symbols)
-    for (int i = 0; chars_row3[i] != '\0'; ++i)
-    {
-        char c = chars_row3[i];
-        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
-            .x = i * renderer->glyph_width,
-            .y = 3 * renderer->glyph_height,
-            .width = renderer->glyph_width,
-            .height = renderer->glyph_height};
-    }
-}
-
-static void draw_world(Renderer *renderer, const World *world)
-{
-    for (int y = 0; y < world_get_height(world); ++y)
-    {
-        for (int x = 0; x < world_get_width(world); ++x)
-        {
-            const Actor *actor = world_get_actor_at(world, x, y);
-            if (actor)
-            {
-                const char glyph = actor_get_glyph(actor);
-                const Colour fg_colour = actor_get_colour(actor);
-                const Colour bg_colour = (Colour){0, 0, 0, 255};
-                renderer_draw_glyph(
-                    renderer,
-                    x,
-                    y,
-                    glyph,
-                    fg_colour,
-                    bg_colour);
-            }
-            else
-            {
-                const Tile *tile = world_get_tile_at(world, x, y);
-                char glyph = '?';
-                switch (tile->type)
-                {
-                case TILE_TYPE_FLOOR:
-                    glyph = '.';
-                    break;
-                case TILE_TYPE_WALL:
-                    glyph = '#';
-                    break;
-                default:
-                    glyph = '?';
-                    break;
-                }
-                const Colour fg_colour = {255, 255, 255, 255};
-                const Colour bg_colour = {0, 0, 0, 255};
-                renderer_draw_glyph(
-                    renderer,
-                    x,
-                    y,
-                    glyph,
-                    fg_colour,
-                    bg_colour);
-            }
-        }
-    }
-}
-
-static void redraw_virtual_screen(Renderer *renderer, const World *world)
-{
-    BeginTextureMode(renderer->virtual_screen);
-    ClearBackground(BLACK);
-
-    draw_world(renderer, world);
-
-    EndTextureMode();
-
-    renderer->is_dirty = false;
-}
-
-// --- Public API Implementation ---
-
+// --- Public Function Definitions ---
 Renderer *renderer_create(
     int screen_width,
     int screen_height,
@@ -218,6 +96,11 @@ void renderer_free(Renderer *renderer)
     free(renderer);
 }
 
+void renderer_set_dirty(Renderer *renderer)
+{
+    renderer->is_dirty = true;
+}
+
 void renderer_begin_frame(Renderer *renderer, World *world)
 {
     if (renderer->is_dirty)
@@ -228,7 +111,6 @@ void renderer_begin_frame(Renderer *renderer, World *world)
     BeginDrawing();
     ClearBackground(BLACK);
 }
-
 void renderer_end_frame(Renderer *renderer)
 {
     Rectangle source_rect = {
@@ -297,7 +179,6 @@ void renderer_draw_glyph(
             raylib_fg);
     }
 }
-
 void renderer_draw_text(
     int pixel_x,
     int pixel_y,
@@ -313,7 +194,124 @@ bool renderer_should_close(void)
     return WindowShouldClose();
 }
 
-void renderer_set_dirty(Renderer *renderer)
+// --- Static Function Definitions ---
+static Color to_raylib_colour(Colour colour)
 {
-    renderer->is_dirty = true;
+    return (Color){
+        .r = colour.r,
+        .g = colour.g,
+        .b = colour.b,
+        .a = colour.a};
+}
+static void build_glyph_atlas(Renderer *renderer)
+{
+    // Define the characters in the order they appear in the font texture.
+    const char *chars_row0 = "abcdefghijklmnopqrstuvwxyz ";
+    const char *chars_row1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char *chars_row2 = "1234567890";
+    const char *chars_row3 = "()[]{}<>+-?!^:#_@%~$\"'&*=`|/\\.,;";
+
+    // Process row 0 (lowercase)
+    for (int i = 0; chars_row0[i] != '\0'; ++i)
+    {
+        char c = chars_row0[i];
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 0 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
+    }
+
+    // Process row 1 (uppercase)
+    for (int i = 0; chars_row1[i] != '\0'; ++i)
+    {
+        char c = chars_row1[i];
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 1 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
+    }
+
+    // Process row 2 (numbers)
+    for (int i = 0; chars_row2[i] != '\0'; ++i)
+    {
+        char c = chars_row2[i];
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 2 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
+    }
+
+    // Process row 3 (symbols)
+    for (int i = 0; chars_row3[i] != '\0'; ++i)
+    {
+        char c = chars_row3[i];
+        renderer->glyph_atlas[(unsigned char)c] = (Rectangle){
+            .x = i * renderer->glyph_width,
+            .y = 3 * renderer->glyph_height,
+            .width = renderer->glyph_width,
+            .height = renderer->glyph_height};
+    }
+}
+static void draw_world(Renderer *renderer, const World *world)
+{
+    for (int y = 0; y < world_get_height(world); ++y)
+    {
+        for (int x = 0; x < world_get_width(world); ++x)
+        {
+            const Actor *actor = world_get_actor_at(world, x, y);
+            if (actor)
+            {
+                const char glyph = actor_get_glyph(actor);
+                const Colour fg_colour = actor_get_colour(actor);
+                const Colour bg_colour = (Colour){0, 0, 0, 255};
+                renderer_draw_glyph(
+                    renderer,
+                    x,
+                    y,
+                    glyph,
+                    fg_colour,
+                    bg_colour);
+            }
+            else
+            {
+                const Tile *tile = world_get_tile_at(world, x, y);
+                char glyph = '?';
+                switch (tile->type)
+                {
+                case TILE_TYPE_FLOOR:
+                    glyph = '.';
+                    break;
+                case TILE_TYPE_WALL:
+                    glyph = '#';
+                    break;
+                default:
+                    glyph = '?';
+                    break;
+                }
+                const Colour fg_colour = {255, 255, 255, 255};
+                const Colour bg_colour = {0, 0, 0, 255};
+                renderer_draw_glyph(
+                    renderer,
+                    x,
+                    y,
+                    glyph,
+                    fg_colour,
+                    bg_colour);
+            }
+        }
+    }
+}
+static void redraw_virtual_screen(Renderer *renderer, const World *world)
+{
+    BeginTextureMode(renderer->virtual_screen);
+    ClearBackground(BLACK);
+
+    draw_world(renderer, world);
+
+    EndTextureMode();
+
+    renderer->is_dirty = false;
 }

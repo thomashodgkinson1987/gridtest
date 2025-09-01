@@ -4,6 +4,7 @@
 
 #include "log.h"
 
+// --- Public Function Definitions ---
 Component *component_health_create(int current_hp, int max_hp)
 {
     Component *component = malloc(sizeof(*component));
@@ -19,7 +20,6 @@ Component *component_health_create(int current_hp, int max_hp)
 
     return component;
 }
-
 Component *component_combat_create(int attack_power)
 {
     Component *component = malloc(sizeof(*component));
@@ -34,7 +34,6 @@ Component *component_combat_create(int attack_power)
 
     return component;
 }
-
 Component *component_ai_create(void)
 {
     Component *component = malloc(sizeof(*component));

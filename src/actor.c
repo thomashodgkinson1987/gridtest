@@ -8,8 +8,10 @@
 #include "component_array.h"
 #include "log.h"
 
+// --- Static Module State ---
 static uint64_t next_id = 1;
 
+// --- Internal Module Definitions ---
 struct actor
 {
     uint64_t id;
@@ -21,31 +23,13 @@ struct actor
     ComponentArray components;
 };
 
-// --- Static Functions ---
-
+// --- Static Function Prototypes ---
 static Component *find_component(
     Actor *actor,
     ComponentType type,
-    size_t *out_index)
-{
-    for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
-    {
-        Component *component = component_array_get(&actor->components, i);
-        if (component->type == type)
-        {
-            if (out_index)
-                *out_index = i;
-            return component;
-        }
-    }
+    size_t *out_index);
 
-    if (out_index)
-        *out_index = (size_t)-1;
-    return NULL;
-}
-
-// --- Creation/Destruction ---
-
+// --- Public Function Definitions ---
 Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 {
     if (!name || strlen(name) == 0)
@@ -77,7 +61,6 @@ Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name)
 
     return actor;
 }
-
 void actor_free(Actor *actor)
 {
     for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
@@ -91,8 +74,6 @@ void actor_free(Actor *actor)
     free(actor);
 }
 
-// --- Component Management ---
-
 void actor_add_component(Actor *actor, Component *component)
 {
     if (find_component(actor, component->type, NULL))
@@ -105,7 +86,6 @@ void actor_add_component(Actor *actor, Component *component)
 
     component_array_push(&actor->components, component);
 }
-
 void actor_remove_component(Actor *actor, ComponentType type)
 {
     size_t index = 0;
@@ -120,18 +100,14 @@ void actor_remove_component(Actor *actor, ComponentType type)
 
     component_array_remove(&actor->components, index);
 }
-
 const Component *actor_get_component(Actor *actor, ComponentType type)
 {
     return find_component(actor, type, NULL);
 }
-
 Component *actor_get_component_mut(Actor *actor, ComponentType type)
 {
     return find_component(actor, type, NULL);
 }
-
-// --- Getters/Setters ---
 
 uint64_t actor_get_id(const Actor *actor)
 {
@@ -229,4 +205,26 @@ void actor_set_name(Actor *actor, const char *name)
     }
     strncpy(new_pointer, name, strlen(name) + 1);
     actor->name = new_pointer;
+}
+
+// --- Static Function Definitions ---
+static Component *find_component(
+    Actor *actor,
+    ComponentType type,
+    size_t *out_index)
+{
+    for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
+    {
+        Component *component = component_array_get(&actor->components, i);
+        if (component->type == type)
+        {
+            if (out_index)
+                *out_index = i;
+            return component;
+        }
+    }
+
+    if (out_index)
+        *out_index = (size_t)-1;
+    return NULL;
 }

@@ -6,21 +6,17 @@
 #include "colour.h"
 #include "component.h"
 
+// --- Forward Declarations ---
 typedef struct actor Actor;
 
-// --- Creation/Destruction ---
-
+// --- Public Function Prototypes ---
 Actor *actor_create(int x, int y, char glyph, Colour colour, const char *name);
 void actor_free(Actor *actor);
-
-// --- Component Management ---
 
 void actor_add_component(Actor *actor, Component *component);
 void actor_remove_component(Actor *actor, ComponentType type);
 const Component *actor_get_component(Actor *actor, ComponentType type);
 Component *actor_get_component_mut(Actor *actor, ComponentType type);
-
-// --- Getters/Setters ---
 
 uint64_t actor_get_id(const Actor *actor);
 

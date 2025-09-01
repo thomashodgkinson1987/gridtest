@@ -1,6 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+// --- Type Definitions ---
 typedef enum component_type
 {
     COMPONENT_TYPE_NONE,
@@ -37,11 +38,13 @@ typedef struct component
     } params;
 } Component;
 
+// --- Public Function Prototypes ---
 Component *component_health_create(int current_hp, int max_hp);
 Component *component_combat_create(int attack_power);
 Component *component_ai_create(void);
 
 void component_free(Component *component);
+
 const char *component_get_name_from_type(ComponentType type);
 
 #endif // COMPONENT_H

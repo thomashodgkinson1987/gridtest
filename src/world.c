@@ -12,6 +12,7 @@
 #include "log.h"
 #include "renderer.h"
 
+// --- Internal Module Definitions ---
 struct world
 {
     int width;
@@ -20,8 +21,7 @@ struct world
     ActorArray actors;
 };
 
-// --- Creation/Destruction ---
-
+// --- Public Function Definitions ---
 World *world_create(int width, int height)
 {
     if (width < 1 || height < 1)
@@ -83,7 +83,6 @@ World *world_create(int width, int height)
 
     return world;
 }
-
 void world_free(World *world)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
@@ -96,8 +95,6 @@ void world_free(World *world)
     free(world);
 }
 
-// -- Getters ---
-
 int world_get_width(const World *world)
 {
     return world->width;
@@ -107,13 +104,10 @@ int world_get_height(const World *world)
     return world->height;
 }
 
-// --- World Management ---
-
 void world_add_actor(World *world, Actor *actor)
 {
     actor_array_push(&world->actors, actor);
 }
-
 void world_remove_actor(World *world, Actor *actor)
 {
     size_t index = 0;
@@ -176,8 +170,6 @@ Command world_actor_attack_actor(
     return command;
 }
 
-// --- Queries ---
-
 const Actor *world_get_actor_at(const World *world, int x, int y)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
@@ -192,7 +184,6 @@ const Actor *world_get_actor_at(const World *world, int x, int y)
     }
     return NULL;
 }
-
 Actor *world_get_actor_at_mut(const World *world, int x, int y)
 {
     for (size_t i = 0; i < actor_array_get_count(&world->actors); ++i)
@@ -216,7 +207,6 @@ const Tile *world_get_tile_at(const World *world, int x, int y)
     }
     return &world->tiles[y * world->width + x];
 }
-
 Tile *world_get_tile_at_mut(const World *world, int x, int y)
 {
     if (x < 0 || x >= world->width || y < 0 || y >= world->height)

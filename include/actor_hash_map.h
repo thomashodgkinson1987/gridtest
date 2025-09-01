@@ -4,13 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
- // --- Forward Declarations ---
-
+// --- Forward Declarations ---
 typedef struct actor Actor;
 typedef struct actor_hash_map ActorHashMap;
 
-// --- Public Functions ---
-
+// --- Public Function Prototypes ---
 ActorHashMap *actor_hash_map_create(size_t initial_capacity);
 void actor_hash_map_free(ActorHashMap *hash_map);
 

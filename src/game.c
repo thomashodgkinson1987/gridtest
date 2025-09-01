@@ -12,6 +12,7 @@
 #include "renderer.h"
 #include "world.h"
 
+// --- Internal Module Definition ---
 struct game
 {
     Renderer *renderer;
@@ -25,14 +26,12 @@ struct game
 };
 
 // --- Static Function Prototypes ---
-
 static void handle_input(Game *game);
 static void update(Game *game);
 static void render(Game *game);
 static void create_map(World *world);
 
-// --- Public Function Implementations ---
-
+// --- Public Function Definitions ---
 Game *game_create(
     Renderer *renderer,
     World *world,
@@ -53,7 +52,6 @@ Game *game_create(
 
     return game;
 }
-
 void game_init(Game *game)
 {
     create_map(game->world);
@@ -71,7 +69,6 @@ void game_init(Game *game)
     actor_add_component(monster, component_ai_create());
     world_add_actor(game->world, monster);
 }
-
 void game_run(Game *game)
 {
     while (game->is_running)
@@ -87,7 +84,6 @@ void game_run(Game *game)
         render(game);
     }
 }
-
 void game_free(Game *game)
 {
     command_system_free(game->command_system);
@@ -109,8 +105,7 @@ bool game_add_command(Game *game, const Command *command)
     return false;
 }
 
-// --- Static Function Implementations ---
-
+// --- Static Function Definitions ---
 static void handle_input(Game *game)
 {
     int dx = 0;
@@ -175,7 +170,6 @@ static void handle_input(Game *game)
         game->is_player_turn_complete = true;
     }
 }
-
 static void update(Game *game)
 {
     if (game->is_player_turn_complete)
@@ -189,7 +183,6 @@ static void update(Game *game)
         game->is_player_turn_complete = false;
     }
 }
-
 static void render(Game *game)
 {
     renderer_begin_frame(game->renderer, game->world);

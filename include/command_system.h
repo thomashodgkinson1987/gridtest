@@ -1,12 +1,13 @@
 #ifndef COMMAND_SYSTEM_H
 #define COMMAND_SYSTEM_H
 
+// --- Forward Declarations ---
+typedef struct command Command;
+typedef struct world World;
+typedef struct renderer Renderer;
 typedef struct command_system CommandSystem;
 
-typedef struct command Command;
-typedef struct renderer Renderer;
-typedef struct world World;
-
+// --- Public Function Prototypes ---
 CommandSystem *command_system_create(void);
 void command_system_free(CommandSystem *command_system);
 

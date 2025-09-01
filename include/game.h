@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+// --- Forward Declarations ---
 typedef struct command Command;
 
 typedef struct renderer Renderer;
@@ -11,6 +12,7 @@ typedef struct command_system CommandSystem;
 
 typedef struct game Game;
 
+// --- Public Function Prototypes ---
 Game *game_create(
     Renderer *renderer,
     World *world,

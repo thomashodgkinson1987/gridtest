@@ -10,7 +10,7 @@
 #include "renderer.h"
 #include "world.h"
 
-// --- Private Struct Definition ---
+// --- Internal Module Definitions ---
 
 struct command_system
 {
@@ -19,10 +19,12 @@ struct command_system
 
 // --- Static Function Prototypes ---
 
-static void
-process_result(Renderer *renderer, World *world, CommandResult result);
+static void process_result(
+    Renderer *renderer,
+    World *world,
+    CommandResult result);
 
-// --- Public Function Implementations ---
+// --- Public Function Definitions ---
 
 CommandSystem *command_system_create(void)
 {
@@ -36,7 +38,6 @@ CommandSystem *command_system_create(void)
     command_system->command_queue = command_array_create(1);
     return command_system;
 }
-
 void command_system_free(CommandSystem *command_system)
 {
     for (
@@ -77,7 +78,7 @@ void command_system_process_queue(
     command_array_clear(&command_system->command_queue);
 }
 
-// --- Static Function Implementations ---
+// --- Static Function Definitions ---
 
 static void process_result(
     Renderer *renderer,

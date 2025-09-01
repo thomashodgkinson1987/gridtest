@@ -8,6 +8,7 @@
 #include "colour.h"
 #include "log.h"
 
+// --- Public Function Definitions ---
 CommandResult command_result_actor_set_x_create(
     Actor *actor,
     int old_x,
@@ -21,7 +22,6 @@ CommandResult command_result_actor_set_x_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_y_create(
     Actor *actor,
     int old_y,
@@ -35,7 +35,6 @@ CommandResult command_result_actor_set_y_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_position_create(
     Actor *actor,
     int old_x,
@@ -53,7 +52,6 @@ CommandResult command_result_actor_set_position_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_glyph_create(
     Actor *actor,
     char old_glyph,
@@ -67,7 +65,6 @@ CommandResult command_result_actor_set_glyph_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_colour_create(
     Actor *actor,
     Colour old_colour,
@@ -81,7 +78,6 @@ CommandResult command_result_actor_set_colour_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_r_create(
     Actor *actor,
     unsigned char old_r,
@@ -95,7 +91,6 @@ CommandResult command_result_actor_set_r_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_g_create(
     Actor *actor,
     unsigned char old_g,
@@ -109,7 +104,6 @@ CommandResult command_result_actor_set_g_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_b_create(
     Actor *actor,
     unsigned char old_b,
@@ -123,7 +117,6 @@ CommandResult command_result_actor_set_b_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_a_create(
     Actor *actor,
     unsigned char old_a,
@@ -137,7 +130,6 @@ CommandResult command_result_actor_set_a_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_current_hp_create(
     Actor *actor,
     int old_current_hp,
@@ -151,7 +143,6 @@ CommandResult command_result_actor_set_current_hp_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_max_hp_create(
     Actor *actor,
     int old_max_hp,
@@ -165,7 +156,6 @@ CommandResult command_result_actor_set_max_hp_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_hp_create(
     Actor *actor,
     int old_current_hp,
@@ -183,7 +173,6 @@ CommandResult command_result_actor_set_hp_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_attack_power_create(
     Actor *actor,
     int old_attack_power,
@@ -197,7 +186,6 @@ CommandResult command_result_actor_set_attack_power_create(
 
     return result;
 }
-
 CommandResult command_result_actor_set_name_create(
     Actor *actor,
     const char *old_name,
@@ -225,7 +213,6 @@ CommandResult command_result_actor_set_name_create(
 
     return result;
 }
-
 CommandResult command_result_actor_took_damage_create(
     Actor *actor,
     int amount,
