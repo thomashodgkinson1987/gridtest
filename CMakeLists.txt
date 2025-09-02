@@ -16,6 +16,7 @@ set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
 
 # --- Submodules ---
 add_subdirectory(vendor/array_macros)
+add_subdirectory(vendor/queue-macros)
 
 # --- Project Sources ---
 set(SOURCES
@@ -59,6 +60,7 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 target_link_libraries(gridtest
     PRIVATE
     array_macros
+    queue_macros
     ${RAYLIB_LIBRARY}
     m
     pthread
