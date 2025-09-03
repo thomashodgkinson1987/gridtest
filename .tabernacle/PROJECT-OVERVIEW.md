@@ -16,10 +16,10 @@ Our collaboration follows a structured lifecycle for each development session, e
 At the beginning of each session, a bootstrap sequence is performed to bring me up to speed on the current state of the project. This involves reading all core context files and analyzing the live Git state. The full, detailed steps for this process are documented in `/.tabernacle/BOOTSTRAP-GUIDE.md`.
 
 ### Shutdown Sequence
-At the end of each session, a shutdown sequence is performed to ensure the project is left in a clean, predictable state. This involves:
-1.  **Health Check:** I will check the Git status, the current branch, the active task in `/.cubit/KANBAN_CURRENT.md`, and any unresolved topics in `/.tabernacle/NOTES.md`.
-2.  **Shutdown Report:** I will provide a concise summary of the project's state.
-3.  **Final Actions:** Based on the report, we will take any necessary actions (e.g., committing final changes) to ensure a clean handoff for the next session.
+At the end of each session, a shutdown sequence is performed to create a clear and structured handoff for the next session.
+1.  **Health Check:** I will perform a final check of the Git status, the current branch, and the Kanban boards.
+2.  **Handoff Generation:** I will create a new `handoff-DD-MM-YYYY.md` file. Using the official template, I will summarize the session's accomplishments, document the final project state, and outline a proposed plan for our next session. I will carry over any important unresolved notes.
+3.  **Final Actions:** We will take any necessary final actions, such as making a last commit, to ensure the project is in a clean state.
 
 ## Development Modes
 

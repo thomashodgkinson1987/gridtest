@@ -1,4 +1,4 @@
 # Session Notes
-*This file is for transient, session-to-session notes. It can be cleared or updated as needed.*
+*This file is for transient notes created **during** a single session. Important points that need to persist to the next session will be captured in the handoff document during the shutdown sequence.*
 
 *empty*

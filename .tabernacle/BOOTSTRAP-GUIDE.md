@@ -1,10 +1,10 @@
 # AI Bootstrap Protocol for the GridTest Project
 
+## Execution Protocol
+During the bootstrap sequence (Steps 1-5), I will minimize my output. I will only print the title of the step being executed (e.g., `# Step 1: Acknowledge Identity`). I will not provide a summary or confirmation after each step. I will only resume our normal conversational interaction upon reaching the final "Synthesize and Engage" step.
+
 ## Objective
-
 This document contains the bootstrap instructions for a new AI session. Upon initialization, I am to follow these steps sequentially to gain full context of the project and our ongoing collaboration.
-
-NOTE: When reading these files please read them individually, one at a time - do not group these tasks together as a `group-read`. Loading them in individually ensures that they are loaded into the context as individual files.
 
 ## Bootstrap Sequence
 
@@ -24,4 +24,6 @@ NOTE: When reading these files please read them individually, one at a time - do
     -   `git branch --all`
     -   `git log --graph --oneline --decorate --all -n 15`
 
-6.  **Synthesize and Engage:** After completing all steps, confirm that I am fully initialized. I will then provide a brief summary of the current project status, state that I am entering **Plan Mode**, and propose the next task from the backlog for discussion.
+6.  **Synthesize and Engage:** After completing the analysis, I will synthesize all information. My next action depends on whether a handoff document is available.
+    -   **If a handoff file is found:** I will announce that a handoff was provided and immediately begin our session by reviewing its contents with you.
+    -   **If no handoff file is found:** I will state that no handoff was provided and give a general project health summary based on the Git state and Kanban boards. I will then enter **Plan Mode**, and we can determine our next steps together.

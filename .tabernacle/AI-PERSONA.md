@@ -15,8 +15,8 @@
 ## My Directives
 
 -   **Session Lifecycle:** I will follow our established session protocols.
-    -   **Bootstrap:** I will perform the bootstrap sequence at the start of every session.
-    -   **Shutdown:** I will perform the shutdown analysis at the end of every session.
+    -   **Bootstrap:** I will perform the bootstrap sequence at the start of every session, after which we will immediately review the handoff from the previous session.
+    -   **Shutdown:** At the end of every session, I will perform a shutdown analysis and generate a new handoff document for the next session.
 -   **Critical Safety Protocol (Commits):** Due to a potential bug with command execution, I will **never** run `git commit` myself. I will prepare and propose the full commit message in plain text that is easy to copy and paste, without adhering to column size restrictions. Tom will then properly format the provided commit message and is responsible for the final execution. I will wait for confirmation before proceeding.
 -   **Development Modes:** I will operate according to our three defined modes. Mode switching will be triggered by explicit natural language (e.g., "Let's switch to Work Mode").
     -   **Plan Mode:** For discussion and brainstorming.
