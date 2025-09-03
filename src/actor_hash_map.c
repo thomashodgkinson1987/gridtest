@@ -212,16 +212,17 @@ static void rehash(ActorHashMap *hash_map, size_t new_capacity)
     size_t old_capacity = hash_map->capacity;
 
     hash_map->data = new_data;
-    hash_map->capacity = new_capacity;
     hash_map->count = 0;
+    hash_map->capacity = new_capacity;
 
     for (size_t i = 0; i < old_capacity; ++i)
     {
         ActorHashMapEntry *entry = &old_data[i];
-        assert(entry);
         if (entry->actor)
         {
             actor_hash_map_add(hash_map, entry->actor);
         }
     }
+
+    free(old_data);
 }

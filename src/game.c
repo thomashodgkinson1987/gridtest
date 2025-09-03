@@ -8,6 +8,7 @@
 #include "colour.h"
 #include "command.h"
 #include "command_system.h"
+#include "input_system.h"
 #include "log.h"
 #include "renderer.h"
 #include "world.h"
@@ -18,6 +19,7 @@ struct game
     Renderer *renderer;
     World *world;
     CommandSystem *command_system;
+    InputSystem *input_system;
 
     bool is_running;
     bool is_player_turn_complete;
@@ -35,7 +37,8 @@ static void create_map(World *world);
 Game *game_create(
     Renderer *renderer,
     World *world,
-    CommandSystem *command_system)
+    CommandSystem *command_system,
+    InputSystem *input_system)
 {
     Game *game = malloc(sizeof(*game));
     if (!game)
@@ -47,6 +50,7 @@ Game *game_create(
     game->renderer = renderer;
     game->world = world;
     game->command_system = command_system;
+    game->input_system = input_system;
     game->is_running = true;
     game->is_player_turn_complete = false;
 
@@ -86,6 +90,7 @@ void game_run(Game *game)
 }
 void game_free(Game *game)
 {
+    input_system_free(game->input_system);
     command_system_free(game->command_system);
     world_free(game->world);
     renderer_free(game->renderer);
@@ -108,6 +113,38 @@ bool game_add_command(Game *game, const Command *command)
 // --- Static Function Definitions ---
 static void handle_input(Game *game)
 {
+    input_system_poll_input(game->input_system);
+
+    while (input_system_has_event(game->input_system))
+    {
+        InputEvent event = input_system_next_event(game->input_system);
+
+        switch (event.type)
+        {
+        case INPUT_EVENT_TYPE_QUIT:
+            log_message(LOG_LEVEL_INFO, "Input Event: QUIT");
+            break;
+        case INPUT_EVENT_TYPE_ACTOR_MOVE_NORTH:
+            log_message(LOG_LEVEL_INFO, "Input Event: MOVE NORTH");
+            break;
+        case INPUT_EVENT_TYPE_ACTOR_MOVE_SOUTH:
+            log_message(LOG_LEVEL_INFO, "Input Event: MOVE SOUTH");
+            break;
+        case INPUT_EVENT_TYPE_ACTOR_MOVE_EAST:
+            log_message(LOG_LEVEL_INFO, "Input Event: MOVE EAST");
+            break;
+        case INPUT_EVENT_TYPE_ACTOR_MOVE_WEST:
+            log_message(LOG_LEVEL_INFO, "Input Event: MOVE WEST");
+            break;
+        case INPUT_EVENT_TYPE_ACTOR_WAIT:
+            log_message(LOG_LEVEL_INFO, "Input Event: WAIT");
+            break;
+        default:
+            log_message(LOG_LEVEL_INFO, "Input Event: Unknown");
+            break;
+        }
+    }
+
     int dx = 0;
     int dy = 0;
 

@@ -31,6 +31,8 @@ set(SOURCES
     src/component.c
     src/component_array.c
     src/game.c
+    src/input_event_queue.c
+    src/input_system.c
     src/log.c
     src/renderer.c
     src/world.c

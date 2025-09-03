@@ -9,6 +9,7 @@ typedef struct command Command;
 typedef struct renderer Renderer;
 typedef struct world World;
 typedef struct command_system CommandSystem;
+typedef struct input_system InputSystem;
 
 typedef struct game Game;
 
@@ -16,7 +17,8 @@ typedef struct game Game;
 Game *game_create(
     Renderer *renderer,
     World *world,
-    CommandSystem *command_system);
+    CommandSystem *command_system,
+    InputSystem *input_system);
 void game_init(Game *game);
 void game_run(Game *game);
 void game_free(Game *game);

@@ -4,5 +4,5 @@
 
 #include "actor.h"
 
-// -- Public Function Definitions ---
+// --- Public Function Definitions ---
 DEFINE_ARRAY_FUNCTIONS(actor, Actor, Actor *)
