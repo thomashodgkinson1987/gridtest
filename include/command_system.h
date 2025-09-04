@@ -1,6 +1,8 @@
 #ifndef COMMAND_SYSTEM_H
 #define COMMAND_SYSTEM_H
 
+#include "process_result.h"
+
 // --- Forward Declarations ---
 typedef struct command Command;
 typedef struct world World;
@@ -15,7 +17,7 @@ void command_system_add_command(
     CommandSystem *command_system,
     const Command *command);
 
-void command_system_process_queue(
+ProcessResult command_system_process_queue(
     CommandSystem *command_system,
     Renderer *renderer,
     World *world);

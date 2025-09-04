@@ -1,5 +1,12 @@
 # Completed Tasks (Most Recent At The Top)
 
+## Refactor: Implement a State-Driven Game Loop
+-   **Goal:** Replace the current boolean-flag-based game loop with a more robust Finite State Machine (FSM) to manage the core game states.
+-   **Type:** `refactor`
+-   **Priority:** High
+-   **Branch:** `refactor/fsm-game-loop`
+-   **Details:** [Task Details](./tasks/refactor-fsm-game-loop.md)
+
 ## Feature: Implement Input System
 -   **Goal:** Decouple input handling from the game loop by creating a dedicated `InputSystem` that abstracts raw input into a queue of game-agnostic events.
 -   **Type:** `feature`

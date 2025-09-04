@@ -26,6 +26,7 @@ typedef enum command_type
     COMMAND_TYPE_ACTOR_SET_ATTACK_POWER,
     COMMAND_TYPE_ACTOR_SET_NAME,
     COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH,
+    COMMAND_TYPE_GAME_QUIT,
     COMMAND_TYPE_COUNT
 } CommandType;
 
@@ -176,6 +177,7 @@ Command command_actor_set_hp_create(Actor *actor, int current_hp, int max_hp);
 Command command_actor_set_attack_power_create(Actor *actor, int attack_power);
 Command command_actor_set_name_create(Actor *actor, const char *name);
 Command command_actor_translate_health_create(Actor *actor, int translation);
+Command command_game_quit_create(void);
 
 void command_free(Command *command);
 

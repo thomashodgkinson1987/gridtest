@@ -8,8 +8,10 @@
 #include "colour.h"
 #include "command.h"
 #include "command_system.h"
+#include "game_state.h"
 #include "input_system.h"
 #include "log.h"
+#include "process_result.h"
 #include "renderer.h"
 #include "world.h"
 
@@ -20,10 +22,7 @@ struct game
     World *world;
     CommandSystem *command_system;
     InputSystem *input_system;
-
-    bool is_running;
-    bool is_player_turn_complete;
-
+    GameState current_state;
     Actor *player;
 };
 
@@ -51,8 +50,8 @@ Game *game_create(
     game->world = world;
     game->command_system = command_system;
     game->input_system = input_system;
-    game->is_running = true;
-    game->is_player_turn_complete = false;
+    game->current_state = GAME_STATE_WAITING_FOR_INPUT;
+    game->player = NULL;
 
     return game;
 }
@@ -75,16 +74,39 @@ void game_init(Game *game)
 }
 void game_run(Game *game)
 {
-    while (game->is_running)
+    while (game->current_state != GAME_STATE_QUIT)
     {
-        if (renderer_should_close())
+        switch (game->current_state)
         {
-            game->is_running = false;
-            continue;
+        case GAME_STATE_WAITING_FOR_INPUT:
+        {
+            handle_input(game);
+            break;
+        }
+        case GAME_STATE_PLAYER_TURN:
+        {
+            ProcessResult result = command_system_process_queue(
+                game->command_system,
+                game->renderer,
+                game->world);
+            game->current_state = GAME_STATE_ENEMY_TURN;
+            if (result.did_quit)
+                game->current_state = GAME_STATE_QUIT;
+            break;
+        }
+        case GAME_STATE_ENEMY_TURN:
+        {
+            world_update_actors(game->world);
+            game->current_state = GAME_STATE_WAITING_FOR_INPUT;
+            break;
+        }
+        default:
+        {
+            log_message(LOG_LEVEL_FATAL, "%s: Unknown game state", __func__);
+            break;
+        }
         }
 
-        handle_input(game);
-        update(game);
         render(game);
     }
 }
@@ -122,8 +144,13 @@ static void handle_input(Game *game)
         switch (event.type)
         {
         case INPUT_EVENT_TYPE_QUIT:
+        {
             log_message(LOG_LEVEL_INFO, "Input Event: QUIT");
+            const Command command = command_game_quit_create();
+            game_add_command(game, &command);
+            game->current_state = GAME_STATE_PLAYER_TURN;
             break;
+        }
         case INPUT_EVENT_TYPE_ACTOR_MOVE_NORTH:
             log_message(LOG_LEVEL_INFO, "Input Event: MOVE NORTH");
             break;
@@ -138,86 +165,64 @@ static void handle_input(Game *game)
             break;
         case INPUT_EVENT_TYPE_ACTOR_WAIT:
             log_message(LOG_LEVEL_INFO, "Input Event: WAIT");
+            game->current_state = GAME_STATE_PLAYER_TURN;
             break;
         default:
-            log_message(LOG_LEVEL_INFO, "Input Event: Unknown");
+            log_message(
+                LOG_LEVEL_FATAL,
+                "%s: Invalid input event type [%i]",
+                __func__,
+                event.type);
             break;
         }
-    }
 
-    int dx = 0;
-    int dy = 0;
+        bool is_direction =
+            event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_NORTH ||
+            event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_SOUTH ||
+            event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_EAST ||
+            event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_WEST;
 
-    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_KP_8))
-        dy = -1;
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_KP_2))
-        dy = 1;
-    if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_KP_4))
-        dx = -1;
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_KP_6))
-        dx = 1;
-    if (IsKeyPressed(KEY_KP_7))
-    {
-        dx = -1;
-        dy = -1;
-    }
-    if (IsKeyPressed(KEY_KP_9))
-    {
-        dx = 1;
-        dy = -1;
-    }
-    if (IsKeyPressed(KEY_KP_1))
-    {
-        dx = -1;
-        dy = 1;
-    }
-    if (IsKeyPressed(KEY_KP_3))
-    {
-        dx = 1;
-        dy = 1;
-    }
-
-    if (dx != 0 || dy != 0)
-    {
-        const int player_x = actor_get_x(game->player);
-        const int player_y = actor_get_y(game->player);
-
-        const int target_x = player_x + dx;
-        const int target_y = player_y + dy;
-
-        Actor *target = world_get_actor_at_mut(game->world, target_x, target_y);
-
-        if (target)
+        if (is_direction)
         {
-            Command command = world_actor_attack_actor(
+            int dx = 0;
+            int dy = 0;
+
+            if (event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_NORTH)
+                dy = -1;
+            else if (event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_SOUTH)
+                dy = +1;
+            else if (event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_EAST)
+                dx = 1;
+            else if (event.type == INPUT_EVENT_TYPE_ACTOR_MOVE_WEST)
+                dx = -1;
+
+            const int target_x = actor_get_x(game->player) + dx;
+            const int target_y = actor_get_y(game->player) + dy;
+
+            Actor *target = world_get_actor_at_mut(
                 game->world,
-                game->player,
-                target);
-            game_add_command(game, &command);
-        }
-        else if (world_is_tile_walkable(game->world, target_x, target_y))
-        {
-            Command command = command_actor_set_position_create(
-                game->player,
                 target_x,
                 target_y);
-            game_add_command(game, &command);
+
+            if (target)
+            {
+                Command command = world_actor_attack_actor(
+                    game->world,
+                    game->player,
+                    target);
+                game_add_command(game, &command);
+            }
+            else if (world_is_tile_walkable(game->world, target_x, target_y))
+            {
+                Command command = command_actor_set_position_create(
+                    game->player,
+                    target_x,
+                    target_y);
+                game_add_command(game, &command);
+            }
+
+            game->current_state = GAME_STATE_PLAYER_TURN;
         }
-
-        game->is_player_turn_complete = true;
-    }
-}
-static void update(Game *game)
-{
-    if (game->is_player_turn_complete)
-    {
-        command_system_process_queue(
-            game->command_system,
-            game->renderer,
-            game->world);
-
-        world_update_actors(game->world);
-        game->is_player_turn_complete = false;
     }
 }
 static void render(Game *game)

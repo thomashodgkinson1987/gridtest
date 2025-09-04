@@ -7,6 +7,7 @@
 #include "command_array.h"
 #include "command_result.h"
 #include "log.h"
+#include "process_result.h"
 #include "renderer.h"
 #include "world.h"
 
@@ -59,11 +60,13 @@ void command_system_add_command(
     command_array_push(&command_system->command_queue, *command);
 }
 
-void command_system_process_queue(
+ProcessResult command_system_process_queue(
     CommandSystem *command_system,
     Renderer *renderer,
     World *world)
 {
+    ProcessResult parent_result = {.did_quit = false};
+
     for (
         size_t i = 0;
         i < command_array_get_count(&command_system->command_queue);
@@ -71,11 +74,15 @@ void command_system_process_queue(
     {
         Command command = command_array_get(&command_system->command_queue, i);
         CommandResult result = command_execute(&command);
+        if (result.type == COMMAND_RESULT_TYPE_GAME_QUIT)
+            parent_result.did_quit = true;
         process_result(renderer, world, result);
         command_result_free(&result);
         command_free(&command);
     }
     command_array_clear(&command_system->command_queue);
+
+    return parent_result;
 }
 
 // --- Static Function Definitions ---

@@ -220,102 +220,35 @@ Command command_actor_translate_health_create(Actor *actor, int translation)
 
     return command;
 }
+Command command_game_quit_create(void)
+{
+    Command command = {0};
+    command.type = COMMAND_TYPE_GAME_QUIT;
+
+    return command;
+}
 
 void command_free(Command *command)
 {
-    switch (command->type)
+    if (command->type >= 0 && command->type < COMMAND_TYPE_COUNT)
     {
-
-    case COMMAND_TYPE_NONE:
-    {
-        break;
+        switch (command->type)
+        {
+        case COMMAND_TYPE_ACTOR_SET_NAME:
+        {
+            free(command->params.actor_set_name.old_name);
+            free(command->params.actor_set_name.new_name);
+            break;
+        }
+        }
     }
-
-    case COMMAND_TYPE_ACTOR_SET_X:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_Y:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_POSITION:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_GLYPH:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_COLOUR:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_R:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_G:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_B:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_A:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_CURRENT_HP:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_MAX_HP:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_HP:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_ATTACK_POWER:
-    {
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_SET_NAME:
-    {
-        free(command->params.actor_set_name.old_name);
-        free(command->params.actor_set_name.new_name);
-        break;
-    }
-
-    case COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH:
-    {
-        break;
-    }
-
-    default:
+    else
     {
         log_message(
-            LOG_LEVEL_WARN,
-            "Invalid command type %d",
+            LOG_LEVEL_FATAL,
+            "%s: Invalid command type [%d]",
+            __func__,
             command->type);
-        break;
-    }
     }
 }
 
@@ -746,6 +679,17 @@ CommandResult command_execute(Command *command)
         return result;
     }
 
+    case COMMAND_TYPE_GAME_QUIT:
+    {
+        log_message(
+            LOG_LEVEL_DEBUG,
+            "%s [%s]: no params",
+            __func__,
+            command_get_name_from_type(command->type));
+        CommandResult result = command_result_game_quit_create();
+        return result;
+    }
+
     default:
     {
         log_message(
@@ -763,52 +707,38 @@ const char *command_get_name_from_type(CommandType type)
     {
     case COMMAND_TYPE_NONE:
         return "NONE";
-
     case COMMAND_TYPE_ACTOR_SET_X:
         return "ACTOR_SET_X";
-
     case COMMAND_TYPE_ACTOR_SET_Y:
         return "ACTOR_SET_Y";
-
     case COMMAND_TYPE_ACTOR_SET_POSITION:
         return "ACTOR_SET_POSITION";
-
     case COMMAND_TYPE_ACTOR_SET_GLYPH:
         return "ACTOR_SET_GLYPH";
-
     case COMMAND_TYPE_ACTOR_SET_COLOUR:
         return "ACTOR_SET_COLOUR";
-
     case COMMAND_TYPE_ACTOR_SET_R:
         return "ACTOR_SET_R";
-
     case COMMAND_TYPE_ACTOR_SET_G:
         return "ACTOR_SET_G";
-
     case COMMAND_TYPE_ACTOR_SET_B:
         return "ACTOR_SET_B";
-
     case COMMAND_TYPE_ACTOR_SET_A:
         return "ACTOR_SET_A";
-
     case COMMAND_TYPE_ACTOR_SET_CURRENT_HP:
         return "ACTOR_SET_CURRENT_HP";
-
     case COMMAND_TYPE_ACTOR_SET_MAX_HP:
         return "ACTOR_SET_MAX_HP";
-
     case COMMAND_TYPE_ACTOR_SET_HP:
         return "ACTOR_SET_HP";
-
     case COMMAND_TYPE_ACTOR_SET_ATTACK_POWER:
         return "ACTOR_SET_ATTACK_POWER";
-
     case COMMAND_TYPE_ACTOR_SET_NAME:
         return "ACTOR_SET_NAME";
-
     case COMMAND_TYPE_ACTOR_TRANSLATE_HEALTH:
         return "ACTOR_TRANSLATE_HEALTH";
-
+    case COMMAND_TYPE_GAME_QUIT:
+        return "GAME_QUIT";
     default:
         return "UNKNOWN";
     }

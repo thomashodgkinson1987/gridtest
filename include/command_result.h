@@ -11,7 +11,7 @@ typedef struct actor Actor;
 // --- Type Definitions ---
 typedef enum command_result_type
 {
-    COMMAND_RESULT_TYPE_NULL,
+    COMMAND_RESULT_TYPE_NONE,
     COMMAND_RESULT_TYPE_ACTOR_SET_X,
     COMMAND_RESULT_TYPE_ACTOR_SET_Y,
     COMMAND_RESULT_TYPE_ACTOR_SET_POSITION,
@@ -26,7 +26,9 @@ typedef enum command_result_type
     COMMAND_RESULT_TYPE_ACTOR_SET_HP,
     COMMAND_RESULT_TYPE_ACTOR_SET_ATTACK_POWER,
     COMMAND_RESULT_TYPE_ACTOR_SET_NAME,
-    COMMAND_RESULT_TYPE_ACTOR_TOOK_DAMAGE
+    COMMAND_RESULT_TYPE_ACTOR_TOOK_DAMAGE,
+    COMMAND_RESULT_TYPE_GAME_QUIT,
+    COMMAND_RESULT_TYPE_COUNT
 } CommandResultType;
 
 typedef struct command_result_params_actor_set_x
@@ -162,6 +164,7 @@ typedef struct command_result
 } CommandResult;
 
 // --- Public Function Prototypes ---
+CommandResult command_result_none_create(void);
 CommandResult command_result_actor_set_x_create(
     Actor *actor,
     int old_x,
@@ -226,6 +229,7 @@ CommandResult command_result_actor_took_damage_create(
     Actor *actor,
     int amount,
     bool did_die);
+CommandResult command_result_game_quit_create(void);
 
 void command_result_free(CommandResult *command_result);
 

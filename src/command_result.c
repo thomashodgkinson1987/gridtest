@@ -1,5 +1,6 @@
 #include "command_result.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,13 @@
 #include "log.h"
 
 // --- Public Function Definitions ---
+CommandResult command_result_none_create(void)
+{
+    CommandResult result = {0};
+    result.type = COMMAND_RESULT_TYPE_NONE;
+
+    return result;
+}
 CommandResult command_result_actor_set_x_create(
     Actor *actor,
     int old_x,
@@ -226,94 +234,36 @@ CommandResult command_result_actor_took_damage_create(
 
     return result;
 }
+CommandResult command_result_game_quit_create(void)
+{
+    CommandResult result = {0};
+    result.type = COMMAND_RESULT_TYPE_GAME_QUIT;
+
+    return result;
+}
 
 void command_result_free(CommandResult *result)
 {
-    switch (result->type)
+    if (
+        result->type >= COMMAND_RESULT_TYPE_NONE &&
+        result->type < COMMAND_RESULT_TYPE_COUNT)
     {
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_X:
-    {
-        break;
+        switch (result->type)
+        {
+        case COMMAND_RESULT_TYPE_ACTOR_SET_NAME:
+        {
+            free(result->params.actor_set_name.old_name);
+            free(result->params.actor_set_name.new_name);
+            break;
+        }
+        }
     }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_Y:
+    else
     {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_POSITION:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_GLYPH:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_COLOUR:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_R:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_G:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_B:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_A:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_CURRENT_HP:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_MAX_HP:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_HP:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_ATTACK_POWER:
-    {
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_SET_NAME:
-    {
-        CommandResultParamsActorSetName *params =
-            &result->params.actor_set_name;
-        free(params->old_name);
-        free(params->new_name);
-        break;
-    }
-
-    case COMMAND_RESULT_TYPE_ACTOR_TOOK_DAMAGE:
-    {
-        break;
-    }
-
-    default:
-    {
-        break;
-    }
+        log_message(
+            LOG_LEVEL_FATAL,
+            "%s: Invalid command result type [%d]",
+            __func__,
+            result->type);
     }
 }
