@@ -101,7 +101,7 @@ void renderer_set_dirty(Renderer *renderer)
     renderer->is_dirty = true;
 }
 
-void renderer_begin_frame(Renderer *renderer, World *world)
+void renderer_begin_frame(Renderer *renderer, const World *world)
 {
     if (renderer->is_dirty)
     {
@@ -187,11 +187,6 @@ void renderer_draw_text(
     int size)
 {
     DrawText(text, pixel_x, pixel_y, size, to_raylib_colour(colour));
-}
-
-bool renderer_should_close(void)
-{
-    return WindowShouldClose();
 }
 
 // --- Static Function Definitions ---

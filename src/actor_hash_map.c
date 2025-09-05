@@ -2,13 +2,13 @@
 
 #include <assert.h>
 #include <stdbool.h>
-#include <stdint.h>
+#include <stddef.h> // for size_t
+#include <stdint.h> // for uint64_t
 #include <stdlib.h>
 
 #include "actor.h"
 
 // --- Internal Module Definitions ---
-
 typedef struct actor_hash_map_entry
 {
     Actor *actor;
@@ -23,11 +23,9 @@ struct actor_hash_map
 };
 
 // --- Static Function Declarations ---
-
 static void rehash(ActorHashMap *hash_map, size_t new_capacity);
 
 // --- Public Function Definitions ---
-
 ActorHashMap *actor_hash_map_create(size_t initial_capacity)
 {
     assert(initial_capacity);
@@ -166,7 +164,7 @@ const Actor *actor_hash_map_get(const ActorHashMap *hash_map, uint64_t id)
         }
     }
 }
-Actor *actor_hash_map_get_mut(const ActorHashMap *hash_map, uint64_t id)
+Actor *actor_hash_map_get_mut(ActorHashMap *hash_map, uint64_t id)
 {
     assert(hash_map);
     assert(hash_map->data);
@@ -198,7 +196,6 @@ Actor *actor_hash_map_get_mut(const ActorHashMap *hash_map, uint64_t id)
 }
 
 // --- Static Function Definitions ---
-
 static void rehash(ActorHashMap *hash_map, size_t new_capacity)
 {
     assert(hash_map);

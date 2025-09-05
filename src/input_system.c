@@ -68,6 +68,11 @@ void input_system_poll_input(InputSystem *input_system)
         event = (InputEvent){INPUT_EVENT_TYPE_ACTOR_WAIT};
     }
 
+    if (WindowShouldClose())
+    {
+        event = (InputEvent){INPUT_EVENT_TYPE_QUIT};
+    }
+
     if (event.type != INPUT_EVENT_TYPE_NONE)
     {
         input_event_queue_push(&input_system->event_queue, event);

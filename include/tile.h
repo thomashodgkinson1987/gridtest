@@ -3,6 +3,7 @@
 
 #include "colour.h"
 
+// --- Type Definitions ---
 typedef enum tile_type
 {
     TILE_TYPE_FLOOR,

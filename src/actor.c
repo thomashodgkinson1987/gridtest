@@ -1,6 +1,7 @@
 #include "actor.h"
 
-#include <stdint.h>
+#include <stddef.h> // for size_t
+#include <stdint.h> // for uint64_t
 #include <stdlib.h>
 
 #include "colour.h"
@@ -24,7 +25,12 @@ struct actor
 };
 
 // --- Static Function Prototypes ---
-static Component *find_component(
+static const Component *find_component(
+    const Actor *actor,
+    ComponentType type,
+    size_t *out_index);
+
+static Component *find_component_mut(
     Actor *actor,
     ComponentType type,
     size_t *out_index);
@@ -100,13 +106,13 @@ void actor_remove_component(Actor *actor, ComponentType type)
 
     component_array_remove(&actor->components, index);
 }
-const Component *actor_get_component(Actor *actor, ComponentType type)
+const Component *actor_get_component(const Actor *actor, ComponentType type)
 {
     return find_component(actor, type, NULL);
 }
 Component *actor_get_component_mut(Actor *actor, ComponentType type)
 {
-    return find_component(actor, type, NULL);
+    return find_component_mut(actor, type, NULL);
 }
 
 uint64_t actor_get_id(const Actor *actor)
@@ -199,16 +205,36 @@ void actor_set_name(Actor *actor, const char *name)
     if (!new_pointer)
     {
         log_perror("Name reallocation failure");
-        log_fatal(
-            "%s: Fatal error due to name reallocation failure",
-            __func__);
+        log_fatal("%s: Fatal error", __func__);
     }
     strncpy(new_pointer, name, strlen(name) + 1);
     actor->name = new_pointer;
 }
 
 // --- Static Function Definitions ---
-static Component *find_component(
+static const Component *find_component(
+    const Actor *actor,
+    ComponentType type,
+    size_t *out_index)
+{
+    for (size_t i = 0; i < component_array_get_count(&actor->components); ++i)
+    {
+        Component *component = component_array_get(
+            &((Actor *)actor)->components, i);
+        if (component->type == type)
+        {
+            if (out_index)
+                *out_index = i;
+            return component;
+        }
+    }
+
+    if (out_index)
+        *out_index = (size_t)-1;
+    return NULL;
+}
+
+static Component *find_component_mut(
     Actor *actor,
     ComponentType type,
     size_t *out_index)

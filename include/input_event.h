@@ -1,6 +1,7 @@
 #ifndef INPUT_EVENT_H
 #define INPUT_EVENT_H
 
+// --- Type Definitions ---
 typedef enum input_event_type
 {
     INPUT_EVENT_TYPE_NONE,

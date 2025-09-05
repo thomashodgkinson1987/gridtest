@@ -18,7 +18,7 @@ void renderer_free(Renderer *renderer);
 
 void renderer_set_dirty(Renderer *renderer);
 
-void renderer_begin_frame(Renderer *renderer, World *world);
+void renderer_begin_frame(Renderer *renderer, const World *world);
 void renderer_end_frame(Renderer *renderer);
 
 void renderer_draw_glyph(
@@ -35,7 +35,5 @@ void renderer_draw_text(
     const char *text,
     Colour colour,
     int size);
-
-bool renderer_should_close(void);
 
 #endif // RENDERER_H

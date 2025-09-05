@@ -1,7 +1,7 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include <stdint.h>
+#include <stdint.h> // for uint64_t
 
 #include "colour.h"
 #include "component.h"
@@ -15,7 +15,7 @@ void actor_free(Actor *actor);
 
 void actor_add_component(Actor *actor, Component *component);
 void actor_remove_component(Actor *actor, ComponentType type);
-const Component *actor_get_component(Actor *actor, ComponentType type);
+const Component *actor_get_component(const Actor *actor, ComponentType type);
 Component *actor_get_component_mut(Actor *actor, ComponentType type);
 
 uint64_t actor_get_id(const Actor *actor);

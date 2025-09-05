@@ -12,21 +12,18 @@
 #include "world.h"
 
 // --- Internal Module Definitions ---
-
 struct command_system
 {
     CommandArray command_queue;
 };
 
 // --- Static Function Prototypes ---
-
-static void process_result(
+static void handle_command_result(
     Renderer *renderer,
     World *world,
     CommandResult result);
 
 // --- Public Function Definitions ---
-
 CommandSystem *command_system_create(void)
 {
     CommandSystem *command_system = malloc(sizeof(*command_system));
@@ -65,7 +62,7 @@ ProcessResult command_system_process_queue(
     Renderer *renderer,
     World *world)
 {
-    ProcessResult parent_result = {.did_quit = false};
+    ProcessResult result = {.did_quit = false};
 
     for (
         size_t i = 0;
@@ -73,21 +70,20 @@ ProcessResult command_system_process_queue(
         ++i)
     {
         Command command = command_array_get(&command_system->command_queue, i);
-        CommandResult result = command_execute(&command);
-        if (result.type == COMMAND_RESULT_TYPE_GAME_QUIT)
-            parent_result.did_quit = true;
-        process_result(renderer, world, result);
-        command_result_free(&result);
+        CommandResult command_result = command_execute(&command);
+        if (command_result.type == COMMAND_RESULT_TYPE_GAME_QUIT)
+            result.did_quit = true;
+        handle_command_result(renderer, world, command_result);
+        command_result_free(&command_result);
         command_free(&command);
     }
     command_array_clear(&command_system->command_queue);
 
-    return parent_result;
+    return result;
 }
 
 // --- Static Function Definitions ---
-
-static void process_result(
+static void handle_command_result(
     Renderer *renderer,
     World *world,
     CommandResult result)
