@@ -6,7 +6,6 @@
 // --- Forward Declarations ---
 typedef struct command Command;
 typedef struct world World;
-typedef struct renderer Renderer;
 typedef struct command_system CommandSystem;
 
 // --- Public Function Prototypes ---
@@ -19,7 +18,6 @@ void command_system_add_command(
 
 ProcessResult command_system_process_queue(
     CommandSystem *command_system,
-    Renderer *renderer,
     World *world);
 
 #endif // COMMAND_SYSTEM_H

@@ -25,7 +25,7 @@ set(SOURCES
     src/actor_array.c
     src/actor_hash_map.c
     src/command.c
-    src/command_array.c
+    src/command_queue.c
     src/command_result.c
     src/command_system.c
     src/component.c

@@ -28,7 +28,6 @@ struct game
 
 // --- Static Function Prototypes ---
 static void handle_input(Game *game);
-static void update(Game *game);
 static void render(Game *game);
 static void create_map(World *world);
 
@@ -87,9 +86,12 @@ void game_run(Game *game)
         {
             ProcessResult result = command_system_process_queue(
                 game->command_system,
-                game->renderer,
                 game->world);
             game->current_state = GAME_STATE_ENEMY_TURN;
+            if (result.is_redraw)
+            {
+                renderer_set_dirty(game->renderer);
+            }
             if (result.did_quit)
                 game->current_state = GAME_STATE_QUIT;
             break;

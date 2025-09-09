@@ -7,6 +7,7 @@
 typedef struct process_result
 {
     bool did_quit;
+    bool is_redraw;
 } ProcessResult;
 
 #endif // PROCESS_RESULT_H

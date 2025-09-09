@@ -4,24 +4,23 @@
 
 #include "actor.h"
 #include "command.h"
-#include "command_array.h"
+#include "command_queue.h"
 #include "command_result.h"
 #include "log.h"
 #include "process_result.h"
-#include "renderer.h"
 #include "world.h"
 
 // --- Internal Module Definitions ---
 struct command_system
 {
-    CommandArray command_queue;
+    CommandQueue command_queue;
 };
 
 // --- Static Function Prototypes ---
 static void handle_command_result(
-    Renderer *renderer,
+    ProcessResult *process_result,
     World *world,
-    CommandResult result);
+    CommandResult command_result);
 
 // --- Public Function Definitions ---
 CommandSystem *command_system_create(void)
@@ -33,20 +32,17 @@ CommandSystem *command_system_create(void)
         return NULL;
     }
 
-    command_system->command_queue = command_array_create(1);
+    command_system->command_queue = command_queue_create(2);
     return command_system;
 }
 void command_system_free(CommandSystem *command_system)
 {
-    for (
-        size_t i = 0;
-        i < command_array_get_count(&command_system->command_queue);
-        ++i)
+    while (!command_queue_is_empty(&command_system->command_queue))
     {
-        Command command = command_array_get(&command_system->command_queue, i);
+        Command command = command_queue_pop(&command_system->command_queue);
         command_free(&command);
     }
-    command_array_free(&command_system->command_queue);
+    command_queue_free(&command_system->command_queue);
     free(command_system);
 }
 
@@ -54,130 +50,60 @@ void command_system_add_command(
     CommandSystem *command_system,
     const Command *command)
 {
-    command_array_push(&command_system->command_queue, *command);
+    command_queue_push(&command_system->command_queue, *command);
 }
 
 ProcessResult command_system_process_queue(
     CommandSystem *command_system,
-    Renderer *renderer,
     World *world)
 {
-    ProcessResult result = {.did_quit = false};
+    ProcessResult result = {.did_quit = false, .is_redraw = false};
 
-    for (
-        size_t i = 0;
-        i < command_array_get_count(&command_system->command_queue);
-        ++i)
+    while (!command_queue_is_empty(&command_system->command_queue))
     {
-        Command command = command_array_get(&command_system->command_queue, i);
+        Command command = command_queue_pop(&command_system->command_queue);
         CommandResult command_result = command_execute(&command);
-        if (command_result.type == COMMAND_RESULT_TYPE_GAME_QUIT)
-            result.did_quit = true;
-        handle_command_result(renderer, world, command_result);
+        handle_command_result(&result, world, command_result);
         command_result_free(&command_result);
         command_free(&command);
     }
-    command_array_clear(&command_system->command_queue);
 
     return result;
 }
 
 // --- Static Function Definitions ---
 static void handle_command_result(
-    Renderer *renderer,
+    ProcessResult *process_result,
     World *world,
-    CommandResult result)
+    CommandResult command_result)
 {
-    bool is_set_renderer_dirty = false;
-
-    switch (result.type)
+    switch (command_result.type)
     {
     case COMMAND_RESULT_TYPE_ACTOR_SET_X:
-    {
-        if (result.params.actor_set_x.old_x != result.params.actor_set_x.new_x)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
     case COMMAND_RESULT_TYPE_ACTOR_SET_Y:
-    {
-        if (result.params.actor_set_y.old_y != result.params.actor_set_y.new_y)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
     case COMMAND_RESULT_TYPE_ACTOR_SET_POSITION:
-    {
-        const int old_x = result.params.actor_set_position.old_x;
-        const int old_y = result.params.actor_set_position.old_y;
-        const int new_x = result.params.actor_set_position.new_x;
-        const int new_y = result.params.actor_set_position.new_y;
-        if (old_x != new_x || old_y != new_y)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
+    case COMMAND_RESULT_TYPE_ACTOR_SET_COLOUR:
+    case COMMAND_RESULT_TYPE_ACTOR_SET_R:
+    case COMMAND_RESULT_TYPE_ACTOR_SET_G:
+    case COMMAND_RESULT_TYPE_ACTOR_SET_B:
+    case COMMAND_RESULT_TYPE_ACTOR_SET_A:
     case COMMAND_RESULT_TYPE_ACTOR_SET_GLYPH:
     {
-        const char old_glyph = result.params.actor_set_glyph.old_glyph;
-        const char new_glyph = result.params.actor_set_glyph.new_glyph;
-        if (old_glyph != new_glyph)
-        {
-            is_set_renderer_dirty = true;
-        }
+        process_result->is_redraw = true;
         break;
     }
-    case COMMAND_RESULT_TYPE_ACTOR_SET_COLOUR:
+    case COMMAND_RESULT_TYPE_GAME_QUIT:
     {
-        const Colour old_colour = result.params.actor_set_colour.old_colour;
-        const Colour new_colour = result.params.actor_set_colour.new_colour;
-        if (old_colour.r != new_colour.r || old_colour.g != new_colour.g ||
-            old_colour.b != new_colour.b || old_colour.a != new_colour.a)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
-    case COMMAND_RESULT_TYPE_ACTOR_SET_R:
-    {
-        if (result.params.actor_set_r.old_r != result.params.actor_set_r.new_r)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
-    case COMMAND_RESULT_TYPE_ACTOR_SET_G:
-    {
-        if (result.params.actor_set_g.old_g != result.params.actor_set_g.new_g)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
-    case COMMAND_RESULT_TYPE_ACTOR_SET_B:
-    {
-        if (result.params.actor_set_b.old_b != result.params.actor_set_b.new_b)
-        {
-            is_set_renderer_dirty = true;
-        }
-        break;
-    }
-    case COMMAND_RESULT_TYPE_ACTOR_SET_A:
-    {
-        if (result.params.actor_set_a.old_a != result.params.actor_set_a.new_a)
-        {
-            is_set_renderer_dirty = true;
-        }
+        process_result->did_quit = true;
+        process_result->is_redraw = true;
         break;
     }
     case COMMAND_RESULT_TYPE_ACTOR_TOOK_DAMAGE:
     {
-        Actor *actor = result.params.actor_took_damage.actor;
-        const int amount = result.params.actor_took_damage.amount;
-        const bool did_die = result.params.actor_took_damage.did_die;
+        process_result->is_redraw = true;
+        Actor *actor = command_result.params.actor_took_damage.actor;
+        const int amount = command_result.params.actor_took_damage.amount;
+        const bool did_die = command_result.params.actor_took_damage.did_die;
         log_message(
             LOG_LEVEL_INFO,
             "%s took %i damage",
@@ -187,7 +113,6 @@ static void handle_command_result(
         {
             log_message(LOG_LEVEL_INFO, "%s died", actor_get_name(actor));
             world_remove_actor(world, actor);
-            is_set_renderer_dirty = true;
         }
         break;
     }
@@ -195,10 +120,5 @@ static void handle_command_result(
     {
         break;
     }
-    }
-
-    if (is_set_renderer_dirty)
-    {
-        renderer_set_dirty(renderer);
     }
 }
