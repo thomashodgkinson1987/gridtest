@@ -59,26 +59,17 @@ Our collaboration is structured around three distinct modes of operation to ensu
     -   A `command_execute` function processes commands and returns a `Result` object.
     -   The main game loop inspects the `Result` to handle consequences (e.g., actor death, dirtying the renderer).
 
-## Project Conventions
+## Project Conventions & Workflow
 
--   **API Design:** Prefer passing explicit context (e.g., `Game*`, `Renderer*`) over using singletons. Strive for `const`-correctness with both `const` and `_mut` variants for getters where appropriate.
--   **Memory Management:** Ownership is clear and encapsulated. `_create` functions `malloc`, and corresponding `_free` functions `free`. The calling code does not manage memory for objects it receives.
--   **Formatting:** Adhere to an 80-column limit. Use include guards and a standard include order (primary header, system headers, library headers, project headers).
--   **File Naming:**
-    -   C source and header files (`.c`, `.h`) use `snake_case` (e.g., `command_result.h`).
-    -   Non-code metadata files use `dash-case` (e.g., `PROJECT-OVERVIEW.md`).
+All conventions for C code, documentation, Git, and our overall workflow are formally documented in the project's official style guide.
 
-## Git & Repository
+**Please refer to the [STYLE-GUIDE.md](./STYLE-GUIDE.md) for a complete reference.**
 
--   **URLs:**
-    -   Main Project: `https://github.com/thomashodgkinson1987/gridtest.git`
-    -   `array_macros` Submodule: `https://github.com/thomashodgkinson1987/array_macros.git`
--   **Branching:** All work is done on feature/fix/chore branches, branched from `develop`.
--   **Commits:** All commit messages must adhere to the **Conventional Commits** specification. We are practice creating **atomic commits** where it adds clarity.
--   **Merging:**
-    -   Feature branches are always **squash merged** into `develop` to build a clean, atomic history.
-    -   `develop` is merged into `main` for releases using **`--no-ff`** to preserve the history of the `develop` branch.
-    -   A "back-merge" from `main` to `develop` is performed after releases to keep branches synchronized.
+## Git Repositories
+
+-   **Main Project:** `https://github.com/thomashodgkinson1987/gridtest.git`
+-   **`array_macros` Submodule:** `https://github.com/thomashodgkinson1987/array_macros.git`
+-   **`queue_macros` Submodule:** `https://github.com/thomashodgkinson1987/queue-macros.git`
 
 ## Build & Run Workflow
 
@@ -98,6 +89,7 @@ This project uses a CMake configuration that simplifies the build and run proces
 
 The project is organized into the following key directories:
 
+-   `/.isaiah/`: Contains the high-level project vision and guiding principles.
 -   `/.tabernacle/`: Contains the foundational context for our AI collaboration (persona, project overview, bootstrap guide).
 -   `/.cubit/`: Contains the concrete project plans, including Kanban boards and detailed task files.
 -   `/src/`: Contains all the core C source files (.c).

@@ -1,5 +1,12 @@
 # Completed Tasks (Most Recent At The Top)
 
+## Docs: Create Initial Style Guide
+-   **Goal:** To formally document all project conventions for code, Git, and documentation in a central `STYLE-GUIDE.md` file.
+-   **Type:** `docs`
+-   **Priority:** High
+-   **Branch:** `docs/create-style-guide`
+-   **Details:** [Task Details](./tasks/docs-create-style-guide.md)
+
 ## Refactor: Implement a State-Driven Game Loop
 -   **Goal:** Replace the current boolean-flag-based game loop with a more robust Finite State Machine (FSM) to manage the core game states.
 -   **Type:** `refactor`

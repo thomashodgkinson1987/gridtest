@@ -1,12 +1,5 @@
 # Backlog
 
-## Docs: Create Initial Style Guide
--   **Goal:** To formally document all project conventions for code, Git, and documentation in a central `STYLE-GUIDE.md` file.
--   **Type:** `docs`
--   **Priority:** High
--   **Branch:** `docs/create-style-guide`
--   **Details:** [Task Details](./tasks/docs-create-style-guide.md)
-
 ## Chore: Rename `array_macros` Submodule
 -   **Goal:** To standardize repository naming conventions by renaming the `array_macros` library and submodule to `array-macros`.
 -   **Type:** `chore`
