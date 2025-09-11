@@ -1,5 +1,12 @@
 # Completed Tasks (Most Recent At The Top)
 
+## Refactor: Use Opaque Pointer in `queue-macros`
+-   **Goal:** To improve encapsulation and API design in the `queue-macros` library by refactoring it to use an opaque pointer (handle).
+-   **Type:** `refactor`
+-   **Priority:** Medium
+-   **Branch:** `refactor/opaque-pointer-queue-macros`
+-   **Details:** [Task Details](./tasks/refactor-opaque-pointer-queue-macros.md)
+
 ## Docs: Create Initial Style Guide
 -   **Goal:** To formally document all project conventions for code, Git, and documentation in a central `STYLE-GUIDE.md` file.
 -   **Type:** `docs`
