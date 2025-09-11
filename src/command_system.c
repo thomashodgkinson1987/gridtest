@@ -13,7 +13,7 @@
 // --- Internal Module Definitions ---
 struct command_system
 {
-    CommandQueue command_queue;
+    CommandQueue *command_queue;
 };
 
 // --- Static Function Prototypes ---
@@ -37,12 +37,13 @@ CommandSystem *command_system_create(void)
 }
 void command_system_free(CommandSystem *command_system)
 {
-    while (!command_queue_is_empty(&command_system->command_queue))
+    while (!command_queue_is_empty(command_system->command_queue))
     {
-        Command command = command_queue_pop(&command_system->command_queue);
-        command_free(&command);
+        Command command;
+        if (command_queue_pop(command_system->command_queue, &command))
+            command_free(&command);
     }
-    command_queue_free(&command_system->command_queue);
+    command_queue_free(command_system->command_queue);
     free(command_system);
 }
 
@@ -50,7 +51,7 @@ void command_system_add_command(
     CommandSystem *command_system,
     const Command *command)
 {
-    command_queue_push(&command_system->command_queue, *command);
+    command_queue_push(command_system->command_queue, *command);
 }
 
 ProcessResult command_system_process_queue(
@@ -59,13 +60,16 @@ ProcessResult command_system_process_queue(
 {
     ProcessResult result = {.did_quit = false, .is_redraw = false};
 
-    while (!command_queue_is_empty(&command_system->command_queue))
+    while (!command_queue_is_empty(command_system->command_queue))
     {
-        Command command = command_queue_pop(&command_system->command_queue);
-        CommandResult command_result = command_execute(&command);
-        handle_command_result(&result, world, command_result);
-        command_result_free(&command_result);
-        command_free(&command);
+        Command command;
+        if (command_queue_pop(command_system->command_queue, &command))
+        {
+            CommandResult command_result = command_execute(&command);
+            handle_command_result(&result, world, command_result);
+            command_result_free(&command_result);
+            command_free(&command);
+        }
     }
 
     return result;

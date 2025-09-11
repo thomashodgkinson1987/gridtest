@@ -13,7 +13,7 @@
 // --- Internal Module Definitions ---
 struct input_system
 {
-    InputEventQueue event_queue;
+    InputEventQueue *event_queue;
 };
 
 // --- Public Function Definitions ---
@@ -22,13 +22,13 @@ InputSystem *input_system_create(void)
     InputSystem *input_system = malloc(sizeof(*input_system));
     assert(input_system);
 
-    input_system->event_queue = input_event_queue_create(8);
+    input_system->event_queue = input_event_queue_create(2);
 
     return input_system;
 }
 void input_system_free(InputSystem *input_system)
 {
-    input_event_queue_free(&input_system->event_queue);
+    input_event_queue_free(input_system->event_queue);
     free(input_system);
 }
 
@@ -75,22 +75,26 @@ void input_system_poll_input(InputSystem *input_system)
 
     if (event.type != INPUT_EVENT_TYPE_NONE)
     {
-        input_event_queue_push(&input_system->event_queue, event);
+        input_event_queue_push(input_system->event_queue, event);
     }
 }
 
 bool input_system_has_event(const InputSystem *input_system)
 {
-    return !input_event_queue_is_empty(&input_system->event_queue);
+    return !input_event_queue_is_empty(input_system->event_queue);
 }
 InputEvent input_system_next_event(InputSystem *input_system)
 {
+    InputEvent event;
+
     if (input_system_has_event(input_system))
     {
-        return input_event_queue_pop(&input_system->event_queue);
+        input_event_queue_pop(input_system->event_queue, &event);
     }
     else
     {
-        return (InputEvent){INPUT_EVENT_TYPE_NONE};
+        event = (InputEvent){INPUT_EVENT_TYPE_NONE};
     }
+
+    return event;
 }

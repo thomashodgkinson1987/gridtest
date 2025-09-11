@@ -5,9 +5,7 @@
 
 // --- Forward Declarations ---
 typedef struct command Command;
-
-// --- Type Definitions ---
-DECLARE_QUEUE_STRUCT(command, Command, Command)
+DECLARE_QUEUE_STRUCT(command, Command)
 
 // --- Public Function Prototypes ---
 DECLARE_QUEUE_FUNCTIONS(command, Command, Command)

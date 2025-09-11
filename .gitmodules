@@ -4,3 +4,4 @@
 [submodule "vendor/queue-macros"]
 	path = vendor/queue-macros
 	url = git@github.com:thomashodgkinson1987/queue-macros.git
+	branch = main

@@ -5,9 +5,7 @@
 
 // --- Forward Declarations ---
 typedef struct input_event InputEvent;
-
-// --- Type Definitions ---
-DECLARE_QUEUE_STRUCT(input_event, InputEvent, InputEvent)
+DECLARE_QUEUE_STRUCT(input_event, InputEvent)
 
 // --- Public Function Prototypes ---
 DECLARE_QUEUE_FUNCTIONS(input_event, InputEvent, InputEvent)
