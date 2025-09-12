@@ -1,6 +1,6 @@
 #include "component_array.h"
 
-#include "array_macros.h"
+#include <array_macros.h>
 
 #include "component.h"
 

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "raylib.h"
+#include <raylib.h>
 
 #include "input_event.h"
 #include "input_event_queue.h"

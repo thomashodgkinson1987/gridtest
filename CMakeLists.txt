@@ -1,5 +1,5 @@
 # Specifies the minimum version of CMake required.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 # Define the project name, version, and language.
 project(GridTest VERSION 1.0 LANGUAGES C)
@@ -8,17 +8,17 @@ project(GridTest VERSION 1.0 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Add 'include' directory to the list of directories to search for headers.
-include_directories(include)
-
-# Define a variable for the raylib library path.
-set(RAYLIB_LIBRARY ${CMAKE_SOURCE_DIR}/lib/libraylib.so.5.5.0)
-
 # --- Submodules ---
+# Add our custom libraries. Their CMakeLists.txt files will define targets
+# named 'array_macros' and 'queue_macros'.
 add_subdirectory(vendor/array_macros)
 add_subdirectory(vendor/queue-macros)
 
+# Add the Raylib library. Its CMakeLists.txt will define a target named 'raylib'.
+add_subdirectory(lib/raylib)
+
 # --- Project Sources ---
+# List all of our project's source files.
 set(SOURCES
     src/main.c
     src/actor.c
@@ -39,8 +39,26 @@ set(SOURCES
 )
 
 # --- Executable Definition ---
-# Define the executable target and give it a name.
+# Define the executable target and provide its source files.
 add_executable(gridtest ${SOURCES})
+
+# --- Linking ---
+# Link our 'gridtest' executable against all required library targets.
+# This single command handles everything: it finds the libraries, adds the
+# correct include directories, and links them in the proper order.
+target_link_libraries(gridtest
+    PRIVATE
+    raylib
+    array_macros
+    queue_macros
+    m
+    pthread
+)
+
+# --- Include Directories ---
+# Explicitly add our project's 'include' directory to the target.
+# This is the modern way to manage include paths.
+target_include_directories(gridtest PRIVATE include)
 
 # --- IDE Integration ---
 # Set the working directory for when the debugger launches the executable.
@@ -48,29 +66,6 @@ add_executable(gridtest ${SOURCES})
 set_target_properties(gridtest PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
-
-# --- RPATH Handling ---
-# Embed a runtime search path (RPATH) into the executable. This tells the
-# dynamic linker where to find the raylib .so file. Using $ORIGIN makes the
-# executable portable even after compilation.
-# $ORIGIN resolves to the executable's directory, so ../lib finds the lib folder.
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-
-# --- Linking ---
-# Link the executable against all required libraries.
-target_link_libraries(gridtest
-    PRIVATE
-    array_macros
-    queue_macros
-    ${RAYLIB_LIBRARY}
-    m
-    pthread
-)
-
-# --- Optional: For Development ---
-# If using VSCode with the CMake Tools extension, this helps it find headers.
-target_include_directories(gridtest PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # --- Custom Run Target ---
 # Creates a `make run` command that builds and then executes the program

@@ -1,7 +1,7 @@
 #ifndef INPUT_EVENT_QUEUE_H
 #define INPUT_EVENT_QUEUE_H
 
-#include "queue_macros.h"
+#include <queue_macros.h>
 
 // --- Forward Declarations ---
 typedef struct input_event InputEvent;

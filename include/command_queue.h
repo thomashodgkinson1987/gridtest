@@ -1,7 +1,7 @@
 #ifndef COMMAND_QUEUE_H
 #define COMMAND_QUEUE_H
 
-#include "queue_macros.h"
+#include <queue_macros.h>
 
 // --- Forward Declarations ---
 typedef struct command Command;

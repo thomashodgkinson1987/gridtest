@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "raylib.h"
+#include <raylib.h>
 
 #include "actor.h"
 #include "colour.h"

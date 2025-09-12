@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "raylib.h"
+#include <raylib.h>
 
 #include "actor.h"
 #include "log.h"

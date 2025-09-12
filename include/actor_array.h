@@ -1,7 +1,7 @@
 #ifndef ACTOR_ARRAY_H
 #define ACTOR_ARRAY_H
 
-#include "array_macros.h"
+#include <array_macros.h>
 
 // --- Forward Declarations ---
 typedef struct actor Actor;
