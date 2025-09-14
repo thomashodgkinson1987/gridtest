@@ -13,7 +13,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: europe-west2-docker.pkg.dev/gen-lang-client-0059571033/dev-images/gridtest-dev:1.0.0
+      image: europe-west2-docker.pkg.dev/gen-lang-client-0059571033/dev-images/gridtest-dev:1.0.1
       credentials:
         username: _json_key
         password: ${{ secrets.GCP_SA_KEY }}

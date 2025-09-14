@@ -39,7 +39,5 @@ RUN --mount=type=cache,target=/var/cache/dnf \
     neovim-0.11.4-1.fc42 && \
     dnf clean all
 
-# Switch back to the generic user as the default.
-USER vscode
 WORKDIR /workspaces/gridtest
 CMD ["/bin/bash"]
