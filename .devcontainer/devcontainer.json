@@ -36,13 +36,8 @@
             },
             // The list of extensions to automatically install inside the container
             "extensions": [
-                "ms-vscode.cpptools",
                 "ms-vscode.cpptools-extension-pack",
-                "ms-vscode.cpptools-themes",
-                "ms-vscode.cmake-tools",
-                "google.gemini-cli-vscode-ide-companion",
-                "GitHub.github-vscode-theme",
-                "RooVeterinaryInc.roo-cline"
+                "github.vscode-github-actions"
             ]
         }
     },
