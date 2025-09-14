@@ -1,5 +1,5 @@
-# Use the latest official Fedora image as our base environment.
-FROM fedora:latest
+# Use the fedora:42 image as our base environment.
+FROM fedora:42
 
 # Add metadata to the image to describe its purpose.
 LABEL author="Thomas Hodgkinson"
@@ -15,31 +15,28 @@ USER root
 RUN usermod -aG wheel vscode && \
     echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
-    
-# Install all dependencies, upgrade the system, and clean up in a single layer.
 # The --mount cache ensures that re-running this layer is fast, as packages
 # are cached on the host and do not need to be re-downloaded.
 RUN --mount=type=cache,target=/var/cache/dnf \
     dnf install -y \
-    git \
-    gcc \
-    gcc-c++ \
-    mingw64-gcc \
-    mingw64-gcc-c++ \
-    gdb \
-    cmake \
-    mesa-libGL-devel \
-    libX11-devel \
-    libXrandr-devel \
-    libXi-devel \
-    libXcursor-devel \
-    libXfixes-devel \
-    alsa-lib-devel \
-    libXinerama-devel \
-    libXxf86vm-devel \
-    vim \
-    neovim && \
-    dnf upgrade -y && \
+    git-2.51.0-2.fc42 \
+    gcc-15.2.1-1.fc42 \
+    gcc-c++-15.2.1-1.fc42 \
+    mingw64-gcc-14.2.1-4.fc42 \
+    mingw64-gcc-c++-14.2.1-4.fc42 \
+    gdb-16.3-1.fc42 \
+    cmake-3.31.6-2.fc42 \
+    mesa-libGL-devel-25.1.7-1.fc42 \
+    libX11-devel-1.8.12-1.fc42 \
+    libXrandr-devel-1.5.4-5.fc42 \
+    libXi-devel-1.8.2-2.fc42 \
+    libXcursor-devel-1.2.3-2.fc42 \
+    libXfixes-devel-6.0.1-5.fc42 \
+    alsa-lib-devel-1.2.14-3.fc42 \
+    libXinerama-devel-1.1.5-8.fc42 \
+    libXxf86vm-devel-1.1.6-2.fc42 \
+    vim-enhanced-2:9.1.1723-2.fc42 \
+    neovim-0.11.4-1.fc42 && \
     dnf clean all
 
 # Switch back to the generic user as the default.
