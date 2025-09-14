@@ -10,12 +10,8 @@ declare -a PODMAN_ARGS
 
 PODMAN_ARGS+=(
     -it --rm
-    # --- THIS IS THE KEY ---
-    # Fixes file permissions on the host
     --userns=keep-id
-    # Ensures we are the 'vscode' user inside the container
     --user vscode
-    # -----------------------
     -v "$(pwd):${WORKSPACE_DIR}:z"
     -v "/tmp/.X11-unix:/tmp/.X11-unix:ro"
     -v "${XAUTHORITY}:/home/vscode/.Xauthority:ro,z"
@@ -23,6 +19,12 @@ PODMAN_ARGS+=(
     -e "XAUTHORITY=/home/vscode/.Xauthority"
     --ipc=host
 )
+
+SSH_DIR="${HOME}/.ssh"
+if [ -d "$SSH_DIR" ]; then
+    echo "Host .ssh directory found. Forwarding..."
+    PODMAN_ARGS+=( -v "${SSH_DIR}:/home/vscode/.ssh:ro,z" )
+fi
 
 GITCONFIG_PATH="${HOME}/.gitconfig"
 if [ -f "$GITCONFIG_PATH" ]; then

@@ -20,6 +20,11 @@ PODMAN_ARGS+=(
     --ipc=host
 )
 
+SSH_DIR="${HOME}/.ssh"
+if [ -d "$SSH_DIR" ]; then
+    PODMAN_ARGS+=( -v "${SSH_DIR}:/home/vscode/.ssh:ro,z" )
+fi
+
 GITCONFIG_PATH="${HOME}/.gitconfig"
 if [ -f "$GITCONFIG_PATH" ]; then
     PODMAN_ARGS+=( -v "${GITCONFIG_PATH}:/home/vscode/.gitconfig:ro,z" )
