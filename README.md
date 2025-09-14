@@ -1,3 +1,5 @@
+[![Build Project](https://github.com/thomashodgkinson1987/gridtest/actions/workflows/build.yml/badge.svg?branch=feature%2Fpodman)](https://github.com/thomashodgkinson1987/gridtest/actions/workflows/build.yml)
+
 # GridTest Rogulike Prototype
 
 A simple roguelike prototype written in C using the Raylib library.
