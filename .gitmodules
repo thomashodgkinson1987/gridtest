@@ -1,9 +1,9 @@
 [submodule "vendor/array_macros"]
 	path = vendor/array_macros
-	url = git@github.com:thomashodgkinson1987/array_macros.git
+	url = https://github.com/thomashodgkinson1987/array_macros.git
 [submodule "vendor/queue-macros"]
 	path = vendor/queue-macros
-	url = git@github.com:thomashodgkinson1987/queue-macros.git
+	url = https://github.com/thomashodgkinson1987/queue-macros.git
 	branch = main
 [submodule "lib/raylib"]
 	path = lib/raylib
