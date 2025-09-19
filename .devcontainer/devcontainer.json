@@ -1,40 +1,28 @@
 {
     "name": "GridTest C Environment (Raylib)",
-    "image": "europe-west2-docker.pkg.dev/gen-lang-client-0059571033/dev-images/gridtest-dev:1.0.0",
+    "image": "europe-west2-docker.pkg.dev/gen-lang-client-0059571033/dev-images/gridtest-dev:1.0.1",
     "remoteUser": "vscode",
     "updateRemoteUserUID": true,
 
     "runArgs": [
-        // Allows the container to share the host's Inter-Process Communication namespace.
         "--ipc=host",
-        
-        // Mounts the host's X11 socket (the "front door" for windows) into the container
         "-v", "/tmp/.X11-unix:/tmp/.X11-unix:ro",
-        
-        // Mount the X11 authentication file using the host's XAUTHORITY variable
         "-v", "${env:XAUTHORITY}:/home/vscode/.Xauthority:ro",
-        
         "-v", "${env:HOME}/.gitconfig:/home/vscode/.gitconfig:ro",
         "-v", "${env:SSH_AUTH_SOCK}:${env:SSH_AUTH_SOCK}"
     ],
 
     "containerEnv": {
-        // Tells graphical applications inside the container the "address" of your
-        // desktop's display, which it can now reach via the mounted socket.
         "DISPLAY": "${localEnv:DISPLAY}",
-        // Tell GUI apps inside the container where to find the mounted auth file
         "XAUTHORITY": "/home/vscode/.Xauthority",
-        // Tell SSH clients inside the container where to find the forwarded socket.
         "SSH_AUTH_SOCK": "${env:SSH_AUTH_SOCK}"
     },
 
     "customizations": {
         "vscode": {
-            // Settings that will be applied or overridden inside the container.
             "settings": {
                 "cmake.buildDirectory": "${workspaceFolder}/build-container-${buildType}"
             },
-            // The list of extensions to automatically install inside the container
             "extensions": [
                 "ms-vscode.cpptools-extension-pack",
                 "github.vscode-github-actions"
@@ -42,6 +30,5 @@
         }
     },
 
-    // A command to run after the container is created but before you connect.
     "postCreateCommand": "sudo git config --system --add safe.directory /workspaces/gridtest"
 }
