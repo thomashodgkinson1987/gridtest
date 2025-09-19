@@ -41,7 +41,7 @@ This document is the single source of truth for all coding, documentation, and w
 -   **Include Order:** Includes must be sorted alphabetically within the following groups, separated by a blank line:
     1.  The primary header for the corresponding `.c` file (`"command_system.h"`).
     2.  System headers (`<stdbool.h>`, `<stdlib.h>`).
-    3.  Library headers (`"raylib.h"`).
+    3.  Library headers (`<raylib.h>`).
     4.  Project headers (`"actor.h"`, `"world.h"`).
 
 ### 3.4. API Design
