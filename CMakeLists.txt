@@ -4,6 +4,17 @@ cmake_minimum_required(VERSION 3.15)
 # Define the project name, version, and language.
 project(GridTest VERSION 1.0 LANGUAGES C)
 
+# --- Artifact Output Configuration ---
+# Define a structured output path for all compiled binaries (executables and libraries).
+# This keeps the build output organized and separate from the source code.
+# Using CMAKE_BINARY_DIR ensures that all artifacts stay within the build folder (e.g., build/Debug).
+set(ARTIFACT_OUTPUT_PATH "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/${CMAKE_BUILD_TYPE}")
+
+# Set the standard CMake variables to redirect all output to our custom path.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ARTIFACT_OUTPUT_PATH})
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${ARTIFACT_OUTPUT_PATH})
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${ARTIFACT_OUTPUT_PATH})
+
 # Set the C standard.
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)

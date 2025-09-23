@@ -1,28 +1,36 @@
 {
     "name": "GridTest C Environment (Raylib)",
-    "image": "europe-west2-docker.pkg.dev/gen-lang-client-0059571033/dev-images/gridtest-dev:1.0.1",
-    "remoteUser": "vscode",
-    "updateRemoteUserUID": true,
+
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": "..",
+        "target": "dev"
+    },
+
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/gridtest,type=bind,Z",
+    "workspaceFolder": "/workspaces/gridtest",
 
     "runArgs": [
         "--ipc=host",
+        "--network=host",
         "-v", "/tmp/.X11-unix:/tmp/.X11-unix:ro",
-        "-v", "${env:XAUTHORITY}:/home/vscode/.Xauthority:ro",
-        "-v", "${env:HOME}/.gitconfig:/home/vscode/.gitconfig:ro",
-        "-v", "${env:SSH_AUTH_SOCK}:${env:SSH_AUTH_SOCK}"
+        "-v", "${localEnv:XAUTHORITY}:/home/vscode/.Xauthority:ro",
+        "-v", "${localEnv:HOME}/.gitconfig:/home/vscode/.gitconfig:ro",
+        "-v", "${localEnv:SSH_AUTH_SOCK}:${localEnv:SSH_AUTH_SOCK}"
     ],
 
     "containerEnv": {
+        "BUILD_CONTEXT": "container",
         "DISPLAY": "${localEnv:DISPLAY}",
         "XAUTHORITY": "/home/vscode/.Xauthority",
-        "SSH_AUTH_SOCK": "${env:SSH_AUTH_SOCK}"
+        "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}"
     },
+
+    "remoteUser": "vscode",
+    "updateRemoteUserUID": true,
 
     "customizations": {
         "vscode": {
-            "settings": {
-                "cmake.buildDirectory": "${workspaceFolder}/build-container-${buildType}"
-            },
             "extensions": [
                 "ms-vscode.cpptools-extension-pack",
                 "github.vscode-github-actions"
