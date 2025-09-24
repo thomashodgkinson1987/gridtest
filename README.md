@@ -16,7 +16,7 @@ You will need the following tools to build the project:
 ## Building and Running
 
 1.  **Clone the repository (including the submodule):**
-    `git clone --recursive git@github.com:thomashodgkinson1987/gridtest.git`
+    `git clone --recursive https://github.com/thomashodgkinson1987/gridtest.git`
 
 2.  **Open in VS Code:**
     Open the project folder in Visual Studio Code with the CMake Tools extension installed.

@@ -77,7 +77,7 @@ All commit messages must adhere to the **Conventional Commits** specification.
     -   For project-wide changes, use `project`, `workflow`, `deps`, or `plan`.
 
 **Example Commit:**
-refactor(queue): Adapt codebase to queue-macros opaque pointer API
+refactor(project): Adapt codebase to queue-macros opaque pointer API
 
 Refactors the `CommandSystem` and `InputSystem` to integrate the
 updated `queue-macros` submodule, which now uses an opaque pointer

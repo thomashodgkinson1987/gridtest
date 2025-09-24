@@ -1,4 +1,4 @@
-# The Prophesy of Project Chimera
+# Prophesy
 
 ## Guiding Statement
 
@@ -17,3 +17,4 @@ Project Chimera shall be a procedurally generated, science-fantasy roguelike des
 -   ***Caves of Qud:*** Serves as the primary model for systemic world-building and emergent narrative. We will study its approach to lore, factions, history generation, and its unique descriptive language.
 -   ***Cataclysm: Dark Days Ahead:*** Provides the benchmark for player agency, survival mechanics, and crafting depth. Its philosophy of "if you can think it, you can do it" is a key driver for our interaction design.
 -   ***No Man's Sky:*** Establishes the technical and aesthetic target for seamless scale transition. Its visual identity and the feeling of boundless exploration are the primary sources of inspiration for the project's presentation.
+-   ***Cogmind:*** Lorem ipsum.

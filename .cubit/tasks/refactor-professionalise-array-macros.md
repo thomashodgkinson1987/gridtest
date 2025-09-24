@@ -1,14 +1,13 @@
-# Refactor: Professionalize the array-macros Library
+# Refactor: Professionalise the array-macros Library
 
 -   **Goal:** To replace the legacy `array_macros` library with a new, professional-grade `array-macros` library, built to the same high standard as `queue-macros`.
 -   **Type:** `refactor`
 -   **Priority:** High
--   **Branch:** `refactor/professionalize-array-macros`
+-   **Branch:** `refactor/professionalise-array-macros`
 
 ---
 
 ## Action Plan
-
 This task is divided into two distinct phases. Phase 1 involves creating the new, standalone library. Phase 2 involves integrating it into the main `gridtest` project.
 
 ### Phase 1: Create the New `array-macros` Library
@@ -26,7 +25,7 @@ This task is divided into two distinct phases. Phase 1 involves creating the new
 ### Phase 2: Integrate into GridTest
 *(This work takes place on a feature branch within the `gridtest` repository)*
 
-1.  **Open Task:** Create the `refactor/professionalize-array-macros` branch. The **first commit** on this branch must be the `docs(plan): Open task` commit, moving this task from the backlog to the current board.
+1.  **Open Task:** Create the `refactor/professionalise-array-macros` branch.
 2.  **Remove Old Submodule:** Unregister and remove the old `vendor/array_macros` submodule.
     ```bash
     git rm vendor/array_macros
@@ -38,4 +37,3 @@ This task is divided into two distinct phases. Phase 1 involves creating the new
 4.  **Update Build System:** Modify `gridtest`'s root `CMakeLists.txt` to point to the new submodule directory.
 5.  **Refactor Call Sites:** Search the `gridtest` codebase for any place that used the old array library and update it to use the new, opaque-pointer-based API.
 6.  **Verify Integration:** Perform a clean build of `gridtest` and run it to confirm that the new library is integrated and functioning correctly.
-7.  **Close Task:** The **final commit** on the branch must be the `docs(plan): Close task` commit, moving this task from the current board to the completed board.

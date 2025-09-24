@@ -1,6 +1,7 @@
 # Completed Tasks (Most Recent At The Top)
 
 ## Refactor: Use Opaque Pointer in `queue-macros`
+
 -   **Goal:** To improve encapsulation and API design in the `queue-macros` library by refactoring it to use an opaque pointer (handle).
 -   **Type:** `refactor`
 -   **Priority:** Medium
@@ -8,6 +9,7 @@
 -   **Details:** [Task Details](./tasks/refactor-opaque-pointer-queue-macros.md)
 
 ## Docs: Create Initial Style Guide
+
 -   **Goal:** To formally document all project conventions for code, Git, and documentation in a central `STYLE-GUIDE.md` file.
 -   **Type:** `docs`
 -   **Priority:** High
@@ -15,6 +17,7 @@
 -   **Details:** [Task Details](./tasks/docs-create-style-guide.md)
 
 ## Refactor: Implement a State-Driven Game Loop
+
 -   **Goal:** Replace the current boolean-flag-based game loop with a more robust Finite State Machine (FSM) to manage the core game states.
 -   **Type:** `refactor`
 -   **Priority:** High
@@ -22,6 +25,7 @@
 -   **Details:** [Task Details](./tasks/refactor-fsm-game-loop.md)
 
 ## Feature: Implement Input System
+
 -   **Goal:** Decouple input handling from the game loop by creating a dedicated `InputSystem` that abstracts raw input into a queue of game-agnostic events.
 -   **Type:** `feature`
 -   **Priority:** High
@@ -29,6 +33,7 @@
 -   **Details:** [Task Details](./tasks/feature-implement-input-system.md)
 
 ## Lesson: Implement a Hash Map in C
+
 -   **Goal:** Learn about and discuss the implementation of hash maps in C.
 -   **Type:** `lesson`
 -   **Priority:** High
@@ -37,6 +42,7 @@
 -   **Action 2 (Discussion):** Hold a discussion session to review findings, clarify concepts, and sketch out a potential C implementation for future use in the project.
 
 ## Refactor: Standardize Enum Naming to use `_NONE`
+
 -   **Goal:** Refactor all enums to use `_NONE` as the zero-value member instead of `_NULL` for better semantic clarity.
 -   **Type:** `refactor`
 -   **Priority:** Medium
@@ -46,6 +52,7 @@
 -   **Action 3:** Update all call sites throughout the codebase that reference the old `_NULL` member name.
 
 ## Chore: Split `PLAN.md` into Multiple Files
+
 -   **Goal:** Split the main `PLAN.md` file into separate files for each Kanban section (`Current`, `Backlog`, `Completed`) to improve token efficiency.
 -   **Type:** `chore`
 -   **Priority:** High
@@ -55,6 +62,7 @@
 -   **Action 3:** Update workflow documents (`PROJECT-OVERVIEW.md`, `BOOTSTRAP-GUIDE.md` etc) to reflect the new multi-file Kanban system.
 
 ## Refactor: Overhaul Component System
+
 -   **Goal:** Refactor the component system to be a generic, type-safe, and extensible system, mirroring the design of the Command system.
 -   **Type:** `refactor`
 -   **Priority:** High
@@ -67,6 +75,7 @@
 -   **Action 6 (Update Codebase):** Sweep the project to replace all calls to the old component API with the new one.
 
 ## Refactor: Standardize Command Object Logging
+
 -   **Goal:** All Command logging calls will use a lookup table to retrieve the object's name.
 -   **Type:** `refactor`
 -   **Priority:** Low
@@ -75,6 +84,7 @@
 -   **Action 2 (Refactor Logging Calls):** Search the codebase and replace any manual logging of command names with calls to the new helper function.
 
 ## Reorder `#include`s In Game Module
+
 -   **Goal:** To have `game.c/.h` include directives to be alphabetically ordererd.
 -   **Type:** refactor
 -   **Priority:** Low
@@ -82,6 +92,7 @@
 -   **Action 1:** Reorder Game module `#include`s.
 
 ## Remove Redundant Null Checks
+
 -   **Goal:** Align the codebase with the project convention of not performing a null check before calling free.
 -   **Type:** refactor
 -   **Priority:** Low
@@ -90,6 +101,7 @@
 -   **Action 2:** Replace all instances with a direct `free(ptr)` call.
 
 ## Change Command API to Use Pointers
+
 -   **Goal:** Refactor the Command struct to be passed by const pointer to improve encapsulation and reduce header coupling.
 -   **Type:** refactor
 -   **Priority:** Medium
@@ -99,6 +111,7 @@
 -   **Action 3:** Replace `#include "command.h"` with a forward declaration in headers where possible.
 
 ## Amend Commit Type
+
 -   **Goal:** Amend 98a20a0 to use the `chore` type for better adherence to Conventional Commits.
 -   **Type:** chore
 -   **Priority:** High
@@ -107,6 +120,7 @@
 -   **Action 2:** Push the change using `git push --force-with-lease`.
 
 ## Refactor: Centralize Command Logic into `CommandSystem`
+
 -   **Goal:** Create a new core subsystem for the Game module that manages the command queue.
 -   **Type:** `refactor`
 -   **Priority:** Medium
@@ -125,12 +139,14 @@
 -   **Action 7 (Git):** Commit, merge, and clean up.
 
 ## Topic: Kanban Methodology Overview
+
 -   **Goal:** Ensure we have a shared, solid understanding of the workflow system we've adopted.
 -   **Type:** `lesson`
 -   **Priority:** High
 -   **Action (Chat):** Discuss the core principles of the Kanban methodology.
 
 ## Create the Command Processing System
+
 -   **Goal:** Move responsibiility of CommandResult processing into dedicated command system.
 -   **Type:** `feature`
 -   **Priority:** Medium
